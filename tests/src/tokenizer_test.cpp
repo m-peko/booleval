@@ -30,8 +30,7 @@
 #include <string>
 #include <memory>
 #include <gtest/gtest.h>
-
-#include "tokenizer.h"
+#include <booleval/tokenizer.h>
 
 class TokenizerTest : public testing::Test {};
 

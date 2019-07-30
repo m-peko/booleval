@@ -27,41 +27,66 @@
  *
  */
 
-#ifndef BOOLEVAL_EVALUATOR_H
-#define BOOLEVAL_EVALUATOR_H
+#ifndef BOOLEVAL_BASE_TOKEN_H
+#define BOOLEVAL_BASE_TOKEN_H
 
-#include <string>
-#include <memory>
-
-#include "object.h"
-#include "tokenizer.h"
-#include "tree_node.h"
+#include <cstdint>
 
 namespace Booleval {
 
-class Evaluator {
-public:
-    Evaluator() noexcept;
+enum class TokenType : uint8_t {
+    UNKNOWN = 0,
+    VALUE   = 1,
 
-    bool const is_activated() const;
+    // Logical operators
+    AND = 2,
+    OR  = 3,
 
-    bool const build_expression_tree(std::string const& expression);
-    bool const evaluate(Object const& obj);
+    // Relational operators
+    NEQ = 4,
+    GT  = 5,
+    LT  = 6,
 
-private:
-    std::shared_ptr<TreeNode> parse_expression();
-    std::shared_ptr<TreeNode> parse_and();
-    std::shared_ptr<TreeNode> parse_condition();
-    std::shared_ptr<TreeNode> parse_terminal();
+    // Parentheses
+    LP = 7,
+    RP = 8,
 
-    bool const evaluate_recursive(std::shared_ptr<TreeNode>& node, Object const& obj) const;
-
-private:
-    bool is_activated_;
-    Tokenizer tokenizer_;
-    std::shared_ptr<TreeNode> root;
+    // Fields
+    FIELD_A = 9,
+    FIELD_B = 10,
+    FIELD_C = 11
 };
+
+class BaseToken {
+public:
+    BaseToken() noexcept;
+    BaseToken(TokenType type) noexcept;
+
+    bool operator==(BaseToken const& other) const;
+
+    virtual ~BaseToken() = default;
+
+    void type(TokenType const type) noexcept;
+    TokenType type() const noexcept;
+
+    bool is(TokenType const type) const noexcept;
+    bool is_not(TokenType const type) const noexcept;
+    bool is_one_of(TokenType const type1, TokenType const type2) const noexcept;
+
+    template <typename... Types>
+    bool is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept;
+
+    bool is_field_type() const noexcept;
+
+private:
+    TokenType type_;
+};
+
+template <typename... Types>
+bool BaseToken::is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept {
+    return is(type1) || is_one_of(type2, types...);
+}
 
 } // Booleval
 
-#endif // BOOLEVAL_EVALUATOR_H
+#endif // BOOLEVAL_BASE_TOKEN_H

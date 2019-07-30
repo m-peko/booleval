@@ -3,7 +3,6 @@ cmake_minimum_required (VERSION 3.2)
 # Use booleval's include directories + test include directories
 include_directories (
     ${PROJECT_SOURCE_DIR}/include/
-    ../include/
     ${GOOGLETEST_INCLUDE}
 )
 
@@ -19,7 +18,7 @@ link_directories (
 link_libraries (
     gtest
     gtest_main
-    libbooleval
+    booleval
     pthread
 )
 

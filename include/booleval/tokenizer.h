@@ -50,7 +50,7 @@ public:
     std::string const& expression() const noexcept;
 
     std::shared_ptr<BaseToken> const& token() const;
-    bool const has_token() const noexcept;
+    bool has_token() const noexcept;
 
     void tokenize();
 

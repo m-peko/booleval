@@ -27,7 +27,7 @@
  *
  */
 
-#include "object.h"
+#include <booleval/object.h>
 
 namespace Booleval {
 

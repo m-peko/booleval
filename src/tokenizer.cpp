@@ -29,9 +29,8 @@
 
 #include <regex>
 #include <algorithm>
+#include <booleval/tokenizer.h>
 #include <boost/algorithm/string.hpp>
-
-#include "tokenizer.h"
 
 namespace Booleval {
 
@@ -85,7 +84,7 @@ std::shared_ptr<BaseToken> const& Tokenizer::token() const {
     return tokens_.at(current_index_);
 }
 
-bool const Tokenizer::has_token() const noexcept {
+bool Tokenizer::has_token() const noexcept {
     return current_index_ < tokens_.size();
 }
 

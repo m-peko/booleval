@@ -27,66 +27,41 @@
  *
  */
 
-#ifndef BOOLEVAL_BASE_TOKEN_H
-#define BOOLEVAL_BASE_TOKEN_H
+#ifndef BOOLEVAL_EVALUATOR_H
+#define BOOLEVAL_EVALUATOR_H
 
-#include <cstdint>
+#include <string>
+#include <memory>
+
+#include "object.h"
+#include "tokenizer.h"
+#include "tree_node.h"
 
 namespace Booleval {
 
-enum class TokenType : uint8_t {
-    UNKNOWN = 0,
-    VALUE   = 1,
-
-    // Logical operators
-    AND = 2,
-    OR  = 3,
-
-    // Relational operators
-    NEQ = 4,
-    GT  = 5,
-    LT  = 6,
-
-    // Parentheses
-    LP = 7,
-    RP = 8,
-
-    // Fields
-    FIELD_A = 9,
-    FIELD_B = 10,
-    FIELD_C = 11
-};
-
-class BaseToken {
+class Evaluator {
 public:
-    BaseToken() noexcept;
-    BaseToken(TokenType type) noexcept;
+    Evaluator() noexcept;
 
-    bool operator==(BaseToken const& other) const;
+    bool is_activated() const;
 
-    virtual ~BaseToken() = default;
-
-    void type(TokenType const type) noexcept;
-    TokenType const type() const noexcept;
-
-    bool const is(TokenType const type) const noexcept;
-    bool const is_not(TokenType const type) const noexcept;
-    bool const is_one_of(TokenType const type1, TokenType const type2) const noexcept;
-
-    template <typename... Types>
-    bool const is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept;
-
-    bool const is_field_type() const noexcept;
+    bool build_expression_tree(std::string const& expression);
+    bool evaluate(Object const& obj);
 
 private:
-    TokenType type_;
-};
+    std::shared_ptr<TreeNode> parse_expression();
+    std::shared_ptr<TreeNode> parse_and();
+    std::shared_ptr<TreeNode> parse_condition();
+    std::shared_ptr<TreeNode> parse_terminal();
 
-template <typename... Types>
-bool const BaseToken::is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept {
-    return is(type1) || is_one_of(type2, types...);
-}
+    bool evaluate_recursive(std::shared_ptr<TreeNode>& node, Object const& obj) const;
+
+private:
+    bool is_activated_;
+    Tokenizer tokenizer_;
+    std::shared_ptr<TreeNode> root;
+};
 
 } // Booleval
 
-#endif // BOOLEVAL_BASE_TOKEN_H
+#endif // BOOLEVAL_EVALUATOR_H

@@ -29,9 +29,8 @@
 
 #include <string>
 #include <gtest/gtest.h>
-
-#include "object.h"
-#include "evaluator.h"
+#include <booleval/object.h>
+#include <booleval/evaluator.h>
 
 class EvaluatorTest : public testing::Test {};
 

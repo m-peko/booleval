@@ -27,8 +27,8 @@
  *
  */
 
-#include "token.h"
-#include "evaluator.h"
+#include <booleval/token.h>
+#include <booleval/evaluator.h>
 
 namespace Booleval {
 
@@ -36,11 +36,11 @@ Evaluator::Evaluator() noexcept
     : is_activated_(false)
 {}
 
-bool const Evaluator::is_activated() const {
+bool Evaluator::is_activated() const {
     return is_activated_;
 }
 
-bool const Evaluator::build_expression_tree(std::string const& expression) {
+bool Evaluator::build_expression_tree(std::string const& expression) {
     tokenizer_.expression(expression);
     tokenizer_.tokenize();
 
@@ -58,7 +58,7 @@ bool const Evaluator::build_expression_tree(std::string const& expression) {
     return is_activated_;
 }
 
-bool const Evaluator::evaluate(Object const& obj) {
+bool Evaluator::evaluate(Object const& obj) {
     if (is_activated_) {
         return evaluate_recursive(root, obj);
     } else {
@@ -134,7 +134,7 @@ std::shared_ptr<TreeNode> Evaluator::parse_terminal() {
     return nullptr;
 }
 
-bool const Evaluator::evaluate_recursive(std::shared_ptr<TreeNode>& node, Object const& obj) const {
+bool Evaluator::evaluate_recursive(std::shared_ptr<TreeNode>& node, Object const& obj) const {
     auto left = node->left;
     auto right = node->right;
 

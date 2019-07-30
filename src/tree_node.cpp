@@ -27,7 +27,7 @@
  *
  */
 
-#include "tree_node.h"
+#include <booleval/tree_node.h>
 
 namespace Booleval {
 

@@ -27,7 +27,7 @@
  *
  */
 
-#include "base_token.h"
+#include <booleval/base_token.h>
 
 namespace Booleval {
 
@@ -47,23 +47,23 @@ void BaseToken::type(TokenType const type) noexcept {
     type_ = type;
 }
 
-TokenType const BaseToken::type() const noexcept {
+TokenType BaseToken::type() const noexcept {
     return type_;
 }
 
-bool const BaseToken::is(TokenType const type) const noexcept {
+bool BaseToken::is(TokenType const type) const noexcept {
     return type_ == type;
 }
 
-bool const BaseToken::is_not(TokenType const type) const noexcept {
+bool BaseToken::is_not(TokenType const type) const noexcept {
     return type_ != type;
 }
 
-bool const BaseToken::is_one_of(TokenType const type1, TokenType const type2) const noexcept {
+bool BaseToken::is_one_of(TokenType const type1, TokenType const type2) const noexcept {
     return is(type1) || is(type2);
 }
 
-bool const BaseToken::is_field_type() const noexcept {
+bool BaseToken::is_field_type() const noexcept {
     return is_one_of(TokenType::FIELD_A,
                      TokenType::FIELD_B,
                      TokenType::FIELD_C);

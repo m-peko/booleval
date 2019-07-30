@@ -29,9 +29,8 @@
 
 #include <memory>
 #include <gtest/gtest.h>
-
-#include "token.h"
-#include "tree_node.h"
+#include <booleval/token.h>
+#include <booleval/tree_node.h>
 
 class TreeNodeTest : public testing::Test {};
 
