@@ -27,46 +27,58 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKENIZER_H
-#define BOOLEVAL_TOKENIZER_H
-
-#include <string>
-#include <vector>
 #include <booleval/token.h>
 
 namespace booleval {
 
-class Tokenizer {
-public:
-    Tokenizer() noexcept;
-    Tokenizer(Tokenizer&& other) = default;
-    Tokenizer(Tokenizer const& other) = default;
-    Tokenizer(std::string const& expression) noexcept;
+Token::Token() noexcept
+    : type_(Type::UNKNOWN)
+{}
 
-    Tokenizer& operator=(Tokenizer&& other) = default;
-    Tokenizer& operator=(Tokenizer const& other) = default;
-    Tokenizer& operator++();
-    Tokenizer operator++(int);
+Token::Token(Type type) noexcept
+    : type_(type)
+{}
 
-    ~Tokenizer() = default;
+bool Token::operator==(Token const& other) const noexcept {
+    return type_ == other.type_;
+}
 
-    void expression(std::string const& expression) noexcept;
-    std::string const& expression() const noexcept;
+void Token::type(Type const type) noexcept {
+    type_ = type;
+}
 
-    bool has_token() const noexcept;
-    Token const& token() const;
+Token::Type Token::type() const noexcept {
+    return type_;
+}
 
-    void tokenize();
+bool Token::is(Type const type) const noexcept {
+    return type_ == type;
+}
 
-private:
-    std::string build_regex_pattern() const;
+bool Token::is_not(Type const type) const noexcept {
+    return type_ != type;
+}
 
-private:
-    std::string expression_;
-    std::vector<Token> tokens_;
-    size_t current_token_index_;
-};
+bool Token::is_one_of(Type const type1, Type const type2) const noexcept {
+    return is(type1) || is(type2);
+}
+
+std::unordered_map<std::string, Token::Type> Token::type_expressions() noexcept {
+    static std::unordered_map<std::string, Type> type_expressions = {
+        { "and",     Type::AND },
+        { "&&" ,     Type::AND },
+        { "or" ,     Type::OR },
+        { "||" ,     Type::OR },
+        { "neq",     Type::NEQ },
+        { "!="  ,    Type::NEQ },
+        { "greater", Type::GT },
+        { ">",       Type::GT },
+        { "less",    Type::LT },
+        { "<",       Type::LT },
+        { "(",       Type::LP },
+        { ")",       Type::RP }
+    };
+    return type_expressions;
+}
 
 } // booleval
-
-#endif // BOOLEVAL_TOKENIZER_H

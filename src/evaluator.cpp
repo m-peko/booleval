@@ -30,7 +30,7 @@
 #include <booleval/token.h>
 #include <booleval/evaluator.h>
 
-namespace Booleval {
+namespace booleval {
 
 Evaluator::Evaluator() noexcept
     : is_activated_(false)
@@ -66,10 +66,10 @@ bool Evaluator::evaluate(Object const& obj) {
     }
 }
 
-std::shared_ptr<TreeNode> Evaluator::parse_expression() {
+std::shared_ptr<nodes::BaseNode> Evaluator::parse_expression() {
     auto and_condition1 = parse_and();
     while (tokenizer_.has_token() && tokenizer_.token()->is(TokenType::OR)) {
-        auto or_condition = std::make_shared<TreeNode>(TokenType::OR);
+        auto or_condition = std::make_shared<nodes::BaseNode>(TokenType::OR);
         tokenizer_++;
 
         auto and_condition2 = parse_and();
@@ -80,12 +80,12 @@ std::shared_ptr<TreeNode> Evaluator::parse_expression() {
     return and_condition1;
 }
 
-std::shared_ptr<TreeNode> Evaluator::parse_and() {
+std::shared_ptr<nodes::BaseNode> Evaluator::parse_and() {
     auto condition1 = parse_condition();
     while (tokenizer_.has_token() && tokenizer_.token()->is(TokenType::AND)) {
         tokenizer_++;
         auto condition2 = parse_condition();
-        auto condition = std::make_shared<TreeNode>(TokenType::AND);
+        auto condition = std::make_shared<nodes::BaseNode>(TokenType::AND);
         condition->left = condition1;
         condition->right = condition2;
         condition1 = condition;
@@ -93,7 +93,7 @@ std::shared_ptr<TreeNode> Evaluator::parse_and() {
     return condition1;
 }
 
-std::shared_ptr<TreeNode> Evaluator::parse_condition() {
+std::shared_ptr<nodes::BaseNode> Evaluator::parse_condition() {
     if (tokenizer_.has_token() && tokenizer_.token()->is(TokenType::LP)) {
         tokenizer_++;
         auto expression = parse_expression();
@@ -107,7 +107,7 @@ std::shared_ptr<TreeNode> Evaluator::parse_condition() {
 
     auto terminal_left = parse_terminal();
     if (tokenizer_.has_token()) {
-        auto condition = std::make_shared<TreeNode>(tokenizer_.token()->type());
+        auto condition = std::make_shared<nodes::BaseNode>(tokenizer_.token()->type());
 
         auto terminal_right = parse_terminal();
         condition->left = terminal_left;
@@ -118,23 +118,23 @@ std::shared_ptr<TreeNode> Evaluator::parse_condition() {
     return nullptr;
 }
 
-std::shared_ptr<TreeNode> Evaluator::parse_terminal() {
+std::shared_ptr<nodes::BaseNode> Evaluator::parse_terminal() {
     if (tokenizer_.has_token()) {
         auto token = tokenizer_.token();
         tokenizer_++;
 
         if (token->is_field_type()) {
-            return std::make_shared<TreeNode>(token->type());
+            return std::make_shared<nodes::BaseNode>(token->type());
         } else if (token->is(TokenType::VALUE)) {
             auto value_token = std::dynamic_pointer_cast<Token<std::string>>(token);
-            return std::make_shared<TreeNode>(value_token->type(), value_token->value());
+            return std::make_shared<nodes::BaseNode>(value_token->type(), value_token->value());
         }
     }
 
     return nullptr;
 }
 
-bool Evaluator::evaluate_recursive(std::shared_ptr<TreeNode>& node, Object const& obj) const {
+bool Evaluator::evaluate_recursive(std::shared_ptr<nodes::BaseNode>& node, Object const& obj) const {
     auto left = node->left;
     auto right = node->right;
 
@@ -168,4 +168,4 @@ bool Evaluator::evaluate_recursive(std::shared_ptr<TreeNode>& node, Object const
     }
 }
 
-} // Booleval
+} // booleval

@@ -73,6 +73,7 @@ if (BOOLEVAL_BUILD_TESTS)
         # Make sure we build googletest before anything else
         add_dependencies (booleval googletest)
         enable_testing ()
+        add_subdirectory (googletest)
         add_subdirectory (tests)
     else ()
         message (STATUS "googletest git submodule is absent. Run `git submodule init && git submodule update` to get it")

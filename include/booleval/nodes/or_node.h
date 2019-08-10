@@ -27,46 +27,30 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKENIZER_H
-#define BOOLEVAL_TOKENIZER_H
+#ifndef BOOLEVAL_OR_NODE_H
+#define BOOLEVAL_OR_NODE_H
 
-#include <string>
-#include <vector>
-#include <booleval/token.h>
+#include <booleval/nodes/base_node.h>
 
 namespace booleval {
 
-class Tokenizer {
-public:
-    Tokenizer() noexcept;
-    Tokenizer(Tokenizer&& other) = default;
-    Tokenizer(Tokenizer const& other) = default;
-    Tokenizer(std::string const& expression) noexcept;
+namespace nodes {
 
-    Tokenizer& operator=(Tokenizer&& other) = default;
-    Tokenizer& operator=(Tokenizer const& other) = default;
-    Tokenizer& operator++();
-    Tokenizer operator++(int);
+struct OrNode : BaseNode {
+    OrNode() = default;
+    OrNode(OrNode&& other) = default;
+    OrNode(OrNode const& other) = default;
 
-    ~Tokenizer() = default;
+    OrNode& operator=(OrNode&& other) = default;
+    OrNode& operator=(OrNode const& other) = default;
 
-    void expression(std::string const& expression) noexcept;
-    std::string const& expression() const noexcept;
+    ~OrNode() = default;
 
-    bool has_token() const noexcept;
-    Token const& token() const;
-
-    void tokenize();
-
-private:
-    std::string build_regex_pattern() const;
-
-private:
-    std::string expression_;
-    std::vector<Token> tokens_;
-    size_t current_token_index_;
+    virtual bool evaluate();
 };
+
+} // nodes
 
 } // booleval
 
-#endif // BOOLEVAL_TOKENIZER_H
+#endif // BOOLEVAL_OR_NODE_H

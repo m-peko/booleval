@@ -35,14 +35,14 @@
 class EvaluatorTest : public testing::Test {};
 
 TEST_F(EvaluatorTest, DefaultConstructor) {
-    using namespace Booleval;
+    using namespace booleval;
 
     Evaluator evaluator;
     EXPECT_FALSE(evaluator.is_activated());
 }
 
 TEST_F(EvaluatorTest, EmptyExpression) {
-    using namespace Booleval;
+    using namespace booleval;
 
     std::string expression = "";
     Object obj;
@@ -54,7 +54,7 @@ TEST_F(EvaluatorTest, EmptyExpression) {
 }
 
 TEST_F(EvaluatorTest, InvalidExpression) {
-    using namespace Booleval;
+    using namespace booleval;
 
     std::string expression = "(field_a foo or field_b bar";
     Object obj;
@@ -68,7 +68,7 @@ TEST_F(EvaluatorTest, InvalidExpression) {
 }
 
 TEST_F(EvaluatorTest, ValidExpression) {
-    using namespace Booleval;
+    using namespace booleval;
 
     std::string expression = "field_a foo or field_b bar";
     Object obj1;

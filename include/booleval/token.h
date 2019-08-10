@@ -30,60 +30,65 @@
 #ifndef BOOLEVAL_TOKEN_H
 #define BOOLEVAL_TOKEN_H
 
-#include "base_token.h"
+#include <string>
+#include <cstdint>
+#include <unordered_map>
 
-namespace Booleval {
+namespace booleval {
 
-template <typename T = uint8_t>
-class Token : public BaseToken {
+class Token {
+public:
+    enum class Type : uint8_t {
+        UNKNOWN = 0,
+        VALUE   = 1,
+
+        // Logical operators
+        AND = 2,
+        OR  = 3,
+
+        // Relational operators
+        NEQ = 4,
+        GT  = 5,
+        LT  = 6,
+
+        // Parentheses
+        LP = 7,
+        RP = 8
+    };
+
 public:
     Token() noexcept;
-    Token(TokenType type) noexcept;
-    Token(TokenType type, T const& value) noexcept;
+    Token(Token&& other) = default;
+    Token(Token const& other) = default;
+    Token(Type type) noexcept;
 
-    bool operator==(Token<T> const& other) const;
+    Token& operator=(Token&& other) = default;
+    Token& operator=(Token const& other) = default;
+    bool operator==(Token const& other) const noexcept;
 
-    void value(T const& value) noexcept;
-    T const& value() const noexcept;
+    virtual ~Token() = default;
+
+    void type(Type const type) noexcept;
+    Type type() const noexcept;
+
+    bool is(Type const type) const noexcept;
+    bool is_not(Type const type) const noexcept;
+    bool is_one_of(Type const type1, Type const type2) const noexcept;
+
+    template <typename... Types>
+    bool is_one_of(Type const type1, Type const type2, Types const ... types) const noexcept;
+
+    static std::unordered_map<std::string, Type> type_expressions() noexcept;
 
 private:
-    T value_;
+    Type type_;
 };
 
-template <typename T>
-Token<T>::Token() noexcept
-    : BaseToken(),
-      value_()
-{}
-
-template <typename T>
-Token<T>::Token(TokenType type) noexcept
-    : BaseToken(type),
-      value_()
-{}
-
-template <typename T>
-Token<T>::Token(TokenType type, T const& value) noexcept
-    : BaseToken(type),
-      value_(value)
-{}
-
-template <typename T>
-bool Token<T>::operator==(Token<T> const& other) const {
-    return BaseToken::operator==(other) &&
-           value_ == other.value_;
+template <typename... Types>
+bool Token::is_one_of(Type const type1, Type const type2, Types const ... types) const noexcept {
+    return is(type1) || is_one_of(type2, types...);
 }
 
-template <typename T>
-void Token<T>::value(T const& value) noexcept {
-    value_ = value;
-}
-
-template <typename T>
-T const& Token<T>::value() const noexcept {
-    return value_;
-}
-
-} // Booleval
+} // booleval
 
 #endif // BOOLEVAL_TOKEN_H

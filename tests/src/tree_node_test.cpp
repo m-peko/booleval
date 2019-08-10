@@ -35,7 +35,7 @@
 class TreeNodeTest : public testing::Test {};
 
 TEST_F(TreeNodeTest, DefaultConstructor) {
-    using namespace Booleval;
+    using namespace booleval;
 
     TreeNode node;
     EXPECT_EQ(node.token, nullptr);
@@ -44,7 +44,7 @@ TEST_F(TreeNodeTest, DefaultConstructor) {
 }
 
 TEST_F(TreeNodeTest, ConstructorFromType) {
-    using namespace Booleval;
+    using namespace booleval;
 
     TreeNode node(TokenType::AND);
     EXPECT_EQ(node.token->type(), TokenType::AND);
@@ -53,7 +53,7 @@ TEST_F(TreeNodeTest, ConstructorFromType) {
 }
 
 TEST_F(TreeNodeTest, ConstructorFromTypeAndValue) {
-    using namespace Booleval;
+    using namespace booleval;
 
     TreeNode node(TokenType::AND, static_cast<uint8_t>(1));
 

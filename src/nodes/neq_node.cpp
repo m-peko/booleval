@@ -27,66 +27,16 @@
  *
  */
 
-#ifndef BOOLEVAL_BASE_TOKEN_H
-#define BOOLEVAL_BASE_TOKEN_H
+#include <booleval/nodes/neq_node.h>
 
-#include <cstdint>
+namespace booleval {
 
-namespace Booleval {
+namespace nodes {
 
-enum class TokenType : uint8_t {
-    UNKNOWN = 0,
-    VALUE   = 1,
-
-    // Logical operators
-    AND = 2,
-    OR  = 3,
-
-    // Relational operators
-    NEQ = 4,
-    GT  = 5,
-    LT  = 6,
-
-    // Parentheses
-    LP = 7,
-    RP = 8,
-
-    // Fields
-    FIELD_A = 9,
-    FIELD_B = 10,
-    FIELD_C = 11
-};
-
-class BaseToken {
-public:
-    BaseToken() noexcept;
-    BaseToken(TokenType type) noexcept;
-
-    bool operator==(BaseToken const& other) const;
-
-    virtual ~BaseToken() = default;
-
-    void type(TokenType const type) noexcept;
-    TokenType type() const noexcept;
-
-    bool is(TokenType const type) const noexcept;
-    bool is_not(TokenType const type) const noexcept;
-    bool is_one_of(TokenType const type1, TokenType const type2) const noexcept;
-
-    template <typename... Types>
-    bool is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept;
-
-    bool is_field_type() const noexcept;
-
-private:
-    TokenType type_;
-};
-
-template <typename... Types>
-bool BaseToken::is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept {
-    return is(type1) || is_one_of(type2, types...);
+bool NeqNode::evaluate() {
+    return left->evaluate() != right->evaluate();
 }
 
-} // Booleval
+} // nodes
 
-#endif // BOOLEVAL_BASE_TOKEN_H
+} // booleval

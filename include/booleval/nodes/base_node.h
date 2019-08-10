@@ -27,46 +27,33 @@
  *
  */
 
-#include <booleval/base_token.h>
+#ifndef BOOLEVAL_BASE_NODE_H
+#define BOOLEVAL_BASE_NODE_H
 
-namespace Booleval {
+#include <memory>
 
-BaseToken::BaseToken() noexcept
-    : type_(TokenType::UNKNOWN)
-{}
+namespace booleval {
 
-BaseToken::BaseToken(TokenType type) noexcept
-    : type_(type)
-{}
+namespace nodes {
 
-bool BaseToken::operator==(BaseToken const& other) const {
-    return type_  == other.type_;
-}
+struct BaseNode {
+    std::shared_ptr<BaseNode> left;
+    std::shared_ptr<BaseNode> right;
 
-void BaseToken::type(TokenType const type) noexcept {
-    type_ = type;
-}
+    BaseNode() = default;
+    BaseNode(BaseNode&& other) = default;
+    BaseNode(BaseNode const& other) = default;
 
-TokenType BaseToken::type() const noexcept {
-    return type_;
-}
+    BaseNode& operator=(BaseNode&& other) = default;
+    BaseNode& operator=(BaseNode const& other) = default;
 
-bool BaseToken::is(TokenType const type) const noexcept {
-    return type_ == type;
-}
+    ~BaseNode() = default;
 
-bool BaseToken::is_not(TokenType const type) const noexcept {
-    return type_ != type;
-}
+    virtual bool evaluate() = 0;
+};
 
-bool BaseToken::is_one_of(TokenType const type1, TokenType const type2) const noexcept {
-    return is(type1) || is(type2);
-}
+} // nodes
 
-bool BaseToken::is_field_type() const noexcept {
-    return is_one_of(TokenType::FIELD_A,
-                     TokenType::FIELD_B,
-                     TokenType::FIELD_C);
-}
+} // booleval
 
-} // Booleval
+#endif // BOOLEVAL_BASE_NODE

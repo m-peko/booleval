@@ -32,12 +32,12 @@
 
 #include <string>
 #include <memory>
+#include <booleval/nodes/base_node.h>
 
 #include "object.h"
 #include "tokenizer.h"
-#include "tree_node.h"
 
-namespace Booleval {
+namespace booleval {
 
 class Evaluator {
 public:
@@ -49,19 +49,19 @@ public:
     bool evaluate(Object const& obj);
 
 private:
-    std::shared_ptr<TreeNode> parse_expression();
-    std::shared_ptr<TreeNode> parse_and();
-    std::shared_ptr<TreeNode> parse_condition();
-    std::shared_ptr<TreeNode> parse_terminal();
+    std::shared_ptr<nodes::BaseNode> parse_expression();
+    std::shared_ptr<nodes::BaseNode> parse_and();
+    std::shared_ptr<nodes::BaseNode> parse_condition();
+    std::shared_ptr<nodes::BaseNode> parse_terminal();
 
-    bool evaluate_recursive(std::shared_ptr<TreeNode>& node, Object const& obj) const;
+    bool evaluate_recursive(std::shared_ptr<nodes::BaseNode>& node, Object const& obj) const;
 
 private:
     bool is_activated_;
     Tokenizer tokenizer_;
-    std::shared_ptr<TreeNode> root;
+    std::shared_ptr<nodes::BaseNode> root;
 };
 
-} // Booleval
+} // booleval
 
 #endif // BOOLEVAL_EVALUATOR_H

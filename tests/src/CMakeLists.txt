@@ -19,7 +19,6 @@ link_libraries (
     gtest
     gtest_main
     booleval
-    pthread
 )
 
 add_custom_target (tests)
@@ -30,12 +29,14 @@ macro (create_test test_name)
     add_executable (${binary_name} EXCLUDE_FROM_ALL "${test_name}_test.cpp")
     add_test (${test_name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${binary_name})
     add_dependencies (tests ${binary_name})
-    target_compile_definitions (${binary_name} PRIVATE)
 endmacro ()
 
 # Tests
 
-create_test (evaluator)
+create_test (utils/regex_pattern)
+create_test (utils/string_utils)
+
+#create_test (evaluator)
 create_test (token)
 create_test (tokenizer)
-create_test (tree_node)
+#create_test (tree_node)

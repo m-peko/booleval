@@ -27,34 +27,16 @@
  *
  */
 
-#ifndef BOOLEVAL_TREE_NODE_H
-#define BOOLEVAL_TREE_NODE_H
+#include <booleval/nodes/or_node.h>
 
-#include <memory>
+namespace booleval {
 
-#include "token.h"
+namespace nodes {
 
-namespace Booleval {
-
-struct TreeNode {
-    std::shared_ptr<BaseToken> token;
-    std::shared_ptr<TreeNode> left;
-    std::shared_ptr<TreeNode> right;
-
-    TreeNode();
-    TreeNode(TokenType const type);
-
-    template <typename T>
-    TreeNode(TokenType const type, T const& value);
-};
-
-template <typename T>
-TreeNode::TreeNode(TokenType const type, T const& value)
-    : left(nullptr),
-      right(nullptr) {
-    token = std::make_shared<Token<T>>(type, value);
+bool OrNode::evaluate() {
+    return left->evaluate() || right->evaluate();
 }
 
-} // Booleval
+} // nodes
 
-#endif // BOOLEVAL_TREE_NODE
+} // booleval

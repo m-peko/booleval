@@ -27,35 +27,41 @@
  *
  */
 
-#include <booleval/object.h>
+#ifndef BOOLEVAL_REGEX_PATTERN_H
+#define BOOLEVAL_REGEX_PATTERN_H
 
-namespace Booleval {
+#include <sstream>
 
-Object::Object() noexcept
-{}
+namespace booleval {
 
-void Object::field_A(std::string const& field) noexcept {
-    field_A_ = field;
-}
+namespace utils {
 
-std::string const& Object::field_A() const noexcept {
-    return field_A_;
-}
+class RegexPattern {
+public:
+    RegexPattern() noexcept;
+    RegexPattern(RegexPattern&& other) = default;
+    RegexPattern(RegexPattern const& other) = default;
 
-void Object::field_B(std::string const& field) noexcept {
-    field_B_ = field;
-}
+    RegexPattern& operator=(RegexPattern&& other) = default;
+    RegexPattern& operator=(RegexPattern const& other) = default;
 
-std::string const& Object::field_B() const noexcept {
-    return field_B_;
-}
+    ~RegexPattern() = default;
 
-void Object::field_C(std::string const& field) noexcept {
-    field_C_ = field;
-}
+    void match_whitespaces() noexcept;
+    std::string to_string() const noexcept;
 
-std::string const& Object::field_C() const noexcept {
-    return field_C_;
-}
+    friend RegexPattern& operator<<(RegexPattern& pattern, std::string const& value);
 
-} // Booleval
+private:
+    void escape() noexcept;
+
+private:
+    std::ostringstream output_;
+    bool is_first_;
+};
+
+} // utils
+
+} // booleval
+
+#endif // BOOLEVAL_REGEX_PATTERN_H

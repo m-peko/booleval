@@ -27,46 +27,52 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKENIZER_H
-#define BOOLEVAL_TOKENIZER_H
-
-#include <string>
-#include <vector>
-#include <booleval/token.h>
+#include <booleval/utils/regex_pattern.h>
 
 namespace booleval {
 
-class Tokenizer {
-public:
-    Tokenizer() noexcept;
-    Tokenizer(Tokenizer&& other) = default;
-    Tokenizer(Tokenizer const& other) = default;
-    Tokenizer(std::string const& expression) noexcept;
+namespace utils {
 
-    Tokenizer& operator=(Tokenizer&& other) = default;
-    Tokenizer& operator=(Tokenizer const& other) = default;
-    Tokenizer& operator++();
-    Tokenizer operator++(int);
+RegexPattern::RegexPattern() noexcept
+    : is_first_(true)
+{}
 
-    ~Tokenizer() = default;
+void RegexPattern::match_whitespaces() noexcept {
+    if (is_first_) {
+        is_first_ = false;
+    } else {
+        output_ << '|';
+    }
 
-    void expression(std::string const& expression) noexcept;
-    std::string const& expression() const noexcept;
+    output_ << "\\s+";
+}
 
-    bool has_token() const noexcept;
-    Token const& token() const;
+std::string RegexPattern::to_string() const noexcept {
+    return output_.str();
+}
 
-    void tokenize();
+void RegexPattern::escape() noexcept {
+    output_ << "\\";
+}
 
-private:
-    std::string build_regex_pattern() const;
+RegexPattern& operator<<(RegexPattern& pattern, std::string const& value) {
+    if (pattern.is_first_) {
+        pattern.is_first_ = false;
+    } else {
+        pattern.output_ << '|';
+    }
 
-private:
-    std::string expression_;
-    std::vector<Token> tokens_;
-    size_t current_token_index_;
-};
+    for (auto const character : value) {
+        if (!isalnum(character)) {
+            pattern.escape();
+        }
+
+        pattern.output_ << character;
+    }
+
+    return pattern;
+}
+
+} // utils
 
 } // booleval
-
-#endif // BOOLEVAL_TOKENIZER_H

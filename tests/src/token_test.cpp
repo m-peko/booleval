@@ -33,92 +33,55 @@
 class TokenTest : public testing::Test {};
 
 TEST_F(TokenTest, DefaultConstructor) {
-    using namespace Booleval;
+    using namespace booleval;
 
-    Token<uint8_t> token;
-    EXPECT_EQ(token.type(), TokenType::UNKNOWN);
-    EXPECT_EQ(token.value(), 0U);
+    Token token;
+    EXPECT_EQ(token.type(), Token::Type::UNKNOWN);
 }
 
 TEST_F(TokenTest, ConstructorFromType) {
-    using namespace Booleval;
+    using namespace booleval;
 
-    Token<uint8_t> token(TokenType::AND);
-    EXPECT_EQ(token.type(), TokenType::AND);
-    EXPECT_EQ(token.value(), 0U);
-}
-
-TEST_F(TokenTest, ConstructorFromTypeAndValue) {
-    using namespace Booleval;
-
-    Token<uint8_t> token(TokenType::VALUE, 1);
-    EXPECT_EQ(token.type(), TokenType::VALUE);
-    EXPECT_EQ(token.value(), 1U);
-}
-
-TEST_F(TokenTest, CopyConstructor) {
-    using namespace Booleval;
-
-    Token<uint8_t> token1(TokenType::VALUE, 1);
-    Token<uint8_t> token2(token1);
-    EXPECT_EQ(token1.type(), token2.type());
-    EXPECT_EQ(token1.value(), token2.value());
+    Token token(Token::Type::AND);
+    EXPECT_EQ(token.type(), Token::Type::AND);
 }
 
 TEST_F(TokenTest, Type) {
-    using namespace Booleval;
+    using namespace booleval;
 
-    Token<uint8_t> token;
-    token.type(TokenType::AND);
-    EXPECT_EQ(token.type(), TokenType::AND);
+    Token token;
+    token.type(Token::Type::AND);
+    EXPECT_EQ(token.type(), Token::Type::AND);
 }
 
-TEST_F(TokenTest, Value) {
-    using namespace Booleval;
+TEST_F(TokenTest, IsType) {
+    using namespace booleval;
 
-    Token<uint8_t> token;
-    token.value(1);
-    EXPECT_EQ(token.value(), 1U);
+    Token token(Token::Type::AND);
+    EXPECT_TRUE(token.is(Token::Type::AND));
+    EXPECT_FALSE(token.is(Token::Type::OR));
 }
 
-TEST_F(TokenTest, IsTokenType) {
-    using namespace Booleval;
+TEST_F(TokenTest, IsNotType) {
+    using namespace booleval;
 
-    BaseToken token(TokenType::AND);
-    EXPECT_TRUE(token.is(TokenType::AND));
-    EXPECT_FALSE(token.is(TokenType::OR));
+    Token token(Token::Type::AND);
+    EXPECT_TRUE(token.is_not(Token::Type::OR));
+    EXPECT_FALSE(token.is_not(Token::Type::AND));
 }
 
-TEST_F(TokenTest, IsNotTokenType) {
-    using namespace Booleval;
+TEST_F(TokenTest, IsOneOfTwoTypes) {
+    using namespace booleval;
 
-    BaseToken token(TokenType::AND);
-    EXPECT_FALSE(token.is_not(TokenType::AND));
-    EXPECT_TRUE(token.is_not(TokenType::OR));
+    Token token(Token::Type::AND);
+    EXPECT_TRUE(token.is_one_of(Token::Type::AND, Token::Type::OR));
+    EXPECT_FALSE(token.is_one_of(Token::Type::LP, Token::Type::RP));
 }
 
-TEST_F(TokenTest, IsOneOfTwoTokenTypes) {
-    using namespace Booleval;
+TEST_F(TokenTest, IsOneOfMoreThanTwoTypes) {
+    using namespace booleval;
 
-    BaseToken token(TokenType::AND);
-    EXPECT_TRUE(token.is_one_of(TokenType::AND, TokenType::OR));
-    EXPECT_FALSE(token.is_one_of(TokenType::LP, TokenType::RP));
-}
-
-TEST_F(TokenTest, IsOneOfMultipleTokenTypes) {
-    using namespace Booleval;
-
-    BaseToken token(TokenType::AND);
-    EXPECT_TRUE(token.is_one_of(TokenType::AND, TokenType::LP, TokenType::RP));
-    EXPECT_FALSE(token.is_one_of(TokenType::OR, TokenType::LP, TokenType::RP));
-}
-
-TEST_F(TokenTest, IsFieldType) {
-    using namespace Booleval;
-
-    BaseToken token(TokenType::FIELD_A);
-    EXPECT_TRUE(token.is_field_type());
-
-    token.type(TokenType::AND);
-    EXPECT_FALSE(token.is_field_type());
+    Token token(Token::Type::AND);
+    EXPECT_TRUE(token.is_one_of(Token::Type::AND, Token::Type::LP, Token::Type::RP));
+    EXPECT_FALSE(token.is_one_of(Token::Type::OR, Token::Type::LP, Token::Type::RP));
 }

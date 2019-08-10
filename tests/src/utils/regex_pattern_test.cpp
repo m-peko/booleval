@@ -27,32 +27,35 @@
  *
  */
 
-#ifndef BOOLEVAL_OBJECT_H
-#define BOOLEVAL_OBJECT_H
-
 #include <string>
+#include <gtest/gtest.h>
+#include <booleval/utils/regex_pattern.h>
 
-namespace Booleval {
+class RegexPatternTest : public testing::Test {};
 
-class Object {
-public:
-    Object() noexcept;
+TEST_F(RegexPatternTest, EmptyPattern) {
+    using namespace booleval::utils;
 
-    void field_A(std::string const& field) noexcept;
-    std::string const& field_A() const noexcept;
+    RegexPattern pattern;
+    EXPECT_STREQ(pattern.to_string().c_str(), "");
+}
 
-    void field_B(std::string const& field) noexcept;
-    std::string const& field_B() const noexcept;
+TEST_F(RegexPatternTest, MatchWhitespaces) {
+    using namespace booleval::utils;
 
-    void field_C(std::string const& field) noexcept;
-    std::string const& field_C() const noexcept;
+    RegexPattern pattern;
+    pattern.match_whitespaces();
 
-private:
-    std::string field_A_;
-    std::string field_B_;
-    std::string field_C_;
-};
+    EXPECT_STREQ(pattern.to_string().c_str(), "\\s+");
+}
 
-} // Booleval
+TEST_F(RegexPatternTest, CompletePattern) {
+    using namespace booleval::utils;
 
-#endif // BOOLEVAL_OBJECT_H
+    RegexPattern pattern;
+    pattern.match_whitespaces();
+    pattern << "(";
+    pattern << ")";
+
+    EXPECT_STREQ(pattern.to_string().c_str(), "\\s+|\\(|\\)");
+}
