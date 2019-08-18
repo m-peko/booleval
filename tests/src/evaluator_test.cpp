@@ -29,7 +29,6 @@
 
 #include <string>
 #include <gtest/gtest.h>
-#include <booleval/object.h>
 #include <booleval/evaluator.h>
 
 class EvaluatorTest : public testing::Test {};
@@ -45,44 +44,34 @@ TEST_F(EvaluatorTest, EmptyExpression) {
     using namespace booleval;
 
     std::string expression = "";
-    Object obj;
 
     Evaluator evaluator;
     EXPECT_TRUE(evaluator.build_expression_tree(expression));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj));
+    EXPECT_TRUE(evaluator.evaluate({}));
 }
 
 TEST_F(EvaluatorTest, InvalidExpression) {
     using namespace booleval;
 
     std::string expression = "(field_a foo or field_b bar";
-    Object obj;
-    obj.field_A("foo");
-    obj.field_B("doe");
 
     Evaluator evaluator;
     EXPECT_FALSE(evaluator.build_expression_tree(expression));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj));
+    EXPECT_TRUE(evaluator.evaluate({}));
 }
 
 TEST_F(EvaluatorTest, ValidExpression) {
     using namespace booleval;
 
-    std::string expression = "field_a foo or field_b bar";
-    Object obj1;
-    obj1.field_A("foo");
-    obj1.field_B("doe");
+    std::string expression = "field_a foo and field_b bar";
 
     Evaluator evaluator;
     EXPECT_TRUE(evaluator.build_expression_tree(expression));
     EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj1));
-
-    Object obj2;
-    obj1.field_A("john");
-    obj1.field_B("doe");
-
-    EXPECT_FALSE(evaluator.evaluate(obj2));
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "foo" },
+        { "field_b", "bar" }
+    }));
 }

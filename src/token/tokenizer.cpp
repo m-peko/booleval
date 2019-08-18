@@ -28,11 +28,14 @@
  */
 
 #include <algorithm>
-#include <booleval/tokenizer.h>
+#include <booleval/token/tokenizer.h>
+#include <booleval/token/field_token.h>
 #include <booleval/utils/regex_pattern.h>
 #include <booleval/utils/string_utils.h>
 
 namespace booleval {
+
+namespace token {
 
 Tokenizer::Tokenizer() noexcept
     : current_token_index_(0)
@@ -66,39 +69,48 @@ bool Tokenizer::has_token() const noexcept {
     return current_token_index_ < tokens_.size();
 }
 
-Token const& Tokenizer::token() const {
+std::shared_ptr<BaseToken> const& Tokenizer::token() const {
     return tokens_.at(current_token_index_);
 }
 
 void Tokenizer::tokenize() {
-    auto token_type_expressions = Token::type_expressions();
-
-    tokens_.clear();
-    current_token_index_ = 0;
+    reset();
 
     auto raw_tokens = utils::split(expression_, build_regex_pattern());
+    auto token_type_expressions = BaseToken::type_expressions();
 
     for (auto const& token : raw_tokens) {
         auto search_result = token_type_expressions.find(token);
         if (search_result != token_type_expressions.end()) {
-            tokens_.emplace_back(search_result->second);
+            tokens_.emplace_back(new BaseToken(search_result->second));
         } else {
-            tokens_.emplace_back(Token::Type::VALUE);
+            if (!tokens_.empty() && tokens_.back()->is(TokenType::FIELD)) {
+                tokens_.emplace_back(new BaseToken(TokenType::EQ));
+            }
+            tokens_.emplace_back(new FieldToken<>(token));
         }
     }
 }
 
+void Tokenizer::reset() noexcept {
+    tokens_.clear();
+    current_token_index_ = 0;
+}
+
 std::string Tokenizer::build_regex_pattern() const {
-    auto token_type_expressions = Token::type_expressions();
+    auto token_type_expressions = BaseToken::type_expressions();
 
     utils::RegexPattern pattern;
     pattern.match_whitespaces();
 
     for (auto const& expression : token_type_expressions) {
-        pattern << expression.first;
+        pattern.logical_or()
+               .match_word(expression.first);
     }
 
     return pattern.to_string();
 }
+
+} // token
 
 } // booleval

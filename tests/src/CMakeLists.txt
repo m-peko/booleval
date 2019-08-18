@@ -33,10 +33,10 @@ endmacro ()
 
 # Tests
 
+create_test (node/tree_node)
+create_test (token/base_token)
+create_test (token/field_token)
+create_test (token/tokenizer)
 create_test (utils/regex_pattern)
 create_test (utils/string_utils)
-
-#create_test (evaluator)
-create_test (token)
-create_test (tokenizer)
-#create_test (tree_node)
+create_test (evaluator)

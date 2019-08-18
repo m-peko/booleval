@@ -72,7 +72,9 @@ bool is_empty(std::string const& str) {
 }
 
 std::vector<std::string> split(std::string const& str, std::string const& pattern) {
-    std::regex regex(pattern);
+    std::regex regex(pattern,
+                     std::regex_constants::ECMAScript |
+                     std::regex_constants::icase);
 
     std::vector<std::string> result(
         std::sregex_token_iterator(str.begin(), str.end(), regex, {-1, 0}),

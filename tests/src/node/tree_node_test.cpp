@@ -27,46 +27,43 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKENIZER_H
-#define BOOLEVAL_TOKENIZER_H
+#include <memory>
+#include <gtest/gtest.h>
+#include <booleval/node/tree_node.h>
+#include <booleval/token/base_token.h>
+#include <booleval/token/field_token.h>
+#include <booleval/token/token_type.h>
 
-#include <string>
-#include <vector>
-#include <booleval/token.h>
+class TreeNodeTest : public testing::Test {};
 
-namespace booleval {
+TEST_F(TreeNodeTest, ConstructorFromTokenType) {
+    using namespace booleval;
 
-class Tokenizer {
-public:
-    Tokenizer() noexcept;
-    Tokenizer(Tokenizer&& other) = default;
-    Tokenizer(Tokenizer const& other) = default;
-    Tokenizer(std::string const& expression) noexcept;
+    node::TreeNode node(token::TokenType::AND);
+    EXPECT_EQ(node.token->type(), token::TokenType::AND);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}
 
-    Tokenizer& operator=(Tokenizer&& other) = default;
-    Tokenizer& operator=(Tokenizer const& other) = default;
-    Tokenizer& operator++();
-    Tokenizer operator++(int);
+TEST_F(TreeNodeTest, ConstructorFromBaseToken) {
+    using namespace booleval;
 
-    ~Tokenizer() = default;
+    auto and_token = std::make_shared<token::BaseToken>(token::TokenType::AND);
+    node::TreeNode node(and_token);
+    EXPECT_EQ(node.token->type(), token::TokenType::AND);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}
 
-    void expression(std::string const& expression) noexcept;
-    std::string const& expression() const noexcept;
+TEST_F(TreeNodeTest, ConstructorFromFieldToken) {
+    using namespace booleval;
 
-    bool has_token() const noexcept;
-    Token const& token() const;
+    auto field_token = std::make_shared<token::FieldToken<>>("foo");
+    node::TreeNode node(field_token);
 
-    void tokenize();
-
-private:
-    std::string build_regex_pattern() const;
-
-private:
-    std::string expression_;
-    std::vector<Token> tokens_;
-    size_t current_token_index_;
-};
-
-} // booleval
-
-#endif // BOOLEVAL_TOKENIZER_H
+    auto token = std::dynamic_pointer_cast<token::FieldToken<>>(node.token);
+    EXPECT_STREQ(token->field().c_str(), "foo");
+    EXPECT_EQ(token->type(), token::TokenType::FIELD);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}

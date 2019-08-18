@@ -7,37 +7,33 @@ include_directories (
 
 set (
     SOURCE_FILES
-        nodes/and_node.cpp
-        nodes/eq_node.cpp
-        nodes/gt_node.cpp
-        nodes/lt_node.cpp
-        nodes/neq_node.cpp
-        nodes/or_node.cpp
+        node/result_visitor.cpp
+        node/tree_node.cpp
+
+        token/base_token.cpp
+        token/tokenizer.cpp
 
         utils/regex_pattern.cpp
         utils/string_utils.cpp
 
-        #evaluator.cpp
-        token.cpp
-        tokenizer.cpp
+        evaluator.cpp
 )
 
 set (
     INCLUDE_FILES
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/nodes/and_node.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/nodes/base_node.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/nodes/eq_node.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/nodes/gt_node.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/nodes/lt_node.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/nodes/neq_node.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/nodes/or_node.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/node/base_visitor.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/node/result_visitor.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/node/tree_node.h
+
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/base_token.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/field_token.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.h
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/regex_pattern.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h
 
-        #${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/token.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/tokenizer.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.h
 )
 
 add_library (

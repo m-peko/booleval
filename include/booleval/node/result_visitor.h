@@ -27,16 +27,53 @@
  *
  */
 
-#include <booleval/nodes/gt_node.h>
+#ifndef BOOLEVAL_RESULT_VISITOR_H
+#define BOOLEVAL_RESULT_VISITOR_H
+
+#include <map>
+#include <string>
+#include <memory>
+#include <booleval/node/tree_node.h>
+#include <booleval/node/base_visitor.h>
+#include <booleval/token/field_token.h>
 
 namespace booleval {
 
-namespace nodes {
+namespace node {
 
-bool GtNode::evaluate() {
-    return left->evaluate() > right->evaluate();
-}
+class ResultVisitor : public BaseVisitor<bool> {
+    using FieldMap = std::map<std::string, std::string>;
 
-} // nodes
+public:
+    ResultVisitor() = default;
+    ResultVisitor(ResultVisitor&& other) = default;
+    ResultVisitor(ResultVisitor const& other) = default;
+
+    ResultVisitor& operator=(ResultVisitor&& other) = default;
+    ResultVisitor& operator=(ResultVisitor const& other) = default;
+
+    ~ResultVisitor() = default;
+
+    void fields(FieldMap const& fields) noexcept;
+    FieldMap const& fields() const noexcept;
+
+    virtual bool visit_and(TreeNode const& node);
+    virtual bool visit_or(TreeNode const& node);
+    virtual bool visit_eq(TreeNode const& node);
+    virtual bool visit_neq(TreeNode const& node);
+    virtual bool visit_gt(TreeNode const& node);
+    virtual bool visit_lt(TreeNode const& node);
+
+private:
+    std::shared_ptr<token::FieldToken<>> left_field_token(TreeNode const& node);
+    std::shared_ptr<token::FieldToken<>> right_field_token(TreeNode const& node);
+
+private:
+    FieldMap fields_;
+};
+
+} // node
 
 } // booleval
+
+#endif // BOOLEVAL_RESULT_VISITOR_H

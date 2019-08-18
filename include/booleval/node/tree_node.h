@@ -27,16 +27,36 @@
  *
  */
 
-#include <booleval/nodes/eq_node.h>
+#ifndef BOOLEVAL_TREE_NODE_H
+#define BOOLEVAL_TREE_NODE_H
+
+#include <memory>
+#include <booleval/token/base_token.h>
+#include <booleval/token/token_type.h>
 
 namespace booleval {
 
-namespace nodes {
+namespace node {
 
-bool EqNode::evaluate() {
-    return left->evaluate() != right->evaluate();
-}
+struct TreeNode {
+    std::shared_ptr<token::BaseToken> token;
+    std::shared_ptr<TreeNode> left;
+    std::shared_ptr<TreeNode> right;
 
-} // nodes
+    TreeNode() = default;
+    TreeNode(TreeNode&& other) = default;
+    TreeNode(TreeNode const& other) = default;
+    TreeNode(token::TokenType const type);
+    TreeNode(std::shared_ptr<token::BaseToken> const& token);
+
+    TreeNode& operator=(TreeNode&& other) = default;
+    TreeNode& operator=(TreeNode const& other) = default;
+
+    ~TreeNode() = default;
+};
+
+} // node
 
 } // booleval
+
+#endif // BOOLEVAL_TREE_NODE_H

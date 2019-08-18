@@ -27,33 +27,41 @@
  *
  */
 
-#ifndef BOOLEVAL_BASE_NODE_H
-#define BOOLEVAL_BASE_NODE_H
+#include <gtest/gtest.h>
+#include <booleval/token/field_token.h>
 
-#include <memory>
+class FieldTokenTest : public testing::Test {};
 
-namespace booleval {
+TEST_F(FieldTokenTest, DefaultConstructor) {
+    using namespace booleval::token;
 
-namespace nodes {
+    FieldToken<> token;
+    EXPECT_EQ(token.type(), TokenType::FIELD);
+    EXPECT_STREQ(token.field().c_str(), "");
+}
 
-struct BaseNode {
-    std::shared_ptr<BaseNode> left;
-    std::shared_ptr<BaseNode> right;
+TEST_F(FieldTokenTest, ConstructorFromField) {
+    using namespace booleval::token;
 
-    BaseNode() = default;
-    BaseNode(BaseNode&& other) = default;
-    BaseNode(BaseNode const& other) = default;
+    FieldToken<> token("foo");
+    EXPECT_EQ(token.type(), TokenType::FIELD);
+    EXPECT_STREQ(token.field().c_str(), "foo");
+}
 
-    BaseNode& operator=(BaseNode&& other) = default;
-    BaseNode& operator=(BaseNode const& other) = default;
+TEST_F(FieldTokenTest, Type) {
+    using namespace booleval::token;
 
-    ~BaseNode() = default;
+    FieldToken<> token;
+    token.type(TokenType::AND);
+    EXPECT_EQ(token.type(), TokenType::FIELD);
+    EXPECT_STREQ(token.field().c_str(), "");
+}
 
-    virtual bool evaluate() = 0;
-};
+TEST_F(FieldTokenTest, Field) {
+    using namespace booleval::token;
 
-} // nodes
-
-} // booleval
-
-#endif // BOOLEVAL_BASE_NODE
+    FieldToken<> token;
+    token.field("foo");
+    EXPECT_EQ(token.type(), TokenType::FIELD);
+    EXPECT_STREQ(token.field().c_str(), "foo");
+}

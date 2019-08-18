@@ -27,58 +27,52 @@
  *
  */
 
-#include <booleval/token.h>
+#ifndef BOOLEVAL_TOKEN_H
+#define BOOLEVAL_TOKEN_H
+
+#include <unordered_map>
+#include <booleval/token/token_type.h>
 
 namespace booleval {
 
-Token::Token() noexcept
-    : type_(Type::UNKNOWN)
-{}
+namespace token {
 
-Token::Token(Type type) noexcept
-    : type_(type)
-{}
+class BaseToken {
+public:
+    BaseToken() noexcept;
+    BaseToken(BaseToken&& other) = default;
+    BaseToken(BaseToken const& other) = default;
+    BaseToken(TokenType const type) noexcept;
 
-bool Token::operator==(Token const& other) const noexcept {
-    return type_ == other.type_;
+    BaseToken& operator=(BaseToken&& other) = default;
+    BaseToken& operator=(BaseToken const& other) = default;
+    bool operator==(BaseToken const& other) const noexcept;
+
+    virtual ~BaseToken() = default;
+
+    virtual void type(TokenType const type) noexcept;
+    TokenType type() const noexcept;
+
+    bool is(TokenType const type) const noexcept;
+    bool is_not(TokenType const type) const noexcept;
+    bool is_one_of(TokenType const type1, TokenType const type2) const noexcept;
+
+    template <typename... Types>
+    bool is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept;
+
+    static std::unordered_map<std::string, TokenType> type_expressions() noexcept;
+
+private:
+    TokenType type_;
+};
+
+template <typename... Types>
+bool BaseToken::is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept {
+    return is(type1) || is_one_of(type2, types...);
 }
 
-void Token::type(Type const type) noexcept {
-    type_ = type;
-}
-
-Token::Type Token::type() const noexcept {
-    return type_;
-}
-
-bool Token::is(Type const type) const noexcept {
-    return type_ == type;
-}
-
-bool Token::is_not(Type const type) const noexcept {
-    return type_ != type;
-}
-
-bool Token::is_one_of(Type const type1, Type const type2) const noexcept {
-    return is(type1) || is(type2);
-}
-
-std::unordered_map<std::string, Token::Type> Token::type_expressions() noexcept {
-    static std::unordered_map<std::string, Type> type_expressions = {
-        { "and",     Type::AND },
-        { "&&" ,     Type::AND },
-        { "or" ,     Type::OR },
-        { "||" ,     Type::OR },
-        { "neq",     Type::NEQ },
-        { "!="  ,    Type::NEQ },
-        { "greater", Type::GT },
-        { ">",       Type::GT },
-        { "less",    Type::LT },
-        { "<",       Type::LT },
-        { "(",       Type::LP },
-        { ")",       Type::RP }
-    };
-    return type_expressions;
-}
+} // token
 
 } // booleval
+
+#endif // BOOLEVAL_TOKEN_H

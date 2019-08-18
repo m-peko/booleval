@@ -27,30 +27,24 @@
  *
  */
 
-#ifndef BOOLEVAL_EQ_NODE_H
-#define BOOLEVAL_EQ_NODE_H
-
-#include <booleval/nodes/base_node.h>
+#include <booleval/node/tree_node.h>
 
 namespace booleval {
 
-namespace nodes {
+namespace node {
 
-struct EqNode : BaseNode {
-    EqNode() = default;
-    EqNode(EqNode&& other) = default;
-    EqNode(EqNode const& other) = default;
+TreeNode::TreeNode(token::TokenType const type)
+    : token(std::make_shared<token::BaseToken>(type)),
+      left(nullptr),
+      right(nullptr)
+{}
 
-    EqNode& operator=(EqNode&& other) = default;
-    EqNode& operator=(EqNode const& other) = default;
+TreeNode::TreeNode(std::shared_ptr<token::BaseToken> const& token)
+    : token(token),
+      left(nullptr),
+      right(nullptr)
+{}
 
-    ~EqNode() = default;
-
-    virtual bool evaluate();
-};
-
-} // nodes
+} // node
 
 } // booleval
-
-#endif // BOOLEVAL_EQ_NODE_H

@@ -27,7 +27,6 @@
  *
  */
 
-#include <string>
 #include <gtest/gtest.h>
 #include <booleval/utils/regex_pattern.h>
 
@@ -49,13 +48,46 @@ TEST_F(RegexPatternTest, MatchWhitespaces) {
     EXPECT_STREQ(pattern.to_string().c_str(), "\\s+");
 }
 
-TEST_F(RegexPatternTest, CompletePattern) {
+TEST_F(RegexPatternTest, MatchExpression) {
     using namespace booleval::utils;
 
     RegexPattern pattern;
-    pattern.match_whitespaces();
-    pattern << "(";
-    pattern << ")";
+    pattern.match_expression("\\s+");
 
-    EXPECT_STREQ(pattern.to_string().c_str(), "\\s+|\\(|\\)");
+    EXPECT_STREQ(pattern.to_string().c_str(), "\\s+");
+}
+
+TEST_F(RegexPatternTest, MatchWord) {
+    using namespace booleval::utils;
+
+    RegexPattern pattern;
+    pattern.match_word("and");
+
+    EXPECT_STREQ(pattern.to_string().c_str(), "and");
+}
+
+TEST_F(RegexPatternTest, BuildPattern) {
+    using namespace booleval::utils;
+
+    RegexPattern pattern;
+    pattern.match_whitespaces()
+           .logical_or()
+           .match_word("and")
+           .logical_or()
+           .match_word("or");
+
+    EXPECT_STREQ(pattern.to_string().c_str(), "\\s+|and|or");
+}
+
+TEST_F(RegexPatternTest, BuildPatternWithEscapeChars) {
+    using namespace booleval::utils;
+
+    RegexPattern pattern;
+    pattern.match_whitespaces()
+           .logical_or()
+           .match_word("&&")
+           .logical_or()
+           .match_word("||");
+
+    EXPECT_STREQ(pattern.to_string().c_str(), "\\s+|\\&\\&|\\|\\|");
 }

@@ -38,7 +38,7 @@ namespace utils {
 
 class RegexPattern {
 public:
-    RegexPattern() noexcept;
+    RegexPattern() = default;
     RegexPattern(RegexPattern&& other) = default;
     RegexPattern(RegexPattern const& other) = default;
 
@@ -47,17 +47,17 @@ public:
 
     ~RegexPattern() = default;
 
-    void match_whitespaces() noexcept;
+    RegexPattern& logical_or() noexcept;
+    RegexPattern& match_whitespaces() noexcept;
+    RegexPattern& match_expression(std::string const& expression) noexcept;
+    RegexPattern& match_word(std::string const& word) noexcept;
     std::string to_string() const noexcept;
-
-    friend RegexPattern& operator<<(RegexPattern& pattern, std::string const& value);
 
 private:
     void escape() noexcept;
 
 private:
     std::ostringstream output_;
-    bool is_first_;
 };
 
 } // utils

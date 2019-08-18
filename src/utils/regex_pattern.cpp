@@ -33,18 +33,31 @@ namespace booleval {
 
 namespace utils {
 
-RegexPattern::RegexPattern() noexcept
-    : is_first_(true)
-{}
+RegexPattern& RegexPattern::logical_or() noexcept {
+    output_ << '|';
+    return *this;
+}
 
-void RegexPattern::match_whitespaces() noexcept {
-    if (is_first_) {
-        is_first_ = false;
-    } else {
-        output_ << '|';
+RegexPattern& RegexPattern::match_whitespaces() noexcept {
+    match_expression("\\s+");
+    return *this;
+}
+
+RegexPattern& RegexPattern::match_expression(std::string const& expression) noexcept {
+    output_ << expression;
+    return *this;
+}
+
+RegexPattern& RegexPattern::match_word(std::string const& word) noexcept {
+    for (auto const character : word) {
+        if (!isalnum(character)) {
+            escape();
+        }
+
+        output_ << character;
     }
 
-    output_ << "\\s+";
+    return *this;
 }
 
 std::string RegexPattern::to_string() const noexcept {
@@ -53,24 +66,6 @@ std::string RegexPattern::to_string() const noexcept {
 
 void RegexPattern::escape() noexcept {
     output_ << "\\";
-}
-
-RegexPattern& operator<<(RegexPattern& pattern, std::string const& value) {
-    if (pattern.is_first_) {
-        pattern.is_first_ = false;
-    } else {
-        pattern.output_ << '|';
-    }
-
-    for (auto const character : value) {
-        if (!isalnum(character)) {
-            pattern.escape();
-        }
-
-        pattern.output_ << character;
-    }
-
-    return pattern;
 }
 
 } // utils

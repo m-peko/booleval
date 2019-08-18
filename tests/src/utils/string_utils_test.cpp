@@ -88,3 +88,21 @@ TEST_F(StringUtilsTest, Split) {
     EXPECT_STREQ(tokens[3].c_str(), "or");
     EXPECT_STREQ(tokens[4].c_str(), "baz");
 }
+
+TEST_F(StringUtilsTest, SplitIgnoreCase) {
+    using namespace booleval::utils;
+
+    RegexPattern pattern;
+    pattern.match_word("and")
+           .logical_or()
+           .match_word("or");
+
+    std::string expression = "foo AND bar OR baz";
+    auto tokens = split(expression, pattern.to_string());
+
+    EXPECT_STREQ(tokens[0].c_str(), "foo");
+    EXPECT_STREQ(tokens[1].c_str(), "AND");
+    EXPECT_STREQ(tokens[2].c_str(), "bar");
+    EXPECT_STREQ(tokens[3].c_str(), "OR");
+    EXPECT_STREQ(tokens[4].c_str(), "baz");
+}

@@ -27,16 +27,36 @@
  *
  */
 
-#include <booleval/nodes/neq_node.h>
+#ifndef BOOLEVAL_TOKEN_TYPE_H
+#define BOOLEVAL_TOKEN_TYPE_H
+
+#include <cstdint>
 
 namespace booleval {
 
-namespace nodes {
+namespace token {
 
-bool NeqNode::evaluate() {
-    return left->evaluate() != right->evaluate();
-}
+enum class TokenType : uint8_t {
+    UNKNOWN = 0,
+    FIELD   = 1,
 
-} // nodes
+    // Logical operators
+    AND = 2,
+    OR  = 3,
+
+    // Relational operators
+    EQ  = 4,
+    NEQ = 5,
+    GT  = 6,
+    LT  = 7,
+
+    // Parentheses
+    LP = 8,
+    RP = 9
+};
+
+} // token
 
 } // booleval
+
+#endif // BOOLEVAL_TOKEN_TYPE_H

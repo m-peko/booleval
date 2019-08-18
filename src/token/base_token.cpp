@@ -27,16 +27,62 @@
  *
  */
 
-#include <booleval/nodes/or_node.h>
+#include <booleval/token/base_token.h>
 
 namespace booleval {
 
-namespace nodes {
+namespace token {
 
-bool OrNode::evaluate() {
-    return left->evaluate() || right->evaluate();
+BaseToken::BaseToken() noexcept
+    : type_(TokenType::UNKNOWN)
+{}
+
+BaseToken::BaseToken(TokenType const type) noexcept
+    : type_(type)
+{}
+
+bool BaseToken::operator==(BaseToken const& other) const noexcept {
+    return type_ == other.type_;
 }
 
-} // nodes
+void BaseToken::type(TokenType const type) noexcept {
+    type_ = type;
+}
+
+TokenType BaseToken::type() const noexcept {
+    return type_;
+}
+
+bool BaseToken::is(TokenType const type) const noexcept {
+    return type_ == type;
+}
+
+bool BaseToken::is_not(TokenType const type) const noexcept {
+    return type_ != type;
+}
+
+bool BaseToken::is_one_of(TokenType const type1, TokenType const type2) const noexcept {
+    return is(type1) || is(type2);
+}
+
+std::unordered_map<std::string, TokenType> BaseToken::type_expressions() noexcept {
+    static std::unordered_map<std::string, TokenType> type_expressions = {
+        { "and",     TokenType::AND },
+        { "&&" ,     TokenType::AND },
+        { "or" ,     TokenType::OR },
+        { "||" ,     TokenType::OR },
+        { "neq",     TokenType::NEQ },
+        { "!="  ,    TokenType::NEQ },
+        { "greater", TokenType::GT },
+        { ">",       TokenType::GT },
+        { "less",    TokenType::LT },
+        { "<",       TokenType::LT },
+        { "(",       TokenType::LP },
+        { ")",       TokenType::RP }
+    };
+    return type_expressions;
+}
+
+} // token
 
 } // booleval

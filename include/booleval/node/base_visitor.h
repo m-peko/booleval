@@ -27,46 +27,65 @@
  *
  */
 
-#ifndef BOOLEVAL_EVALUATOR_H
-#define BOOLEVAL_EVALUATOR_H
+#ifndef BOOLEVAL_BASE_VISITOR_H
+#define BOOLEVAL_BASE_VISITOR_H
 
-#include <map>
-#include <string>
-#include <memory>
 #include <booleval/node/tree_node.h>
-#include <booleval/token/tokenizer.h>
-#include <booleval/node/result_visitor.h>
 
 namespace booleval {
 
-class Evaluator {
+namespace node {
+
+template <typename ReturnType>
+class BaseVisitor {
 public:
-    Evaluator() noexcept;
-    Evaluator(Evaluator&& other) = default;
-    Evaluator(Evaluator const& other) = default;
+    BaseVisitor() = default;
+    BaseVisitor(BaseVisitor&& other) = default;
+    BaseVisitor(BaseVisitor const& other) = default;
 
-    Evaluator& operator=(Evaluator&& other) = default;
-    Evaluator& operator=(Evaluator const& other) = default;
+    BaseVisitor& operator=(BaseVisitor&& other) = default;
+    BaseVisitor& operator=(BaseVisitor const& other) = default;
 
-    ~Evaluator() = default;
+    ~BaseVisitor() = default;
 
-    bool is_activated() const noexcept;
-    bool build_expression_tree(std::string const& expression);
-    bool evaluate(std::map<std::string, std::string> const& fields);
+    ReturnType visit(TreeNode const& node);
 
-private:
-    std::shared_ptr<node::TreeNode> parse_expression();
-    std::shared_ptr<node::TreeNode> parse_and();
-    std::shared_ptr<node::TreeNode> parse_condition();
-    std::shared_ptr<node::TreeNode> parse_terminal();
-
-private:
-    bool is_activated_;
-    token::Tokenizer tokenizer_;
-    std::shared_ptr<node::TreeNode> root;
-    node::ResultVisitor result_visitor_;
+    virtual ReturnType visit_and(TreeNode const& node) = 0;
+    virtual ReturnType visit_or(TreeNode const& node) = 0;
+    virtual ReturnType visit_eq(TreeNode const& node) = 0;
+    virtual ReturnType visit_neq(TreeNode const& node) = 0;
+    virtual ReturnType visit_gt(TreeNode const& node) = 0;
+    virtual ReturnType visit_lt(TreeNode const& node) = 0;
 };
+
+template <typename ReturnType>
+ReturnType BaseVisitor<ReturnType>::visit(TreeNode const& node) {
+    switch (node.token->type()) {
+    case token::TokenType::AND:
+        return visit_and(node);
+
+    case token::TokenType::OR:
+        return visit_or(node);
+
+    case token::TokenType::EQ:
+        return visit_eq(node);
+
+    case token::TokenType::NEQ:
+        return visit_neq(node);
+
+    case token::TokenType::GT:
+        return visit_gt(node);
+
+    case token::TokenType::LT:
+        return visit_lt(node);
+
+    default:
+        return ReturnType{};
+    }
+}
+
+} // node
 
 } // booleval
 
-#endif // BOOLEVAL_EVALUATOR_H
+#endif // BOOLEVAL_BASE_VISITOR_H

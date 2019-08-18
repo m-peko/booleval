@@ -27,30 +27,51 @@
  *
  */
 
-#ifndef BOOLEVAL_OR_NODE_H
-#define BOOLEVAL_OR_NODE_H
+#ifndef BOOLEVAL_TOKENIZER_H
+#define BOOLEVAL_TOKENIZER_H
 
-#include <booleval/nodes/base_node.h>
+#include <string>
+#include <vector>
+#include <memory>
+#include <booleval/token/base_token.h>
 
 namespace booleval {
 
-namespace nodes {
+namespace token {
 
-struct OrNode : BaseNode {
-    OrNode() = default;
-    OrNode(OrNode&& other) = default;
-    OrNode(OrNode const& other) = default;
+class Tokenizer {
+public:
+    Tokenizer() noexcept;
+    Tokenizer(Tokenizer&& other) = default;
+    Tokenizer(Tokenizer const& other) = default;
+    Tokenizer(std::string const& expression) noexcept;
 
-    OrNode& operator=(OrNode&& other) = default;
-    OrNode& operator=(OrNode const& other) = default;
+    Tokenizer& operator=(Tokenizer&& other) = default;
+    Tokenizer& operator=(Tokenizer const& other) = default;
+    Tokenizer& operator++();
+    Tokenizer operator++(int);
 
-    ~OrNode() = default;
+    ~Tokenizer() = default;
 
-    virtual bool evaluate();
+    void expression(std::string const& expression) noexcept;
+    std::string const& expression() const noexcept;
+
+    bool has_token() const noexcept;
+    std::shared_ptr<BaseToken> const& token() const;
+    void tokenize();
+
+private:
+    void reset() noexcept;
+    std::string build_regex_pattern() const;
+
+private:
+    std::string expression_;
+    size_t current_token_index_;
+    std::vector<std::shared_ptr<BaseToken>> tokens_;
 };
 
-} // nodes
+} // token
 
 } // booleval
 
-#endif // BOOLEVAL_OR_NODE_H
+#endif // BOOLEVAL_TOKENIZER_H
