@@ -27,9 +27,10 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKEN_H
-#define BOOLEVAL_TOKEN_H
+#ifndef BOOLEVAL_BASE_TOKEN_H
+#define BOOLEVAL_BASE_TOKEN_H
 
+#include <string>
 #include <unordered_map>
 #include <booleval/token/token_type.h>
 
@@ -75,4 +76,4 @@ bool BaseToken::is_one_of(TokenType const type1, TokenType const type2, Types co
 
 } // booleval
 
-#endif // BOOLEVAL_TOKEN_H
+#endif // BOOLEVAL_BASE_TOKEN_H

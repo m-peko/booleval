@@ -30,9 +30,9 @@
 #ifndef BOOLEVAL_TOKENIZER_H
 #define BOOLEVAL_TOKENIZER_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 #include <booleval/token/base_token.h>
 
 namespace booleval {
@@ -41,7 +41,7 @@ namespace token {
 
 class Tokenizer {
 public:
-    Tokenizer() noexcept;
+    Tokenizer() = default;
     Tokenizer(Tokenizer&& other) = default;
     Tokenizer(Tokenizer const& other) = default;
     Tokenizer(std::string const& expression) noexcept;

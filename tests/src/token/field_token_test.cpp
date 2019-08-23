@@ -29,6 +29,7 @@
 
 #include <gtest/gtest.h>
 #include <booleval/token/field_token.h>
+#include <booleval/token/token_type.h>
 
 class FieldTokenTest : public testing::Test {};
 

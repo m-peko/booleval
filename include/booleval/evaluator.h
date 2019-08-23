@@ -31,11 +31,11 @@
 #define BOOLEVAL_EVALUATOR_H
 
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
 #include <booleval/node/tree_node.h>
-#include <booleval/token/tokenizer.h>
 #include <booleval/node/result_visitor.h>
+#include <booleval/token/tokenizer.h>
 
 namespace booleval {
 
@@ -56,8 +56,8 @@ public:
 
 private:
     std::shared_ptr<node::TreeNode> parse_expression();
-    std::shared_ptr<node::TreeNode> parse_and();
-    std::shared_ptr<node::TreeNode> parse_condition();
+    std::shared_ptr<node::TreeNode> parse_and_operation();
+    std::shared_ptr<node::TreeNode> parse_operation();
     std::shared_ptr<node::TreeNode> parse_terminal();
 
 private:

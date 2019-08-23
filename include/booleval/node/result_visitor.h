@@ -31,8 +31,8 @@
 #define BOOLEVAL_RESULT_VISITOR_H
 
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
 #include <booleval/node/tree_node.h>
 #include <booleval/node/base_visitor.h>
 #include <booleval/token/field_token.h>

@@ -31,6 +31,7 @@
 #define BOOLEVAL_BASE_VISITOR_H
 
 #include <booleval/node/tree_node.h>
+#include <booleval/token/token_type.h>
 
 namespace booleval {
 

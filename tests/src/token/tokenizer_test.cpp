@@ -29,19 +29,11 @@
 
 #include <string>
 #include <gtest/gtest.h>
-#include <booleval/token/tokenizer.h>
-#include <booleval/token/base_token.h>
 #include <booleval/token/field_token.h>
+#include <booleval/token/token_type.h>
+#include <booleval/token/tokenizer.h>
 
 class TokenizerTest : public testing::Test {};
-
-TEST_F(TokenizerTest, DefaultConstructor) {
-    using namespace booleval::token;
-
-    Tokenizer tokenizer;
-    EXPECT_STREQ(tokenizer.expression().c_str(), "");
-    EXPECT_FALSE(tokenizer.has_token());
-}
 
 TEST_F(TokenizerTest, ConstructorFromExpression) {
     using namespace booleval::token;

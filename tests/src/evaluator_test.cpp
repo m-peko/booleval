@@ -74,4 +74,9 @@ TEST_F(EvaluatorTest, ValidExpression) {
         { "field_a", "foo" },
         { "field_b", "bar" }
     }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", "bar" },
+        { "field_b", "foo" }
+    }));
 }

@@ -69,35 +69,41 @@ bool Evaluator::evaluate(std::map<std::string, std::string> const& fields) {
 }
 
 std::shared_ptr<node::TreeNode> Evaluator::parse_expression() {
-    auto and_node = parse_and();
+    auto left_and_operation = parse_and_operation();
+
     while (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::OR)) {
-        auto or_node = std::make_shared<node::TreeNode>(token::TokenType::OR);
+        auto or_operation = std::make_shared<node::TreeNode>(token::TokenType::OR);
         tokenizer_++;
 
-        auto and_node_right = parse_and();
-        or_node->left = and_node;
-        or_node->right = and_node_right;
-        and_node = or_node;
+        auto right_and_operation = parse_and_operation();
+        or_operation->left = left_and_operation;
+        or_operation->right = right_and_operation;
+        left_and_operation = or_operation;
     }
-    return and_node;
+
+    return left_and_operation;
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_and() {
-    auto condition1 = parse_condition();
+std::shared_ptr<node::TreeNode> Evaluator::parse_and_operation() {
+    auto left_operation = parse_operation();
+
     while (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::AND)) {
+        auto and_operation = std::make_shared<node::TreeNode>(token::TokenType::AND);
         tokenizer_++;
-        auto condition2 = parse_condition();
-        auto condition = std::make_shared<node::TreeNode>(token::TokenType::AND);
-        condition->left = condition1;
-        condition->right = condition2;
-        condition1 = condition;
+
+        auto right_operation = parse_operation();
+        and_operation->left = left_operation;
+        and_operation->right = right_operation;
+        left_operation = and_operation;
     }
-    return condition1;
+
+    return left_operation;
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_condition() {
+std::shared_ptr<node::TreeNode> Evaluator::parse_operation() {
     if (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::LP)) {
         tokenizer_++;
+
         auto expression = parse_expression();
         if (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::RP)) {
             tokenizer_++;
@@ -107,15 +113,15 @@ std::shared_ptr<node::TreeNode> Evaluator::parse_condition() {
         return nullptr;
     }
 
-    auto terminal_left = parse_terminal();
+    auto left_terminal = parse_terminal();
     if (tokenizer_.has_token()) {
-        auto condition = std::make_shared<node::TreeNode>(tokenizer_.token());
+        auto operation = std::make_shared<node::TreeNode>(tokenizer_.token());
         tokenizer_++;
 
-        auto terminal_right = parse_terminal();
-        condition->left = terminal_left;
-        condition->right = terminal_right;
-        return condition;
+        auto right_terminal = parse_terminal();
+        operation->left = left_terminal;
+        operation->right = right_terminal;
+        return operation;
     }
 
     return nullptr;
