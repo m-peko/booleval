@@ -42,7 +42,7 @@ make tests
 make test
 ```
 
-If you find that any tests fail, please create an ticket in the
+If you find that any tests fail, please create a ticket in the
 issue tracker indicating the platform and architecture you're using.
 
 ## Example
