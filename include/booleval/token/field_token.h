@@ -38,24 +38,59 @@ namespace booleval {
 
 namespace token {
 
+/**
+ * class FieldToken
+ *
+ * This class inherits from the BaseToken class
+ * and represents a field of any type in an
+ * expression.
+ */
 template <typename FieldType = std::string>
 class FieldToken : public BaseToken {
 public:
+    /**
+     * Default constructor creates a token
+     * object of the type FIELD.
+     */
     FieldToken() noexcept;
     FieldToken(FieldToken&& other) = default;
     FieldToken(FieldToken const& other) = default;
+
+    /**
+     * Constructor from field value creates a field
+     * token object that holds specified field value.
+     *
+     * @param field Field value
+     */
     FieldToken(FieldType const& field) noexcept;
 
     FieldToken& operator=(FieldToken&& other) = default;
     FieldToken& operator=(FieldToken const& other) = default;
-    bool operator==(FieldToken const& other) const noexcept;
 
     virtual ~FieldToken() = default;
 
+    /**
+     * Setter for the token type. Ignores the type
+     * passed to the setter and always sets it to
+     * type FIELD.
+     *
+     * @param type Token type
+     */
     virtual void type(TokenType const type) noexcept;
     using BaseToken::type;
 
+    /**
+     * Setter for the field.
+     *
+     * @param field Field value
+     */
     void field(FieldType const& field) noexcept;
+
+    /**
+     * Getter for the field.
+     *
+     * @return Field
+     */
     FieldType const& field() const noexcept;
 
 private:

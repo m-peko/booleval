@@ -41,7 +41,7 @@ namespace booleval {
 
 class Evaluator {
 public:
-    Evaluator() noexcept;
+    Evaluator() = default;
     Evaluator(Evaluator&& other) = default;
     Evaluator(Evaluator const& other) = default;
 
@@ -50,14 +50,67 @@ public:
 
     ~Evaluator() = default;
 
+    /**
+     * Checks whether the evaulation is activated or not, i.e.
+     * if the expression tree is successfully built.
+     *
+     * @return True if the evaluation is activated, otherwise false
+     */
     bool is_activated() const noexcept;
+
+    /**
+     * Checks whether the expression tree is successfully built.
+     *
+     * @param expression Expression used for building the tree
+     *
+     * @return True if the tree is successfully built, otherwise false
+     */
     bool build_expression_tree(std::string const& expression);
+
+    /**
+     * Evaluates expression tree based on the key value map passed in.
+     *
+     * @param fields Key value map that will be evaluated
+     *
+     * @return True if the key value map satisfies expression,
+     *         otherwise false
+     */
     bool evaluate(std::map<std::string, std::string> const& fields);
 
 private:
+    /**
+     * Parses logical operation OR.
+     *
+     * @return Root tree node for the current part of the expression
+     */
     std::shared_ptr<node::TreeNode> parse_expression();
+
+    /**
+     * Parses logical operation AND.
+     *
+     * @return Root tree node for the current part of the expression
+     */
     std::shared_ptr<node::TreeNode> parse_and_operation();
-    std::shared_ptr<node::TreeNode> parse_operation();
+
+    /**
+     * Parses new expression within parentheses.
+     *
+     * @return Root tree node for the parsed expression
+     */
+    std::shared_ptr<node::TreeNode> parse_parentheses();
+
+    /**
+     * Parses relational operation (EQ, NEQ, GT, LT, ...).
+     *
+     * @return Root tree node for the parsed operation
+     */
+    std::shared_ptr<node::TreeNode> parse_relational_operation();
+
+    /**
+     * Parses terminal, i.e. field token.
+     *
+     * @return Leaf node
+     */
     std::shared_ptr<node::TreeNode> parse_terminal();
 
 private:

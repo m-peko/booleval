@@ -33,10 +33,6 @@
 
 namespace booleval {
 
-Evaluator::Evaluator() noexcept
-    : is_activated_(false)
-{}
-
 bool Evaluator::is_activated() const noexcept {
     return is_activated_;
 }
@@ -85,22 +81,35 @@ std::shared_ptr<node::TreeNode> Evaluator::parse_expression() {
 }
 
 std::shared_ptr<node::TreeNode> Evaluator::parse_and_operation() {
-    auto left_operation = parse_operation();
+    std::shared_ptr<node::TreeNode> left_expression;
+    auto left_parentheses = parse_parentheses();
+    if (nullptr != left_parentheses) {
+        left_expression = left_parentheses;
+    } else {
+        left_expression = parse_relational_operation();
+    }
 
     while (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::AND)) {
         auto and_operation = std::make_shared<node::TreeNode>(token::TokenType::AND);
         tokenizer_++;
 
-        auto right_operation = parse_operation();
-        and_operation->left = left_operation;
-        and_operation->right = right_operation;
-        left_operation = and_operation;
+        std::shared_ptr<node::TreeNode> right_expression;
+        auto right_parentheses = parse_parentheses();
+        if (nullptr != right_parentheses) {
+            right_expression = right_parentheses;
+        } else {
+            right_expression = parse_relational_operation();
+        }
+
+        and_operation->left = left_expression;
+        and_operation->right = right_expression;
+        left_expression = and_operation;
     }
 
-    return left_operation;
+    return left_expression;
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_operation() {
+std::shared_ptr<node::TreeNode> Evaluator::parse_parentheses() {
     if (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::LP)) {
         tokenizer_++;
 
@@ -109,10 +118,12 @@ std::shared_ptr<node::TreeNode> Evaluator::parse_operation() {
             tokenizer_++;
             return expression;
         }
-
-        return nullptr;
     }
 
+    return nullptr;
+}
+
+std::shared_ptr<node::TreeNode> Evaluator::parse_relational_operation() {
     auto left_terminal = parse_terminal();
     if (tokenizer_.has_token()) {
         auto operation = std::make_shared<node::TreeNode>(tokenizer_.token());

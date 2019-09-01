@@ -37,6 +37,13 @@ namespace booleval {
 
 namespace node {
 
+/**
+ * class BaseVisitor
+ *
+ * This class is used as a base class for any
+ * other visitor class. It contains set of functions
+ * for visiting tree nodes of different type.
+ */
 template <typename ReturnType>
 class BaseVisitor {
 public:
@@ -49,13 +56,72 @@ public:
 
     ~BaseVisitor() = default;
 
+    /**
+     * Visits tree node by checking token type and
+     * passing node itself to specialized visitor's function.
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
     ReturnType visit(TreeNode const& node);
 
+    /**
+     * Visits tree node representing logical operation AND.
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
     virtual ReturnType visit_and(TreeNode const& node) = 0;
+
+    /**
+     * Visits tree node representing logical operation OR.
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
     virtual ReturnType visit_or(TreeNode const& node) = 0;
+
+    /**
+     * Visits tree node representing relational operation
+     * EQ (EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
     virtual ReturnType visit_eq(TreeNode const& node) = 0;
+
+    /**
+     * Visits tree node representing relational operation
+     * NEQ (NOT EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
     virtual ReturnType visit_neq(TreeNode const& node) = 0;
+
+    /**
+     * Visits tree node representing relational operation
+     * GT (GREATER THAN).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
     virtual ReturnType visit_gt(TreeNode const& node) = 0;
+
+    /**
+     * Visits tree node representing relational operation
+     * LT (LESS THAN).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
     virtual ReturnType visit_lt(TreeNode const& node) = 0;
 };
 

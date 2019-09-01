@@ -47,13 +47,50 @@ public:
 
     ~RegexPattern() = default;
 
+    /**
+     * Adds logical or operation to the regex pattern.
+     *
+     * @return Regex pattern
+     */
     RegexPattern& logical_or() noexcept;
+
+    /**
+     * Adds matching whitespaces to the regex pattern.
+     *
+     * @return Regex pattern
+     */
     RegexPattern& match_whitespaces() noexcept;
+
+    /**
+     * Adds matching of given expression to the regex pattern.
+     *
+     * @param expression Expression to match
+     *
+     * @return Regex pattern
+     */
     RegexPattern& match_expression(std::string const& expression) noexcept;
+
+    /**
+     * Adds matching of given word to the regex pattern.
+     *
+     * @param word Word to match
+     *
+     * @return Regex pattern
+     */
     RegexPattern& match_word(std::string const& word) noexcept;
+
+    /**
+     * Converts regex pattern to string.
+     *
+     * @return Regex pattern string
+     */
     std::string to_string() const noexcept;
 
 private:
+    /**
+     * Adds double forward slash to the regex pattern.
+     * It is used for escaping certain characters.
+     */
     void escape() noexcept;
 
 private:

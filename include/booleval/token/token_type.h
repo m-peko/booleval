@@ -36,6 +36,13 @@ namespace booleval {
 
 namespace token {
 
+/**
+ * enum class TokenType
+ *
+ * This enum class represents a token type.
+ * Supported types are logical operators, relational
+ * operators, parentheses and field.
+ */
 enum class TokenType : uint8_t {
     UNKNOWN = 0,
     FIELD   = 1,

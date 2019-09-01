@@ -38,6 +38,14 @@ namespace booleval {
 
 namespace node {
 
+/**
+ * struct TreeNode
+ *
+ * This struct represents the tree node containing
+ * references to left and right child nodes as well
+ * as the token that the node represents in the actual
+ * expression tree.
+ */
 struct TreeNode {
     std::shared_ptr<token::BaseToken> token;
     std::shared_ptr<TreeNode> left;
@@ -46,7 +54,23 @@ struct TreeNode {
     TreeNode() = default;
     TreeNode(TreeNode&& other) = default;
     TreeNode(TreeNode const& other) = default;
+
+    /**
+     * Constructor from token type creates a tree
+     * node representing the token of specified type
+     * in the expression tree.
+     *
+     * @param type Token type
+     */
     TreeNode(token::TokenType const type);
+
+    /**
+     * Constructor from token creates a tree node
+     * representing the specified token in the
+     * expression tree.
+     *
+     * @param token Base token
+     */
     TreeNode(std::shared_ptr<token::BaseToken> const& token);
 
     TreeNode& operator=(TreeNode&& other) = default;
