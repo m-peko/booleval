@@ -33,10 +33,6 @@
 
 namespace booleval {
 
-Evaluator::Evaluator() noexcept
-    : is_activated_(false)
-{}
-
 bool Evaluator::is_activated() const noexcept {
     return is_activated_;
 }

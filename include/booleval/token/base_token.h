@@ -38,26 +38,89 @@ namespace booleval {
 
 namespace token {
 
+/**
+ * class BaseToken
+ *
+ * This class represents all tokens (AND, OR, EQ, ...)
+ * except the field token to whom it is a base class.
+ */
 class BaseToken {
 public:
+    /**
+     * Default constructor creates a base token
+     * object of the type UNKNOWN.
+     */
     BaseToken() noexcept;
     BaseToken(BaseToken&& other) = default;
     BaseToken(BaseToken const& other) = default;
+
+    /**
+     * Constructor from token type creates a base
+     * token object of the specified type.
+     *
+     * @param type Token type
+     */
     BaseToken(TokenType const type) noexcept;
 
     BaseToken& operator=(BaseToken&& other) = default;
     BaseToken& operator=(BaseToken const& other) = default;
+
+    /**
+     * Comparison of this base token and another one based
+     * on their token types.
+     *
+     * @param other Base token to compare this token to
+     */
     bool operator==(BaseToken const& other) const noexcept;
 
     virtual ~BaseToken() = default;
 
+    /**
+     * Setter for the token type.
+     *
+     * @param type Token type
+     */
     virtual void type(TokenType const type) noexcept;
+
+    /**
+     * Getter for the token type.
+     *
+     * @return Token type
+     */
     TokenType type() const noexcept;
 
+    /**
+     * Checks whether the token is of the specified type.
+     *
+     * @return True if the token is of the specified type,
+     *         otherwise false
+     */
     bool is(TokenType const type) const noexcept;
+
+    /**
+     * Checks whether the token is not of the specified type.
+     *
+     * @return True if the token is not of the specified type,
+     *         otherwise false
+     */
     bool is_not(TokenType const type) const noexcept;
+
+    /**
+     * Checks whether the token is of the first or second
+     * specified type
+     *
+     * @return True if the token is of the first or second
+     *         specified type, otherwise false
+     */
     bool is_one_of(TokenType const type1, TokenType const type2) const noexcept;
 
+    /**
+     * Checks whether the token is one of the multiple
+     * specified types.
+     *
+     * @return True if the token is one of the multiple
+     *         specified types, otherwise false
+     */
     template <typename... Types>
     bool is_one_of(TokenType const type1, TokenType const type2, Types const ... types) const noexcept;
 

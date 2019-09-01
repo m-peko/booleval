@@ -33,13 +33,6 @@
 
 class EvaluatorTest : public testing::Test {};
 
-TEST_F(EvaluatorTest, DefaultConstructor) {
-    using namespace booleval;
-
-    Evaluator evaluator;
-    EXPECT_FALSE(evaluator.is_activated());
-}
-
 TEST_F(EvaluatorTest, EmptyExpression) {
     using namespace booleval;
 

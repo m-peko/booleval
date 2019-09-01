@@ -41,6 +41,13 @@ namespace booleval {
 
 namespace node {
 
+/**
+ * class ResultVisitor
+ *
+ * This class is used for visiting expression
+ * tree nodes in order to get the final result of
+ * the expression based on the specified field map.
+ */
 class ResultVisitor : public BaseVisitor<bool> {
     using FieldMap = std::map<std::string, std::string>;
 
@@ -54,18 +61,99 @@ public:
 
     ~ResultVisitor() = default;
 
+    /**
+     * Setter for the key value map used for evaluation
+     * of expression tree.
+     *
+     * @param fields Key value map
+     */
     void fields(FieldMap const& fields) noexcept;
+
+    /**
+     * Getter for the key value map used for evaluation
+     * of expression tree.
+     *
+     * @return Key value map
+     */
     FieldMap const& fields() const noexcept;
 
+    /**
+     * Visits tree node representing logical operation AND.
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of logical operation AND
+     */
     virtual bool visit_and(TreeNode const& node);
+
+    /**
+     * Visits tree node representing logical operation OR.
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of logical operation OR
+     */
     virtual bool visit_or(TreeNode const& node);
+
+    /**
+     * Visits tree node representing relational operation
+     * EQ (EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of relational operation EQ
+     */
     virtual bool visit_eq(TreeNode const& node);
+
+    /**
+     * Visits tree node representing relational operation
+     * NEQ (NOT EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of relational operation NEQ
+     */
     virtual bool visit_neq(TreeNode const& node);
+
+    /**
+     * Visits tree node representing relational operation
+     * GT (GREATER THAN).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of relational operation GT
+     */
     virtual bool visit_gt(TreeNode const& node);
+
+    /**
+     * Visits tree node representing relational operation
+     * LT (LESS THAN).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of relational operation LT
+     */
     virtual bool visit_lt(TreeNode const& node);
 
 private:
+    /**
+     * Extracts token from the left leaf node that represents
+     * actual field that gets evaluated.
+     *
+     * @param node Tree node to extract token from
+     *
+     * @return Field token
+     */
     std::shared_ptr<token::FieldToken<>> left_field_token(TreeNode const& node);
+
+    /**
+     * Extracts token from the right leaf node that represents
+     * actual field that gets evaluated.
+     *
+     * @param node Tree node to extract token from
+     *
+     * @return Field token
+     */
     std::shared_ptr<token::FieldToken<>> right_field_token(TreeNode const& node);
 
 private:

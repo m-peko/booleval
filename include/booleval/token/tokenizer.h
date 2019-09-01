@@ -39,29 +39,100 @@ namespace booleval {
 
 namespace token {
 
+/**
+ * class Tokenizer
+ *
+ * This class is used for tokenizing the expression, i.e.
+ * transforming the expression in a form of a string to the
+ * collection of tokens.
+ */
 class Tokenizer {
 public:
     Tokenizer() = default;
     Tokenizer(Tokenizer&& other) = default;
     Tokenizer(Tokenizer const& other) = default;
+
+    /**
+     * Constructor from an expression creates an
+     * object which will tokenize specified expression.
+     *
+     * @param expression String expression
+     */
     Tokenizer(std::string const& expression) noexcept;
 
     Tokenizer& operator=(Tokenizer&& other) = default;
     Tokenizer& operator=(Tokenizer const& other) = default;
+
+    /**
+     * Prefix incrementation of the current index
+     * in the collection of tokens.
+     *
+     * @return Tokenizer
+     */
     Tokenizer& operator++();
+
+    /**
+     * Postfix incrementation of the current index
+     * in the collection of tokens.
+     *
+     * @param Unused parameter
+     *
+     * @return Tokenizer
+     */
     Tokenizer operator++(int);
 
     ~Tokenizer() = default;
 
+    /**
+     * Setter for the expression that is supposed to
+     * be tokenized.
+     *
+     * @param expression Expression to be tokenized
+     */
     void expression(std::string const& expression) noexcept;
+
+    /**
+     * Getter for the expression that is supposed to
+     * be tokenized.
+     *
+     * @return Expression to be tokenized
+     */
     std::string const& expression() const noexcept;
 
+    /**
+     * Checks whether the next token in collection exists or not.
+     *
+     * @return True if the next token exists, otherwise false
+     */
     bool has_token() const noexcept;
+
+    /**
+     * Getter for the current token.
+     *
+     * @return Current token
+     */
     std::shared_ptr<BaseToken> const& token() const;
+
+    /**
+     * Tokenizes given expression and transforms it
+     * into the collection of tokens.
+     */
     void tokenize();
 
 private:
+    /**
+     * Resets the current tokenizer state, i.e. clears
+     * the collection of tokens and sets the current
+     * index to zero.
+     */
     void reset() noexcept;
+
+    /**
+     * Builds regex pattern from the standard token
+     * expressions.
+     *
+     * @return Regex pattern
+     */
     std::string build_regex_pattern() const;
 
 private:
