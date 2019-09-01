@@ -93,12 +93,18 @@ private:
     std::shared_ptr<node::TreeNode> parse_and_operation();
 
     /**
-     * Parses new expression within parentheses or the relational
-     * operation.
+     * Parses new expression within parentheses.
      *
-     * @return Root tree node for the current part of the expression
+     * @return Root tree node for the parsed expression
      */
-    std::shared_ptr<node::TreeNode> parse_operation();
+    std::shared_ptr<node::TreeNode> parse_parentheses();
+
+    /**
+     * Parses relational operation (EQ, NEQ, GT, LT, ...).
+     *
+     * @return Root tree node for the parsed operation
+     */
+    std::shared_ptr<node::TreeNode> parse_relational_operation();
 
     /**
      * Parses terminal, i.e. field token.
