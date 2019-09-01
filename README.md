@@ -4,6 +4,22 @@
 
 Recursive descent parser for evaluating boolean expressions.
 
+## Expression
+
+Valid: `(field_a foo and field_b bar) or (field_a bar and field_b baz)`
+
+Invalid: `(field_a foo and field_b bar` _Note: Missing closing parenthesis_
+
+## Supported tokens
+
+Logical operators: `and` / `&&`, `or` / `||`
+
+Relational operators: `neq` / `!=`, `greater` / `>`, `less` / `<` *
+
+_* Note: Equality operator does not have a corresponding token. Instead it is a default operator between two fields._
+
+Parentheses: `(`, `)`
+
 ## Compiling
 
 In order to compile, execute:
@@ -53,21 +69,14 @@ issue tracker indicating the platform and architecture you're using.
 #include <iostream>
 #include <booleval/evaluator.h>
 
-class Object {
-public:
-    Object(std::string const& field_a, std::string const& field_b)
-        : field_a_(field_a), field_b_(field_b) {}
+struct Object {
+    Object(std::string const& a, std::string const& b)
+        : field_a(a),
+          field_b(b)
+    {}
 
-    std::map<std::string, std::string> fields() const noexcept {
-        return {
-            { "field_a", field_a_ },
-            { "field_b", field_b_ }
-        };
-    }
-
-private:
-    std::string field_a_;
-    std::string field_b_;
+    std::string field_a;
+    std::string field_b;
 };
 
 int main() {
@@ -82,8 +91,13 @@ int main() {
     }
 
     if (evaluator.is_activated()) {
-        std::cout << evaluator.evaluate(valid_obj.fields()) << std::endl;   // 1
-        std::cout << evaluator.evaluate(invalid_obj.fields()) << std::endl; // 0
+        // 'valid_obj' satisfies expression
+        // output: 1 i.e. true
+        std::cout << evaluator.evaluate({ "field_a": valid_obj.field_a, "field_b": valid_obj.field_b }) << std::endl;
+        
+        // 'invalid_obj' does not satisfy expression
+        // output: 0 i.e. false
+        std::cout << evaluator.evaluate({ "field_a": invalid_obj.field_a, "field_b": invalid_obj.field_b }) << std::endl;
     } else {
         std::cerr << "Evaluator is not activated!" << std::endl;
     }
