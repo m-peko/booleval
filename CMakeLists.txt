@@ -58,20 +58,6 @@ if (BOOLEVAL_BUILD_TESTS)
         set (GOOGLETEST_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/googletest)
         set (GOOGLETEST_LIBRARY ${GOOGLETEST_BINARY_DIR}/googletest)
 
-        ExternalProject_Add (
-            googletest
-            DOWNLOAD_COMMAND ""
-            SOURCE_DIR ${GOOGLETEST_ROOT}
-            BINARY_DIR ${GOOGLETEST_BINARY_DIR}
-            CMAKE_CACHE_ARGS "-DBUILD_GTEST:bool=ON"
-                             "-DBUILD_GMOCK:bool=OFF"
-                             "-Dgtest_force_shared_crt:bool=ON"
-                             "-DCMAKE_CXX_COMPILER:path=${CMAKE_CXX_COMPILER}"
-            INSTALL_COMMAND ""
-        )
-
-        # Make sure we build googletest before anything else
-        add_dependencies (booleval googletest)
         enable_testing ()
         add_subdirectory (googletest)
         add_subdirectory (tests)
