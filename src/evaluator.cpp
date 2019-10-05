@@ -67,6 +67,10 @@ bool Evaluator::evaluate(std::map<std::string, std::string> const& fields) {
 std::shared_ptr<node::TreeNode> Evaluator::parse_expression() {
     auto left_and_operation = parse_and_operation();
 
+    if (tokenizer_.has_token() && tokenizer_.token()->is_not(token::TokenType::OR)) {
+        return nullptr;
+    }
+
     while (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::OR)) {
         auto or_operation = std::make_shared<node::TreeNode>(token::TokenType::OR);
         tokenizer_++;

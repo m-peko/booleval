@@ -44,13 +44,24 @@ TEST_F(EvaluatorTest, EmptyExpression) {
     EXPECT_TRUE(evaluator.evaluate({}));
 }
 
-TEST_F(EvaluatorTest, InvalidExpression) {
+TEST_F(EvaluatorTest, MissingParenthesisExpression) {
     using namespace booleval;
 
-    std::string expression = "(field_a foo or field_b bar";
+    Evaluator evaluator;
+
+    std::string missing_parenthesis_expression = "(field_a foo or field_b bar";
+    EXPECT_FALSE(evaluator.build_expression_tree(missing_parenthesis_expression));
+    EXPECT_FALSE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({}));
+}
+
+TEST_F(EvaluatorTest, MultipleFieldsExpression) {
+    using namespace booleval;
 
     Evaluator evaluator;
-    EXPECT_FALSE(evaluator.build_expression_tree(expression));
+
+    std::string multiple_fields_in_row_expression = "field_a foo field_b";
+    EXPECT_FALSE(evaluator.build_expression_tree(multiple_fields_in_row_expression));
     EXPECT_FALSE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate({}));
 }
