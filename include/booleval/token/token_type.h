@@ -31,36 +31,81 @@
 #define BOOLEVAL_TOKEN_TYPE_H
 
 #include <cstdint>
+#include <string_view>
+#include <unordered_map>
 
 namespace booleval {
 
 namespace token {
 
 /**
- * enum class TokenType
+ * enum class token_type
  *
- * This enum class represents a token type.
- * Supported types are logical operators, relational
- * operators, parentheses and field.
+ * Represents a token type. Supported types are logical operators,
+ * relational operators, parentheses and field.
  */
-enum class TokenType : uint8_t {
-    UNKNOWN = 0,
-    FIELD   = 1,
+enum class token_type : uint8_t {
+    unknown = 0,
+    field   = 1,
 
     // Logical operators
-    AND = 2,
-    OR  = 3,
+    logical_and = 2,
+    logical_or  = 3,
 
     // Relational operators
-    EQ  = 4,
-    NEQ = 5,
-    GT  = 6,
-    LT  = 7,
+    eq  = 4,
+    neq = 5,
+    gt  = 6,
+    lt  = 7,
 
     // Parentheses
-    LP = 8,
-    RP = 9
+    lp = 8,
+    rp = 9
 };
+
+inline std::unordered_map<
+    std::string_view,
+    token_type
+> const keyword_expressions = {
+    { "and",     token_type::logical_and },
+    { "or",      token_type::logical_or  },
+    { "eq",      token_type::eq  },
+    { "neq",     token_type::neq },
+    { "greater", token_type::gt  },
+    { "less",    token_type::lt  }
+};
+
+inline std::unordered_map<
+    std::string_view,
+    token_type
+> const symbol_expressions = {
+    { "&&", token_type::logical_and },
+    { "||", token_type::logical_or  },
+    { "==", token_type::eq  },
+    { "!=", token_type::neq },
+    { ">",  token_type::gt  },
+    { "<",  token_type::lt  },
+    { "(",  token_type::lp  },
+    { ")",  token_type::rp  }
+};
+
+/**
+ * Maps token value to token type.
+ *
+ * @param value Token value
+ *
+ * @return Token type
+ */
+token_type map_to_token_type(std::string_view const value);
+
+/**
+ * Maps token type to token value.
+ *
+ * @param type Token type
+ *
+ * @return Token value
+ */
+std::string_view map_to_token_value(token_type const type);
 
 } // token
 

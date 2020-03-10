@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Marin Peko
+ * Copyright (c) 2020, Marin Peko
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,42 +27,43 @@
  *
  */
 
-#include <gtest/gtest.h>
-#include <booleval/token/field_token.h>
+#include <algorithm>
 #include <booleval/token/token_type.h>
 
-class FieldTokenTest : public testing::Test {};
+namespace booleval {
 
-TEST_F(FieldTokenTest, DefaultConstructor) {
-    using namespace booleval::token;
+namespace token {
 
-    FieldToken<> token;
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "");
+token_type map_to_token_type(std::string_view const value) {
+    auto keyword_search = keyword_expressions.find(value);
+    if (std::end(keyword_expressions) != keyword_search) {
+        return keyword_search->second;
+    }
+
+    auto symbol_search = symbol_expressions.find(value);
+    if (std::end(symbol_expressions) != symbol_search) {
+        return symbol_search->second;
+    }
+
+    return token_type::field;
 }
 
-TEST_F(FieldTokenTest, ConstructorFromField) {
-    using namespace booleval::token;
+std::string_view map_to_token_value(token_type const type) {
+    auto keyword_search = std::find_if(
+        std::begin(keyword_expressions),
+        std::end(keyword_expressions),
+        [type](auto&& p) {
+            return p.second == type;
+        }
+    );
 
-    FieldToken<> token("foo");
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "foo");
+    if (std::end(keyword_expressions) != keyword_search) {
+        return keyword_search->first;
+    }
+
+    return {};
 }
 
-TEST_F(FieldTokenTest, Type) {
-    using namespace booleval::token;
+} // token
 
-    FieldToken<> token;
-    token.type(TokenType::AND);
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "");
-}
-
-TEST_F(FieldTokenTest, Field) {
-    using namespace booleval::token;
-
-    FieldToken<> token;
-    token.field("foo");
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "foo");
-}
+} // booleval

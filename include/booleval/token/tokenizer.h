@@ -30,115 +30,74 @@
 #ifndef BOOLEVAL_TOKENIZER_H
 #define BOOLEVAL_TOKENIZER_H
 
-#include <memory>
-#include <string>
 #include <vector>
-#include <booleval/token/base_token.h>
+#include <string_view>
+#include <booleval/token/token.h>
 
 namespace booleval {
 
 namespace token {
 
 /**
- * class Tokenizer
+ * class tokenizer
  *
- * This class is used for tokenizing the expression, i.e.
- * transforming the expression in a form of a string to the
- * collection of tokens.
+ * Represents the mechanism for tokenizing the expressions, i.e. transforming
+ * the expressions from a form of a string to the collection of tokens.
  */
-class Tokenizer {
+class tokenizer {
 public:
-    Tokenizer() = default;
-    Tokenizer(Tokenizer&& other) = default;
-    Tokenizer(Tokenizer const& other) = default;
+    tokenizer() = default;
+    tokenizer(tokenizer&& other) = default;
+    tokenizer(tokenizer const& other) = default;
+    tokenizer(std::string_view expression) noexcept;
+
+    tokenizer& operator=(tokenizer&& other) = default;
+    tokenizer& operator=(tokenizer const& other) = default;
+
+    ~tokenizer() = default;
 
     /**
-     * Constructor from an expression creates an
-     * object which will tokenize specified expression.
-     *
-     * @param expression String expression
-     */
-    Tokenizer(std::string const& expression) noexcept;
-
-    Tokenizer& operator=(Tokenizer&& other) = default;
-    Tokenizer& operator=(Tokenizer const& other) = default;
-
-    /**
-     * Prefix incrementation of the current index
-     * in the collection of tokens.
-     *
-     * @return Tokenizer
-     */
-    Tokenizer& operator++();
-
-    /**
-     * Postfix incrementation of the current index
-     * in the collection of tokens.
-     *
-     * @param Unused parameter
-     *
-     * @return Tokenizer
-     */
-    Tokenizer operator++(int);
-
-    ~Tokenizer() = default;
-
-    /**
-     * Setter for the expression that is supposed to
-     * be tokenized.
+     * Sets the expression that needs to be tokenized.
      *
      * @param expression Expression to be tokenized
      */
-    void expression(std::string const& expression) noexcept;
+    void expression(std::string_view expression) noexcept;
 
     /**
-     * Getter for the expression that is supposed to
-     * be tokenized.
+     * Gets the expression that needs to be tokenized.
      *
      * @return Expression to be tokenized
      */
-    std::string const& expression() const noexcept;
+    std::string_view expression() const noexcept;
 
     /**
-     * Checks whether the next token in collection exists or not.
+     * Checks whether more tokens exist or not.
      *
-     * @return True if the next token exists, otherwise false
+     * @return True if there is more tokens, otherwise false
      */
-    bool has_token() const noexcept;
+    bool has_tokens() const noexcept;
 
     /**
-     * Getter for the current token.
+     * Gets the next token.
      *
-     * @return Current token
+     * @return Next token
      */
-    std::shared_ptr<BaseToken> const& token() const;
+    token const& next_token();
 
     /**
-     * Tokenizes given expression and transforms it
-     * into the collection of tokens.
+     * Tokenizes the expression and transforms it into the collection of tokens.
      */
     void tokenize();
 
-private:
     /**
-     * Resets the current tokenizer state, i.e. clears
-     * the collection of tokens and sets the current
-     * index to zero.
+     * Clears the collection of tokens and sets the current index to zero.
      */
     void reset() noexcept;
 
-    /**
-     * Builds regex pattern from the standard token
-     * expressions.
-     *
-     * @return Regex pattern
-     */
-    std::string build_regex_pattern() const;
-
 private:
-    std::string expression_;
+    std::string_view expression_;
     size_t current_token_index_;
-    std::vector<std::shared_ptr<BaseToken>> tokens_;
+    std::vector<token> tokens_;
 };
 
 } // token

@@ -30,7 +30,9 @@
 #ifndef BOOLEVAL_STRING_UTILS_H
 #define BOOLEVAL_STRING_UTILS_H
 
+#include <string>
 #include <vector>
+#include <numeric>
 #include <string_view>
 
 namespace booleval {
@@ -205,6 +207,30 @@ bool is_empty(std::string_view strv);
 std::vector<std::string_view> split(std::string_view strv,
                                     std::string_view delims = " ",
                                     split_options const options = split_options::exclude_delimiters);
+
+/**
+ * Joins the elements from specified range into a string.
+ *
+ * @param first     Start of the range
+ * @param last      End of the range
+ * @param separator Separator between the elements in the produced string
+ *
+ * @return String computed by joining the elements from range
+ */
+template <typename InputIt>
+std::string join(InputIt const& first, InputIt const& last, std::string const& separator = "") {
+    if (first == last) {
+        return {};
+    }
+
+    std::string result{ *first };
+    return std::accumulate(
+        std::next(first), last, result,
+        [&separator](auto result, auto const value) {
+            return result + separator + value;
+        }
+    );
+}
 
 } // utils
 

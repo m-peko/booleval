@@ -158,3 +158,19 @@ TEST_F(StringUtilsTest, SplitMultipleOptions) {
     EXPECT_EQ(tokens[2], "b");
     EXPECT_EQ(tokens[3], ".");
 }
+
+TEST_F(StringUtilsTest, JoinWithoutSeparator) {
+    using namespace booleval::utils;
+
+    auto tokens = { "a", "b", "c", "d" };
+    auto result = join(std::begin(tokens), std::end(tokens));
+    EXPECT_EQ(result, "abcd");
+}
+
+TEST_F(StringUtilsTest, JoinWithCommaSeparator) {
+    using namespace booleval::utils;
+
+    auto tokens = { "a", "b", "c", "d" };
+    auto result = join(std::begin(tokens), std::end(tokens), ",");
+    EXPECT_EQ(result, "a,b,c,d");
+}
