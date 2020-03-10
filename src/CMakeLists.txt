@@ -13,7 +13,6 @@ set (
         token/base_token.cpp
         token/tokenizer.cpp
 
-        utils/regex_pattern.cpp
         utils/string_utils.cpp
 
         evaluator.cpp
@@ -30,7 +29,6 @@ set (
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.h
 
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/regex_pattern.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.h
