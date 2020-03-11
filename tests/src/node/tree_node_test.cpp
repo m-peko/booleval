@@ -27,30 +27,37 @@
  *
  */
 
-#include <memory>
 #include <gtest/gtest.h>
 #include <booleval/node/tree_node.h>
-#include <booleval/token/base_token.h>
-#include <booleval/token/field_token.h>
+#include <booleval/token/token.h>
 #include <booleval/token/token_type.h>
 
 class TreeNodeTest : public testing::Test {};
 
-TEST_F(TreeNodeTest, ConstructorFromTokenType) {
+TEST_F(TreeNodeTest, DefaultConstructor) {
     using namespace booleval;
 
-    node::TreeNode node(token::TokenType::AND);
-    EXPECT_EQ(node.token->type(), token::TokenType::AND);
+    node::tree_node node;
+    EXPECT_EQ(node.token.type(), token::token_type::unknown);
     EXPECT_EQ(node.left, nullptr);
     EXPECT_EQ(node.right, nullptr);
 }
 
-TEST_F(TreeNodeTest, ConstructorFromBaseToken) {
+TEST_F(TreeNodeTest, ConstructorFromTokenType) {
     using namespace booleval;
 
-    auto and_token = std::make_shared<token::BaseToken>(token::TokenType::AND);
-    node::TreeNode node(and_token);
-    EXPECT_EQ(node.token->type(), token::TokenType::AND);
+    node::tree_node node(token::token_type::logical_and);
+    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}
+
+TEST_F(TreeNodeTest, ConstructorFromToken) {
+    using namespace booleval;
+
+    token::token and_token(token::token_type::logical_and);
+    node::tree_node node(and_token);
+    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
     EXPECT_EQ(node.left, nullptr);
     EXPECT_EQ(node.right, nullptr);
 }
@@ -58,12 +65,10 @@ TEST_F(TreeNodeTest, ConstructorFromBaseToken) {
 TEST_F(TreeNodeTest, ConstructorFromFieldToken) {
     using namespace booleval;
 
-    auto field_token = std::make_shared<token::FieldToken<>>("foo");
-    node::TreeNode node(field_token);
-
-    auto token = std::dynamic_pointer_cast<token::FieldToken<>>(node.token);
-    EXPECT_STREQ(token->field().c_str(), "foo");
-    EXPECT_EQ(token->type(), token::TokenType::FIELD);
+    token::token field_token("foo");
+    node::tree_node node(field_token);
+    EXPECT_EQ(node.token.value(), "foo");
+    EXPECT_EQ(node.token.type(), token::token_type::field);
     EXPECT_EQ(node.left, nullptr);
     EXPECT_EQ(node.right, nullptr);
 }

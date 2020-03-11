@@ -31,51 +31,46 @@
 #define BOOLEVAL_RESULT_VISITOR_H
 
 #include <map>
-#include <memory>
-#include <string>
+#include <string_view>
 #include <booleval/node/tree_node.h>
 #include <booleval/node/base_visitor.h>
-#include <booleval/token/field_token.h>
 
 namespace booleval {
 
 namespace node {
 
 /**
- * class ResultVisitor
+ * class result_visitor
  *
- * This class is used for visiting expression
- * tree nodes in order to get the final result of
- * the expression based on the specified field map.
+ * Represents a visitor for expression tree nodes in order to get the
+ * final result of the expression based on the specified field map.
  */
-class ResultVisitor : public BaseVisitor<bool> {
-    using FieldMap = std::map<std::string, std::string>;
+class result_visitor : public base_visitor<bool> {
+    using field_map = std::map<std::string_view, std::string_view>;
 
 public:
-    ResultVisitor() = default;
-    ResultVisitor(ResultVisitor&& other) = default;
-    ResultVisitor(ResultVisitor const& other) = default;
+    result_visitor() = default;
+    result_visitor(result_visitor&& other) = default;
+    result_visitor(result_visitor const& other) = default;
 
-    ResultVisitor& operator=(ResultVisitor&& other) = default;
-    ResultVisitor& operator=(ResultVisitor const& other) = default;
+    result_visitor& operator=(result_visitor&& other) = default;
+    result_visitor& operator=(result_visitor const& other) = default;
 
-    ~ResultVisitor() = default;
+    ~result_visitor() = default;
 
     /**
-     * Setter for the key value map used for evaluation
-     * of expression tree.
+     * Sets the key value map used for evaluation of expression tree.
      *
      * @param fields Key value map
      */
-    void fields(FieldMap const& fields) noexcept;
+    void fields(field_map const& fields) noexcept;
 
     /**
-     * Getter for the key value map used for evaluation
-     * of expression tree.
+     * Gets the key value map used for evaluation of expression tree.
      *
      * @return Key value map
      */
-    FieldMap const& fields() const noexcept;
+    field_map const& fields() const noexcept;
 
     /**
      * Visits tree node representing logical operation AND.
@@ -84,7 +79,7 @@ public:
      *
      * @return Result of logical operation AND
      */
-    virtual bool visit_and(TreeNode const& node);
+    bool visit_and(tree_node const& node) override;
 
     /**
      * Visits tree node representing logical operation OR.
@@ -93,71 +88,46 @@ public:
      *
      * @return Result of logical operation OR
      */
-    virtual bool visit_or(TreeNode const& node);
+    bool visit_or(tree_node const& node) override;
 
     /**
-     * Visits tree node representing relational operation
-     * EQ (EQUAL TO).
+     * Visits tree node representing relational operation EQ (EQUAL TO).
      *
      * @param node Currently visited tree node
      *
      * @return Result of relational operation EQ
      */
-    virtual bool visit_eq(TreeNode const& node);
+    bool visit_eq(tree_node const& node) override;
 
     /**
-     * Visits tree node representing relational operation
-     * NEQ (NOT EQUAL TO).
+     * Visits tree node representing relational operation NEQ (NOT EQUAL TO).
      *
      * @param node Currently visited tree node
      *
      * @return Result of relational operation NEQ
      */
-    virtual bool visit_neq(TreeNode const& node);
+    bool visit_neq(tree_node const& node) override;
 
     /**
-     * Visits tree node representing relational operation
-     * GT (GREATER THAN).
+     * Visits tree node representing relational operation GT (GREATER THAN).
      *
      * @param node Currently visited tree node
      *
      * @return Result of relational operation GT
      */
-    virtual bool visit_gt(TreeNode const& node);
+    bool visit_gt(tree_node const& node) override;
 
     /**
-     * Visits tree node representing relational operation
-     * LT (LESS THAN).
+     * Visits tree node representing relational operation LT (LESS THAN).
      *
      * @param node Currently visited tree node
      *
      * @return Result of relational operation LT
      */
-    virtual bool visit_lt(TreeNode const& node);
+    bool visit_lt(tree_node const& node) override;
 
 private:
-    /**
-     * Extracts token from the left leaf node that represents
-     * actual field that gets evaluated.
-     *
-     * @param node Tree node to extract token from
-     *
-     * @return Field token
-     */
-    std::shared_ptr<token::FieldToken<>> left_field_token(TreeNode const& node);
-
-    /**
-     * Extracts token from the right leaf node that represents
-     * actual field that gets evaluated.
-     *
-     * @param node Tree node to extract token from
-     *
-     * @return Field token
-     */
-    std::shared_ptr<token::FieldToken<>> right_field_token(TreeNode const& node);
-
-private:
-    FieldMap fields_;
+    field_map fields_;
 };
 
 } // node

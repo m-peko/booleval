@@ -38,33 +38,32 @@ namespace booleval {
 namespace node {
 
 /**
- * class BaseVisitor
+ * class base_visitor
  *
- * This class is used as a base class for any
- * other visitor class. It contains set of functions
- * for visiting tree nodes of different type.
+ * Represents a base class for any other visitor class. It contains set of
+ * functions for visiting tree nodes of different types.
  */
 template <typename ReturnType>
-class BaseVisitor {
+class base_visitor {
 public:
-    BaseVisitor() = default;
-    BaseVisitor(BaseVisitor&& other) = default;
-    BaseVisitor(BaseVisitor const& other) = default;
+    base_visitor() = default;
+    base_visitor(base_visitor&& other) = default;
+    base_visitor(base_visitor const& other) = default;
 
-    BaseVisitor& operator=(BaseVisitor&& other) = default;
-    BaseVisitor& operator=(BaseVisitor const& other) = default;
+    base_visitor& operator=(base_visitor&& other) = default;
+    base_visitor& operator=(base_visitor const& other) = default;
 
-    ~BaseVisitor() = default;
+    ~base_visitor() = default;
 
     /**
-     * Visits tree node by checking token type and
-     * passing node itself to specialized visitor's function.
+     * Visits tree node by checking token type and passing node itself
+     * to specialized visitor's function.
      *
      * @param node Currently visited tree node
      *
      * @return ReturnType
      */
-    ReturnType visit(TreeNode const& node);
+    ReturnType visit(tree_node const& node);
 
     /**
      * Visits tree node representing logical operation AND.
@@ -73,7 +72,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_and(TreeNode const& node) = 0;
+    virtual ReturnType visit_and(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing logical operation OR.
@@ -82,68 +81,68 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_or(TreeNode const& node) = 0;
+    virtual ReturnType visit_or(tree_node const& node) = 0;
 
     /**
-     * Visits tree node representing relational operation
-     * EQ (EQUAL TO).
+     * Visits tree node representing relational operation EQ (EQUAL TO).
      *
      * @param node Currently visited tree node
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_eq(TreeNode const& node) = 0;
+    virtual ReturnType visit_eq(tree_node const& node) = 0;
 
     /**
-     * Visits tree node representing relational operation
-     * NEQ (NOT EQUAL TO).
+     * Visits tree node representing relational operation NEQ (NOT EQUAL TO).
      *
      * @param node Currently visited tree node
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_neq(TreeNode const& node) = 0;
+    virtual ReturnType visit_neq(tree_node const& node) = 0;
 
     /**
-     * Visits tree node representing relational operation
-     * GT (GREATER THAN).
+     * Visits tree node representing relational operation GT (GREATER THAN).
      *
      * @param node Currently visited tree node
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_gt(TreeNode const& node) = 0;
+    virtual ReturnType visit_gt(tree_node const& node) = 0;
 
     /**
-     * Visits tree node representing relational operation
-     * LT (LESS THAN).
+     * Visits tree node representing relational operation LT (LESS THAN).
      *
      * @param node Currently visited tree node
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_lt(TreeNode const& node) = 0;
+    virtual ReturnType visit_lt(tree_node const& node) = 0;
 };
 
 template <typename ReturnType>
-ReturnType BaseVisitor<ReturnType>::visit(TreeNode const& node) {
-    switch (node.token->type()) {
-    case token::TokenType::AND:
+ReturnType base_visitor<ReturnType>::visit(tree_node const& node) {
+    if (nullptr == node.left || nullptr == node.right) {
+        return ReturnType{};
+    }
+
+    switch (node.token.type()) {
+    case token::token_type::logical_and:
         return visit_and(node);
 
-    case token::TokenType::OR:
+    case token::token_type::logical_or:
         return visit_or(node);
 
-    case token::TokenType::EQ:
+    case token::token_type::eq:
         return visit_eq(node);
 
-    case token::TokenType::NEQ:
+    case token::token_type::neq:
         return visit_neq(node);
 
-    case token::TokenType::GT:
+    case token::token_type::gt:
         return visit_gt(node);
 
-    case token::TokenType::LT:
+    case token::token_type::lt:
         return visit_lt(node);
 
     default:
