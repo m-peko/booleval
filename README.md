@@ -8,7 +8,7 @@ Recursive descent parser for evaluating boolean expressions.
 
 Valid: `(field_a foo and field_b bar) or (field_a bar and field_b baz)`
 
-Invalid: `(field_a foo and field_b bar` _Note: Missing closing parenthesis_
+Invalid: `(field_a foo and field_b bar` _Note: Missing closing parentheses_
 
 ## Supported tokens
 

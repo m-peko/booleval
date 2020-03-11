@@ -78,11 +78,23 @@ public:
     bool has_tokens() const noexcept;
 
     /**
-     * Gets the next token.
+     * Passes the token by incrementing the current token index.
+     */
+    void pass_token() noexcept;
+
+    /**
+     * Gets the next token and increments the current token index.
      *
      * @return Next token
      */
     token const& next_token();
+
+    /**
+     * Gets the next token without incrementing the current token index.
+     *
+     * @return Next token
+     */
+    token const& weak_next_token();
 
     /**
      * Tokenizes the expression and transforms it into the collection of tokens.

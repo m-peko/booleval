@@ -51,8 +51,16 @@ bool tokenizer::has_tokens() const noexcept {
     return current_token_index_ < tokens_.size();
 }
 
+void tokenizer::pass_token() noexcept {
+    current_token_index_++;
+}
+
 token const& tokenizer::next_token() {
     return tokens_.at(current_token_index_++);
+}
+
+token const& tokenizer::weak_next_token() {
+    return tokens_.at(current_token_index_);
 }
 
 void tokenizer::tokenize() {

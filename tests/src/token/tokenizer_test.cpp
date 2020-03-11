@@ -81,26 +81,23 @@ TEST_F(TokenizerTest, TokenizeKeywordBasedExpression) {
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
 
-    auto foo_token = tokenizer.next_token();
-    EXPECT_TRUE(foo_token.is(token::token_type::field));
-    EXPECT_EQ(foo_token.value(), "foo");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "foo");
 
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_and));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::neq));
 
-    auto bar_token = tokenizer.next_token();
-    EXPECT_TRUE(bar_token.is(token::token_type::field));
-    EXPECT_EQ(bar_token.value(), "bar");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "bar");
 
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::rp));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_or));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::gt));
 
-    auto baz_token = tokenizer.next_token();
-    EXPECT_TRUE(baz_token.is(token::token_type::field));
-    EXPECT_EQ(baz_token.value(), "baz");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "baz");
 }
 
 TEST_F(TokenizerTest, TokenizeSymbolBasedExpression) {
@@ -119,24 +116,21 @@ TEST_F(TokenizerTest, TokenizeSymbolBasedExpression) {
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
 
-    auto foo_token = tokenizer.next_token();
-    EXPECT_TRUE(foo_token.is(token::token_type::field));
-    EXPECT_EQ(foo_token.value(), "foo");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "foo");
 
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_and));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::neq));
 
-    auto bar_token = tokenizer.next_token();
-    EXPECT_TRUE(bar_token.is(token::token_type::field));
-    EXPECT_EQ(bar_token.value(), "bar");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "bar");
 
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::rp));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_or));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::gt));
 
-    auto baz_token = tokenizer.next_token();
-    EXPECT_TRUE(baz_token.is(token::token_type::field));
-    EXPECT_EQ(baz_token.value(), "baz");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "baz");
 }
