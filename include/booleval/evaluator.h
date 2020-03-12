@@ -32,23 +32,29 @@
 
 #include <map>
 #include <memory>
-#include <string>
+#include <string_view>
 #include <booleval/node/tree_node.h>
 #include <booleval/node/result_visitor.h>
 #include <booleval/token/tokenizer.h>
 
 namespace booleval {
 
-class Evaluator {
+/**
+ * class evaluator
+ *
+ * Represents a class for evaluating logical expressions in a form of a string.
+ * It builds an expression tree and traverses that tree in order to evaluate fields.
+ */
+class evaluator {
 public:
-    Evaluator() = default;
-    Evaluator(Evaluator&& other) = default;
-    Evaluator(Evaluator const& other) = default;
+    evaluator();
+    evaluator(evaluator&& other) = default;
+    evaluator(evaluator const& other) = default;
 
-    Evaluator& operator=(Evaluator&& other) = default;
-    Evaluator& operator=(Evaluator const& other) = default;
+    evaluator& operator=(evaluator&& other) = default;
+    evaluator& operator=(evaluator const& other) = default;
 
-    ~Evaluator() = default;
+    ~evaluator() = default;
 
     /**
      * Checks whether the evaulation is activated or not, i.e.
@@ -65,17 +71,16 @@ public:
      *
      * @return True if the tree is successfully built, otherwise false
      */
-    bool build_expression_tree(std::string const& expression);
+    bool build_expression_tree(std::string_view expression);
 
     /**
      * Evaluates expression tree based on the key value map passed in.
      *
-     * @param fields Key value map that will be evaluated
+     * @param fields Key value map to be evaluated
      *
-     * @return True if the key value map satisfies expression,
-     *         otherwise false
+     * @return True if the key value map satisfies expression, otherwise false
      */
-    bool evaluate(std::map<std::string, std::string> const& fields);
+    bool evaluate(std::map<std::string_view, std::string_view> const& fields);
 
 private:
     /**
@@ -83,41 +88,41 @@ private:
      *
      * @return Root tree node for the current part of the expression
      */
-    std::shared_ptr<node::TreeNode> parse_expression();
+    std::shared_ptr<node::tree_node> parse_expression();
 
     /**
      * Parses logical operation AND.
      *
      * @return Root tree node for the current part of the expression
      */
-    std::shared_ptr<node::TreeNode> parse_and_operation();
+    std::shared_ptr<node::tree_node> parse_and_operation();
 
     /**
      * Parses new expression within parentheses.
      *
      * @return Root tree node for the parsed expression
      */
-    std::shared_ptr<node::TreeNode> parse_parentheses();
+    std::shared_ptr<node::tree_node> parse_parentheses();
 
     /**
      * Parses relational operation (EQ, NEQ, GT, LT, ...).
      *
      * @return Root tree node for the parsed operation
      */
-    std::shared_ptr<node::TreeNode> parse_relational_operation();
+    std::shared_ptr<node::tree_node> parse_relational_operation();
 
     /**
      * Parses terminal, i.e. field token.
      *
      * @return Leaf node
      */
-    std::shared_ptr<node::TreeNode> parse_terminal();
+    std::shared_ptr<node::tree_node> parse_terminal();
 
 private:
     bool is_activated_;
-    token::Tokenizer tokenizer_;
-    std::shared_ptr<node::TreeNode> root;
-    node::ResultVisitor result_visitor_;
+    token::tokenizer tokenizer_;
+    std::shared_ptr<node::tree_node> root_;
+    node::result_visitor result_visitor_;
 };
 
 } // booleval

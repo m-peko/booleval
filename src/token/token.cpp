@@ -27,42 +27,69 @@
  *
  */
 
-#include <gtest/gtest.h>
-#include <booleval/token/field_token.h>
+#include <booleval/token/token.h>
 #include <booleval/token/token_type.h>
 
-class FieldTokenTest : public testing::Test {};
+namespace booleval {
 
-TEST_F(FieldTokenTest, DefaultConstructor) {
-    using namespace booleval::token;
+namespace token {
 
-    FieldToken<> token;
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "");
+token::token() noexcept
+    : type_(token_type::unknown)
+{}
+
+token::token(token_type const type) noexcept
+    : type_(type),
+      value_(map_to_token_value(type))
+{}
+
+token::token(std::string_view const value) noexcept
+    : type_(map_to_token_type(value)),
+      value_(value)
+{}
+
+token::token(token_type const type, std::string_view const value) noexcept
+    : type_(type),
+      value_(value)
+{}
+
+bool token::operator==(token const& rhs) const noexcept {
+    return type_  == rhs.type_ &&
+           value_ == rhs.value_;
 }
 
-TEST_F(FieldTokenTest, ConstructorFromField) {
-    using namespace booleval::token;
-
-    FieldToken<> token("foo");
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "foo");
+void token::type(token_type const type) noexcept {
+    if (type != type_) {
+        type_ = type;
+        value_ = map_to_token_value(type);
+    }
 }
 
-TEST_F(FieldTokenTest, Type) {
-    using namespace booleval::token;
-
-    FieldToken<> token;
-    token.type(TokenType::AND);
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "");
+token_type token::type() const noexcept {
+    return type_;
 }
 
-TEST_F(FieldTokenTest, Field) {
-    using namespace booleval::token;
-
-    FieldToken<> token;
-    token.field("foo");
-    EXPECT_EQ(token.type(), TokenType::FIELD);
-    EXPECT_STREQ(token.field().c_str(), "foo");
+void token::value(std::string_view value) noexcept {
+    type_ = map_to_token_type(value);
+    value_ = value;
 }
+
+std::string_view token::value() const noexcept {
+    return value_;
+}
+
+bool token::is(token_type const type) const noexcept {
+    return type_ == type;
+}
+
+bool token::is_not(token_type const type) const noexcept {
+    return type_ != type;
+}
+
+bool token::is_one_of(token_type const first, token_type const second) const noexcept {
+    return is(first) || is(second);
+}
+
+} // token
+
+} // booleval

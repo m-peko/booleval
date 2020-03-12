@@ -27,84 +27,75 @@
  *
  */
 
-#include <algorithm>
 #include <booleval/token/tokenizer.h>
-#include <booleval/token/field_token.h>
-#include <booleval/utils/regex_pattern.h>
 #include <booleval/utils/string_utils.h>
 
 namespace booleval {
 
 namespace token {
 
-Tokenizer::Tokenizer(std::string const& expression) noexcept
+tokenizer::tokenizer(std::string_view expression) noexcept
     : expression_(expression),
       current_token_index_(0)
 {}
 
-Tokenizer& Tokenizer::operator++() {
-    current_token_index_++;
-    return *this;
-}
-
-Tokenizer Tokenizer::operator++(int) {
-    Tokenizer Tokenizer(*this);
-    ++*this;
-    return Tokenizer;
-}
-
-void Tokenizer::expression(std::string const& expression) noexcept {
+void tokenizer::expression(std::string_view expression) noexcept {
     expression_ = expression;
 }
 
-std::string const& Tokenizer::expression() const noexcept {
+std::string_view tokenizer::expression() const noexcept {
     return expression_;
 }
 
-bool Tokenizer::has_token() const noexcept {
+bool tokenizer::has_tokens() const noexcept {
     return current_token_index_ < tokens_.size();
 }
 
-std::shared_ptr<BaseToken> const& Tokenizer::token() const {
+void tokenizer::pass_token() noexcept {
+    current_token_index_++;
+}
+
+token const& tokenizer::next_token() {
+    return tokens_.at(current_token_index_++);
+}
+
+token const& tokenizer::weak_next_token() {
     return tokens_.at(current_token_index_);
 }
 
-void Tokenizer::tokenize() {
+void tokenizer::tokenize() {
+    tokens_.clear();
     reset();
 
-    auto raw_tokens = utils::split(expression_, build_regex_pattern());
-    auto token_type_expressions = BaseToken::type_expressions();
-
-    for (auto const& token : raw_tokens) {
-        auto search_result = token_type_expressions.find(token);
-        if (search_result != token_type_expressions.end()) {
-            tokens_.emplace_back(new BaseToken(search_result->second));
-        } else {
-            if (!tokens_.empty() && tokens_.back()->is(TokenType::FIELD)) {
-                tokens_.emplace_back(new BaseToken(TokenType::EQ));
-            }
-            tokens_.emplace_back(new FieldToken<>(token));
+    std::vector<char> single_char_symbols;
+    for (auto const& p : symbol_expressions) {
+        if (1 == p.first.length()) {
+            single_char_symbols.push_back(p.first.front());
         }
     }
-}
 
-void Tokenizer::reset() noexcept {
-    tokens_.clear();
-    current_token_index_ = 0;
-}
+    auto raw_tokens = utils::split(
+        expression_,
+        utils::join(std::begin(single_char_symbols),
+                    std::end(single_char_symbols)),
+        utils::split_options::include_whitespace |
+        utils::split_options::include_delimiters
+    );
 
-std::string Tokenizer::build_regex_pattern() const {
-    auto token_type_expressions = BaseToken::type_expressions();
+    for (auto const& token : raw_tokens) {
+        auto type = map_to_token_type(token);
+        if (token_type::field == type) {
+            if (!tokens_.empty() && tokens_.back().is(token_type::field)) {
+                tokens_.emplace_back(token_type::eq, map_to_token_value(token_type::eq));
+            }
+        }
 
-    utils::RegexPattern pattern;
-    pattern.match_whitespaces();
-
-    for (auto const& expression : token_type_expressions) {
-        pattern.logical_or()
-               .match_word(expression.first);
+        tokens_.emplace_back(type, token);
     }
+}
 
-    return pattern.to_string();
+void tokenizer::reset() noexcept {
+    current_token_index_ = 0;
 }
 
 } // token

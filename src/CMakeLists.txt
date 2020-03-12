@@ -10,10 +10,10 @@ set (
         node/result_visitor.cpp
         node/tree_node.cpp
 
-        token/base_token.cpp
+        token/token_type.cpp
+        token/token.cpp
         token/tokenizer.cpp
 
-        utils/regex_pattern.cpp
         utils/string_utils.cpp
 
         evaluator.cpp
@@ -25,12 +25,10 @@ set (
         ${BOOLEVAL_INCLUDE_DIR}/booleval/node/result_visitor.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/node/tree_node.h
 
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/base_token.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/field_token.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.h
 
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/regex_pattern.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.h

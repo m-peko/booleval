@@ -28,16 +28,19 @@
  */
 
 #include <booleval/evaluator.h>
-#include <booleval/token/base_token.h>
-#include <booleval/token/field_token.h>
+#include <booleval/token/token.h>
 
 namespace booleval {
 
-bool Evaluator::is_activated() const noexcept {
+evaluator::evaluator()
+    : is_activated_(false)
+{}
+
+bool evaluator::is_activated() const noexcept {
     return is_activated_;
 }
 
-bool Evaluator::build_expression_tree(std::string const& expression) {
+bool evaluator::build_expression_tree(std::string_view expression) {
     is_activated_ = false;
 
     tokenizer_.expression(expression);
@@ -47,79 +50,79 @@ bool Evaluator::build_expression_tree(std::string const& expression) {
         return true;
     }
 
-    root = parse_expression();
-    if (nullptr != root) {
+    root_ = parse_expression();
+    if (nullptr != root_) {
         is_activated_ = true;
     }
 
     return is_activated_;
 }
 
-bool Evaluator::evaluate(std::map<std::string, std::string> const& fields) {
+bool evaluator::evaluate(std::map<std::string_view, std::string_view> const& fields) {
     if (is_activated_) {
         result_visitor_.fields(fields);
-        return result_visitor_.visit(*root);
+        return result_visitor_.visit(*root_);
     } else {
         return true;
     }
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_expression() {
-    auto left_and_operation = parse_and_operation();
+std::shared_ptr<node::tree_node> evaluator::parse_expression() {
+    auto left = parse_and_operation();
 
-    if (tokenizer_.has_token() && tokenizer_.token()->is_not(token::TokenType::OR)) {
+    if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is_not(token::token_type::logical_or)) {
         return nullptr;
     }
 
-    while (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::OR)) {
-        auto or_operation = std::make_shared<node::TreeNode>(token::TokenType::OR);
-        tokenizer_++;
+    while (tokenizer_.has_tokens() && tokenizer_.next_token().is(token::token_type::logical_or)) {
+        auto logical_or = std::make_shared<node::tree_node>(token::token_type::logical_or);
 
-        auto right_and_operation = parse_and_operation();
-        or_operation->left = left_and_operation;
-        or_operation->right = right_and_operation;
-        left_and_operation = or_operation;
+        auto right = parse_and_operation();
+        logical_or->left  = left;
+        logical_or->right = right;
+        left = logical_or;
     }
 
-    return left_and_operation;
+    return left;
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_and_operation() {
-    std::shared_ptr<node::TreeNode> left_expression;
-    auto left_parentheses = parse_parentheses();
-    if (nullptr != left_parentheses) {
-        left_expression = left_parentheses;
+std::shared_ptr<node::tree_node> evaluator::parse_and_operation() {
+    std::shared_ptr<node::tree_node> left;
+    auto left_p = parse_parentheses();
+    if (nullptr != left_p) {
+        left = left_p;
     } else {
-        left_expression = parse_relational_operation();
+        left = parse_relational_operation();
     }
 
-    while (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::AND)) {
-        auto and_operation = std::make_shared<node::TreeNode>(token::TokenType::AND);
-        tokenizer_++;
+    while (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::logical_and)) {
+        tokenizer_.pass_token();
 
-        std::shared_ptr<node::TreeNode> right_expression;
-        auto right_parentheses = parse_parentheses();
-        if (nullptr != right_parentheses) {
-            right_expression = right_parentheses;
+        auto logical_and = std::make_shared<node::tree_node>(token::token_type::logical_and);
+
+        std::shared_ptr<node::tree_node> right;
+        auto right_p = parse_parentheses();
+        if (nullptr != right_p) {
+            right = right_p;
         } else {
-            right_expression = parse_relational_operation();
+            right = parse_relational_operation();
         }
 
-        and_operation->left = left_expression;
-        and_operation->right = right_expression;
-        left_expression = and_operation;
+        logical_and->left  = left;
+        logical_and->right = right;
+        left = logical_and;
     }
 
-    return left_expression;
+    return left;
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_parentheses() {
-    if (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::LP)) {
-        tokenizer_++;
+std::shared_ptr<node::tree_node> evaluator::parse_parentheses() {
+    if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::lp)) {
+        tokenizer_.pass_token();
 
         auto expression = parse_expression();
-        if (tokenizer_.has_token() && tokenizer_.token()->is(token::TokenType::RP)) {
-            tokenizer_++;
+        if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::rp)) {
+            tokenizer_.pass_token();
             return expression;
         }
     }
@@ -127,29 +130,26 @@ std::shared_ptr<node::TreeNode> Evaluator::parse_parentheses() {
     return nullptr;
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_relational_operation() {
-    auto left_terminal = parse_terminal();
-    if (tokenizer_.has_token()) {
-        auto operation = std::make_shared<node::TreeNode>(tokenizer_.token());
-        tokenizer_++;
+std::shared_ptr<node::tree_node> evaluator::parse_relational_operation() {
+    auto left = parse_terminal();
+    if (tokenizer_.has_tokens()) {
+        auto operation = std::make_shared<node::tree_node>(tokenizer_.next_token());
 
-        auto right_terminal = parse_terminal();
-        operation->left = left_terminal;
-        operation->right = right_terminal;
+        auto right = parse_terminal();
+        operation->left  = left;
+        operation->right = right;
         return operation;
     }
 
     return nullptr;
 }
 
-std::shared_ptr<node::TreeNode> Evaluator::parse_terminal() {
-    if (tokenizer_.has_token()) {
-        auto token = tokenizer_.token();
-        tokenizer_++;
+std::shared_ptr<node::tree_node> evaluator::parse_terminal() {
+    if (tokenizer_.has_tokens()) {
+        auto token = tokenizer_.next_token();
 
-        if (token->is(token::TokenType::FIELD)) {
-            auto field_token = std::dynamic_pointer_cast<token::FieldToken<>>(token);
-            return std::make_shared<node::TreeNode>(field_token);
+        if (token.is(token::token_type::field)) {
+            return std::make_shared<node::tree_node>(token);
         }
     }
 

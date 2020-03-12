@@ -27,7 +27,7 @@
  *
  */
 
-#include <regex>
+#include <string>
 #include <algorithm>
 #include <booleval/utils/string_utils.h>
 
@@ -35,66 +35,87 @@ namespace booleval {
 
 namespace utils {
 
-void ltrim(std::string& str) {
-    str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](int character) {
-        return !std::isspace(character);
-    }));
-}
-
-void rtrim(std::string& str) {
-    str.erase(std::find_if(str.rbegin(), str.rend(), [](int character) {
-        return !std::isspace(character);
-    }).base(), str.end());
-}
-
-void trim(std::string& str) {
-    ltrim(str);
-    rtrim(str);
-}
-
-std::string ltrim_copy(std::string str) {
-    ltrim(str);
-    return str;
-}
-
-std::string rtrim_copy(std::string str) {
-    rtrim(str);
-    return str;
-}
-
-std::string trim_copy(std::string str) {
-    trim(str);
-    return str;
-}
-
-bool is_empty(std::string const& str) {
-    return str.empty() || str.find_first_not_of(' ') == std::string::npos;
-}
-
-std::vector<std::string> split(std::string const& str, std::string const& pattern) {
-    std::regex regex(pattern,
-                     std::regex_constants::ECMAScript |
-                     std::regex_constants::icase);
-
-    std::vector<std::string> result(
-        std::sregex_token_iterator(str.begin(), str.end(), regex, {-1, 0}),
-        std::sregex_token_iterator()
+void ltrim(std::string_view& strv) {
+    strv.remove_prefix(
+        std::min(
+            strv.find_first_not_of(' '),
+            strv.size()
+        )
     );
+}
 
-    for (auto& token : result) {
-        trim(token);
+void rtrim(std::string_view& strv) {
+    strv.remove_suffix(
+        std::min(
+            strv.size() - strv.find_last_not_of(' ') - 1,
+            strv.size()
+        )
+    );
+}
+
+void trim(std::string_view& strv) {
+    ltrim(strv);
+    rtrim(strv);
+}
+
+std::string_view ltrim_copy(std::string_view strv) {
+    ltrim(strv);
+    return strv;
+}
+
+std::string_view rtrim_copy(std::string_view strv) {
+    rtrim(strv);
+    return strv;
+}
+
+std::string_view trim_copy(std::string_view strv) {
+    trim(strv);
+    return strv;
+}
+
+bool is_empty(std::string_view strv) {
+    return strv.empty() || std::string_view::npos == strv.find_first_not_of(' ');
+}
+
+std::vector<std::string_view> split(std::string_view strv, std::string_view delims, split_options const options) {
+    std::string delims_impl{ delims };
+    if (is_set(options, split_options::include_whitespace)) {
+        delims_impl.append(1, ' ');
     }
 
-    result.erase(
-        std::remove_if(
-            result.begin(),
-            result.end(),
-            [](std::string const& str) { return is_empty(str); }
-        ),
-        result.end()
-    );
+    std::vector<std::string_view> tokens;
 
-    return result;
+    auto first = std::begin(strv);
+    while (first != std::end(strv)) {
+        auto const second = std::find_first_of(
+            first, std::cend(strv),
+			std::cbegin(delims_impl), std::cend(delims_impl)
+        );
+
+		if (first != second) {
+			tokens.emplace_back(
+                strv.substr(
+                    std::distance(std::begin(strv), first),
+                    std::distance(first, second)
+                )
+            );
+		}
+
+		if (std::end(strv) == second) {
+			break;
+        }
+
+        if (is_set(options, split_options::include_delimiters)) {
+            std::string_view delim{ second, 1 };
+            if (!is_empty(delim)) {
+                tokens.emplace_back(delim);
+            }
+        }
+
+		first = std::next(second);
+	}
+
+	return tokens;
 }
 
 } // utils

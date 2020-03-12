@@ -33,13 +33,19 @@ namespace booleval {
 
 namespace node {
 
-TreeNode::TreeNode(token::TokenType const type)
-    : token(std::make_shared<token::BaseToken>(type)),
+tree_node::tree_node()
+    : token(token::token_type::unknown),
       left(nullptr),
       right(nullptr)
 {}
 
-TreeNode::TreeNode(std::shared_ptr<token::BaseToken> const& token)
+tree_node::tree_node(token::token_type const type)
+    : token(type),
+      left(nullptr),
+      right(nullptr)
+{}
+
+tree_node::tree_node(token::token const& token)
     : token(token),
       left(nullptr),
       right(nullptr)

@@ -33,72 +33,44 @@ namespace booleval {
 
 namespace node {
 
-void ResultVisitor::fields(FieldMap const& fields) noexcept {
+void result_visitor::fields(field_map const& fields) noexcept {
     fields_ = fields;
 }
 
-ResultVisitor::FieldMap const& ResultVisitor::fields() const noexcept {
+result_visitor::field_map const& result_visitor::fields() const noexcept {
     return fields_;
 }
 
-bool ResultVisitor::visit_and(TreeNode const& node) {
+bool result_visitor::visit_and(tree_node const& node) {
     return visit(*node.left) && visit(*node.right);
 }
 
-bool ResultVisitor::visit_or(TreeNode const& node) {
+bool result_visitor::visit_or(tree_node const& node) {
     return visit(*node.left) || visit(*node.right);
 }
 
-bool ResultVisitor::visit_eq(TreeNode const& node) {
-    auto key = left_field_token(node);
-    auto value = right_field_token(node);
-
-    if (nullptr != key && nullptr != value) {
-        return fields_[key->field()] == value->field();
-    } else {
-        return false;
-    }
+bool result_visitor::visit_eq(tree_node const& node) {
+    auto key = node.left->token;
+    auto value = node.right->token;
+    return fields_[key.value()] == value.value();
 }
 
-bool ResultVisitor::visit_neq(TreeNode const& node) {
-    auto key = left_field_token(node);
-    auto value = right_field_token(node);
-
-    if (nullptr != key && nullptr != value) {
-        return fields_[key->field()] != value->field();
-    } else {
-        return false;
-    }
+bool result_visitor::visit_neq(tree_node const& node) {
+    auto key = node.left->token;
+    auto value = node.right->token;
+    return fields_[key.value()] != value.value();
 }
 
-bool ResultVisitor::visit_gt(TreeNode const& node) {
-    auto key = left_field_token(node);
-    auto value = right_field_token(node);
-
-    if (nullptr != key && nullptr != value) {
-        return fields_[key->field()] > value->field();
-    } else {
-        return false;
-    }
+bool result_visitor::visit_gt(tree_node const& node) {
+    auto key = node.left->token;
+    auto value = node.right->token;
+    return fields_[key.value()] > value.value();
 }
 
-bool ResultVisitor::visit_lt(TreeNode const& node) {
-    auto key = left_field_token(node);
-    auto value = right_field_token(node);
-
-    if (nullptr != key && nullptr != value) {
-        return fields_[key->field()] < value->field();
-    } else {
-        return false;
-    }
-}
-
-std::shared_ptr<token::FieldToken<>> ResultVisitor::left_field_token(TreeNode const& node) {
-    return std::dynamic_pointer_cast<token::FieldToken<>>(node.left->token);
-}
-
-std::shared_ptr<token::FieldToken<>> ResultVisitor::right_field_token(TreeNode const& node) {
-    return std::dynamic_pointer_cast<token::FieldToken<>>(node.right->token);
+bool result_visitor::visit_lt(tree_node const& node) {
+    auto key = node.left->token;
+    auto value = node.right->token;
+    return fields_[key.value()] < value.value();
 }
 
 } // node

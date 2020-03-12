@@ -31,7 +31,7 @@
 #define BOOLEVAL_TREE_NODE_H
 
 #include <memory>
-#include <booleval/token/base_token.h>
+#include <booleval/token/token.h>
 #include <booleval/token/token_type.h>
 
 namespace booleval {
@@ -39,44 +39,26 @@ namespace booleval {
 namespace node {
 
 /**
- * struct TreeNode
+ * struct tree_node
  *
- * This struct represents the tree node containing
- * references to left and right child nodes as well
- * as the token that the node represents in the actual
- * expression tree.
+ * Represents the tree node containing references to left and right child nodes
+ * as well as the token that the node represents in the actual expression tree.
  */
-struct TreeNode {
-    std::shared_ptr<token::BaseToken> token;
-    std::shared_ptr<TreeNode> left;
-    std::shared_ptr<TreeNode> right;
+struct tree_node {
+    token::token token;
+    std::shared_ptr<tree_node> left;
+    std::shared_ptr<tree_node> right;
 
-    TreeNode() = default;
-    TreeNode(TreeNode&& other) = default;
-    TreeNode(TreeNode const& other) = default;
+    tree_node();
+    tree_node(tree_node&& other) = default;
+    tree_node(tree_node const& other) = default;
+    tree_node(token::token_type const type);
+    tree_node(token::token const& token);
 
-    /**
-     * Constructor from token type creates a tree
-     * node representing the token of specified type
-     * in the expression tree.
-     *
-     * @param type Token type
-     */
-    TreeNode(token::TokenType const type);
+    tree_node& operator=(tree_node&& other) = default;
+    tree_node& operator=(tree_node const& other) = default;
 
-    /**
-     * Constructor from token creates a tree node
-     * representing the specified token in the
-     * expression tree.
-     *
-     * @param token Base token
-     */
-    TreeNode(std::shared_ptr<token::BaseToken> const& token);
-
-    TreeNode& operator=(TreeNode&& other) = default;
-    TreeNode& operator=(TreeNode const& other) = default;
-
-    ~TreeNode() = default;
+    ~tree_node() = default;
 };
 
 } // node

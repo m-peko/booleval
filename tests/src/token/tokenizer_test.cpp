@@ -27,153 +27,110 @@
  *
  */
 
-#include <string>
+#include <string_view>
 #include <gtest/gtest.h>
-#include <booleval/token/field_token.h>
-#include <booleval/token/token_type.h>
 #include <booleval/token/tokenizer.h>
+#include <booleval/token/token_type.h>
 
 class TokenizerTest : public testing::Test {};
 
 TEST_F(TokenizerTest, ConstructorFromExpression) {
-    using namespace booleval::token;
+    using namespace booleval;
 
-    std::string expression = "field foo";
-
-    Tokenizer tokenizer(expression);
-    EXPECT_STREQ(tokenizer.expression().c_str(), expression.c_str());
-    EXPECT_FALSE(tokenizer.has_token());
+    std::string_view expression{ "field foo" };
+    token::tokenizer tokenizer(expression);
+    EXPECT_EQ(tokenizer.expression(), expression);
+    EXPECT_FALSE(tokenizer.has_tokens());
 }
 
 TEST_F(TokenizerTest, Expression) {
-    using namespace booleval::token;
+    using namespace booleval;
 
-    std::string expression = "field foo";
-
-    Tokenizer tokenizer;
+    std::string_view expression{ "field foo" };
+    token::tokenizer tokenizer;
     tokenizer.expression(expression);
-    EXPECT_STREQ(tokenizer.expression().c_str(), expression.c_str());
+    EXPECT_EQ(tokenizer.expression(), expression);
 }
 
 TEST_F(TokenizerTest, TokenizeEmptyExpression) {
-    using namespace booleval::token;
+    using namespace booleval;
 
-    std::string expression = "";
+    std::string_view expression;
 
-    Tokenizer tokenizer;
+    token::tokenizer tokenizer;
     tokenizer.expression(expression);
-    EXPECT_STREQ(tokenizer.expression().c_str(), expression.c_str());
+    EXPECT_EQ(tokenizer.expression(), expression);
 
     tokenizer.tokenize();
-    EXPECT_FALSE(tokenizer.has_token());
+    EXPECT_FALSE(tokenizer.has_tokens());
 }
 
-TEST_F(TokenizerTest, TokenizeExpression1) {
-    using namespace booleval::token;
+TEST_F(TokenizerTest, TokenizeKeywordBasedExpression) {
+    using namespace booleval;
 
-    std::string expression = "(field_a foo and field_b neq bar) or field_c greater baz";
+    std::string_view expression{ "(field_a foo and field_b neq bar) or field_c greater baz" };
 
-    Tokenizer tokenizer;
+    token::tokenizer tokenizer;
     tokenizer.expression(expression);
-    EXPECT_STREQ(tokenizer.expression().c_str(), expression.c_str());
+    EXPECT_EQ(tokenizer.expression(), expression);
 
     tokenizer.tokenize();
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::LP));
+    EXPECT_TRUE(tokenizer.has_tokens());
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::lp));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::EQ));
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "foo");
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-    auto foo_token = std::dynamic_pointer_cast<FieldToken<>>(tokenizer.token());
-    EXPECT_STREQ(foo_token->field().c_str(), "foo");
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_and));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::neq));
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::AND));
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "bar");
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::rp));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_or));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::gt));
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::NEQ));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-    auto bar_token = std::dynamic_pointer_cast<FieldToken<>>(tokenizer.token());
-    EXPECT_STREQ(bar_token->field().c_str(), "bar");
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::RP));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::OR));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::GT));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-    auto baz_token = std::dynamic_pointer_cast<FieldToken<>>(tokenizer.token());
-    EXPECT_STREQ(baz_token->field().c_str(), "baz");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "baz");
 }
 
-TEST_F(TokenizerTest, TokenizeExpression2) {
-    using namespace booleval::token;
+TEST_F(TokenizerTest, TokenizeSymbolBasedExpression) {
+    using namespace booleval;
 
-    std::string expression = "(field_a foo && field_b != bar) || field_c > baz";
+    std::string_view expression{ "(field_a foo && field_b != bar) || field_c > baz" };
 
-    Tokenizer tokenizer;
+    token::tokenizer tokenizer;
     tokenizer.expression(expression);
-    EXPECT_STREQ(tokenizer.expression().c_str(), expression.c_str());
+    EXPECT_EQ(tokenizer.expression(), expression);
 
     tokenizer.tokenize();
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::LP));
+    EXPECT_TRUE(tokenizer.has_tokens());
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::lp));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::EQ));
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "foo");
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-    auto foo_token = std::dynamic_pointer_cast<FieldToken<>>(tokenizer.token());
-    EXPECT_STREQ(foo_token->field().c_str(), "foo");
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_and));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::neq));
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::AND));
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "bar");
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::rp));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_or));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::gt));
 
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::NEQ));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-    auto bar_token = std::dynamic_pointer_cast<FieldToken<>>(tokenizer.token());
-    EXPECT_STREQ(bar_token->field().c_str(), "bar");
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::RP));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::OR));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::GT));
-
-    tokenizer++;
-    EXPECT_TRUE(tokenizer.token()->is(TokenType::FIELD));
-    auto baz_token = std::dynamic_pointer_cast<FieldToken<>>(tokenizer.token());
-    EXPECT_STREQ(baz_token->field().c_str(), "baz");
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "baz");
 }

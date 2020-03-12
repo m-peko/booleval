@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Marin Peko
+ * Copyright (c) 2020, Marin Peko
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,47 +27,43 @@
  *
  */
 
-#include <booleval/utils/regex_pattern.h>
+#include <algorithm>
+#include <booleval/token/token_type.h>
 
 namespace booleval {
 
-namespace utils {
+namespace token {
 
-RegexPattern& RegexPattern::logical_or() noexcept {
-    output_ << '|';
-    return *this;
-}
-
-RegexPattern& RegexPattern::match_whitespaces() noexcept {
-    match_expression("\\s+");
-    return *this;
-}
-
-RegexPattern& RegexPattern::match_expression(std::string const& expression) noexcept {
-    output_ << expression;
-    return *this;
-}
-
-RegexPattern& RegexPattern::match_word(std::string const& word) noexcept {
-    for (auto const character : word) {
-        if (!isalnum(character)) {
-            escape();
-        }
-
-        output_ << character;
+token_type map_to_token_type(std::string_view const value) {
+    auto keyword_search = keyword_expressions.find(value);
+    if (std::end(keyword_expressions) != keyword_search) {
+        return keyword_search->second;
     }
 
-    return *this;
+    auto symbol_search = symbol_expressions.find(value);
+    if (std::end(symbol_expressions) != symbol_search) {
+        return symbol_search->second;
+    }
+
+    return token_type::field;
 }
 
-std::string RegexPattern::to_string() const noexcept {
-    return output_.str();
+std::string_view map_to_token_value(token_type const type) {
+    auto keyword_search = std::find_if(
+        std::begin(keyword_expressions),
+        std::end(keyword_expressions),
+        [type](auto&& p) {
+            return p.second == type;
+        }
+    );
+
+    if (std::end(keyword_expressions) != keyword_search) {
+        return keyword_search->first;
+    }
+
+    return {};
 }
 
-void RegexPattern::escape() noexcept {
-    output_ << "\\";
-}
-
-} // utils
+} // token
 
 } // booleval

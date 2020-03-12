@@ -27,37 +27,60 @@
  *
  */
 
-#include <string>
 #include <gtest/gtest.h>
-#include <booleval/utils/regex_pattern.h>
 #include <booleval/utils/string_utils.h>
 
 class StringUtilsTest : public testing::Test {};
 
+TEST_F(StringUtilsTest, IsSetSplitOption) {
+    using namespace booleval::utils;
+
+    auto options = split_options::include_whitespace;
+    EXPECT_TRUE(is_set(options, split_options::include_whitespace));
+    EXPECT_FALSE(is_set(options, split_options::include_delimiters));
+    EXPECT_FALSE(is_set(options, split_options::exclude_delimiters));
+
+    options = split_options::include_whitespace |
+              split_options::include_delimiters;
+    EXPECT_TRUE(is_set(options, split_options::include_whitespace));
+    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
+    EXPECT_FALSE(is_set(options, split_options::exclude_delimiters));
+
+    options = split_options::include_whitespace |
+              split_options::include_delimiters |
+              split_options::exclude_delimiters;
+    EXPECT_TRUE(is_set(options, split_options::include_whitespace));
+    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
+    EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
+}
+
 TEST_F(StringUtilsTest, LeftTrim) {
     using namespace booleval::utils;
 
-    EXPECT_STREQ(ltrim_copy("abc").c_str(), "abc");
-    EXPECT_STREQ(ltrim_copy(" abc").c_str(), "abc");
-    EXPECT_STREQ(ltrim_copy("  abc").c_str(), "abc");
-    EXPECT_STREQ(ltrim_copy("  abc ").c_str(), "abc ");
+    EXPECT_EQ(ltrim_copy("abc"), "abc");
+    EXPECT_EQ(ltrim_copy(" abc"), "abc");
+    EXPECT_EQ(ltrim_copy("  abc"), "abc");
+    EXPECT_EQ(ltrim_copy("  abc "), "abc ");
+    EXPECT_EQ(ltrim_copy("  a b c "), "a b c ");
 }
 
 TEST_F(StringUtilsTest, RightTrim) {
     using namespace booleval::utils;
 
-    EXPECT_STREQ(rtrim_copy("abc").c_str(), "abc");
-    EXPECT_STREQ(rtrim_copy("abc ").c_str(), "abc");
-    EXPECT_STREQ(rtrim_copy("abc  ").c_str(), "abc");
-    EXPECT_STREQ(rtrim_copy(" abc  ").c_str(), " abc");
+    EXPECT_EQ(rtrim_copy("abc"), "abc");
+    EXPECT_EQ(rtrim_copy("abc "), "abc");
+    EXPECT_EQ(rtrim_copy("abc  "), "abc");
+    EXPECT_EQ(rtrim_copy(" abc  "), " abc");
+    EXPECT_EQ(rtrim_copy(" a b c  "), " a b c");
 }
 
 TEST_F(StringUtilsTest, Trim) {
     using namespace booleval::utils;
 
-    EXPECT_STREQ(trim_copy("abc").c_str(), "abc");
-    EXPECT_STREQ(trim_copy(" abc ").c_str(), "abc");
-    EXPECT_STREQ(trim_copy("  abc  ").c_str(), "abc");
+    EXPECT_EQ(trim_copy("abc"), "abc");
+    EXPECT_EQ(trim_copy(" abc "), "abc");
+    EXPECT_EQ(trim_copy("  abc  "), "abc");
+    EXPECT_EQ(trim_copy("  a b c  "), "a b c");
 }
 
 TEST_F(StringUtilsTest, IsEmpty) {
@@ -71,38 +94,83 @@ TEST_F(StringUtilsTest, IsEmpty) {
     EXPECT_FALSE(is_empty(" abc"));
     EXPECT_FALSE(is_empty("abc "));
     EXPECT_FALSE(is_empty(" abc "));
+    EXPECT_FALSE(is_empty(" a b c "));
 }
 
-TEST_F(StringUtilsTest, Split) {
+TEST_F(StringUtilsTest, SplitByWhitespace) {
     using namespace booleval::utils;
 
-    RegexPattern pattern;
-    pattern.match_whitespaces();
+    auto tokens = split("a b c d");
 
-    std::string expression = "foo and bar or baz";
-    auto tokens = split(expression, pattern.to_string());
-
-    EXPECT_STREQ(tokens[0].c_str(), "foo");
-    EXPECT_STREQ(tokens[1].c_str(), "and");
-    EXPECT_STREQ(tokens[2].c_str(), "bar");
-    EXPECT_STREQ(tokens[3].c_str(), "or");
-    EXPECT_STREQ(tokens[4].c_str(), "baz");
+    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens[0], "a");
+    EXPECT_EQ(tokens[1], "b");
+    EXPECT_EQ(tokens[2], "c");
+    EXPECT_EQ(tokens[3], "d");
 }
 
-TEST_F(StringUtilsTest, SplitIgnoreCase) {
+TEST_F(StringUtilsTest, SplitByComma) {
     using namespace booleval::utils;
 
-    RegexPattern pattern;
-    pattern.match_word("and")
-           .logical_or()
-           .match_word("or");
+    auto tokens = split("a,b,c,d", ",");
 
-    std::string expression = "foo AND bar OR baz";
-    auto tokens = split(expression, pattern.to_string());
+    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens[0], "a");
+    EXPECT_EQ(tokens[1], "b");
+    EXPECT_EQ(tokens[2], "c");
+    EXPECT_EQ(tokens[3], "d");
+}
 
-    EXPECT_STREQ(tokens[0].c_str(), "foo");
-    EXPECT_STREQ(tokens[1].c_str(), "AND");
-    EXPECT_STREQ(tokens[2].c_str(), "bar");
-    EXPECT_STREQ(tokens[3].c_str(), "OR");
-    EXPECT_STREQ(tokens[4].c_str(), "baz");
+TEST_F(StringUtilsTest, SplitByMultipleDelimiters) {
+    using namespace booleval::utils;
+
+    auto tokens = split("a,b.c,d.", ".,");
+
+    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens[0], "a");
+    EXPECT_EQ(tokens[1], "b");
+    EXPECT_EQ(tokens[2], "c");
+    EXPECT_EQ(tokens[3], "d");
+}
+
+TEST_F(StringUtilsTest, SplitIncludeDelimitersOption) {
+    using namespace booleval::utils;
+
+    auto tokens = split("a,b.", ".,", split_options::include_delimiters);
+
+    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens[0], "a");
+    EXPECT_EQ(tokens[1], ",");
+    EXPECT_EQ(tokens[2], "b");
+    EXPECT_EQ(tokens[3], ".");
+}
+
+TEST_F(StringUtilsTest, SplitMultipleOptions) {
+    using namespace booleval::utils;
+
+    auto options = split_options::include_whitespace |
+                   split_options::include_delimiters;
+    auto tokens = split("a , b .", ".,", options);
+
+    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens[0], "a");
+    EXPECT_EQ(tokens[1], ",");
+    EXPECT_EQ(tokens[2], "b");
+    EXPECT_EQ(tokens[3], ".");
+}
+
+TEST_F(StringUtilsTest, JoinWithoutSeparator) {
+    using namespace booleval::utils;
+
+    auto tokens = { "a", "b", "c", "d" };
+    auto result = join(std::begin(tokens), std::end(tokens));
+    EXPECT_EQ(result, "abcd");
+}
+
+TEST_F(StringUtilsTest, JoinWithCommaSeparator) {
+    using namespace booleval::utils;
+
+    auto tokens = { "a", "b", "c", "d" };
+    auto result = join(std::begin(tokens), std::end(tokens), ",");
+    EXPECT_EQ(result, "a,b,c,d");
 }

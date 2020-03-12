@@ -27,52 +27,40 @@
  *
  */
 
-#include <string>
 #include <gtest/gtest.h>
 #include <booleval/evaluator.h>
 
 class EvaluatorTest : public testing::Test {};
 
+TEST_F(EvaluatorTest, DefaultConstructor) {
+    booleval::evaluator evaluator;
+    EXPECT_FALSE(evaluator.is_activated());
+}
+
 TEST_F(EvaluatorTest, EmptyExpression) {
-    using namespace booleval;
-
-    std::string expression = "";
-
-    Evaluator evaluator;
-    EXPECT_TRUE(evaluator.build_expression_tree(expression));
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree(""));
     EXPECT_FALSE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate({}));
 }
 
-TEST_F(EvaluatorTest, MissingParenthesisExpression) {
-    using namespace booleval;
-
-    Evaluator evaluator;
-
-    std::string missing_parenthesis_expression = "(field_a foo or field_b bar";
-    EXPECT_FALSE(evaluator.build_expression_tree(missing_parenthesis_expression));
+TEST_F(EvaluatorTest, MissingClosingParenthesesExpression) {
+    booleval::evaluator evaluator;
+    EXPECT_FALSE(evaluator.build_expression_tree("(field_a foo or field_b bar"));
     EXPECT_FALSE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate({}));
 }
 
 TEST_F(EvaluatorTest, MultipleFieldsExpression) {
-    using namespace booleval;
-
-    Evaluator evaluator;
-
-    std::string multiple_fields_in_row_expression = "field_a foo field_b";
-    EXPECT_FALSE(evaluator.build_expression_tree(multiple_fields_in_row_expression));
+    booleval::evaluator evaluator;
+    EXPECT_FALSE(evaluator.build_expression_tree("field_a foo field_b"));
     EXPECT_FALSE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate({}));
 }
 
 TEST_F(EvaluatorTest, ValidExpression) {
-    using namespace booleval;
-
-    std::string expression = "field_a foo and field_b bar";
-
-    Evaluator evaluator;
-    EXPECT_TRUE(evaluator.build_expression_tree(expression));
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a foo and field_b bar"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate({
         { "field_a", "foo" },
