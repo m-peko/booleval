@@ -97,7 +97,7 @@ public:
      */
     template <typename T,
               typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-    std::optional<T> value_as() const noexcept;
+    std::optional<T> value() const noexcept;
 
     /**
      * Gets the token value as a floating point value.
@@ -107,7 +107,7 @@ public:
      */
     template <typename T,
               typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-    std::optional<T> value_as() const noexcept;
+    std::optional<T> value() const noexcept;
 
     /**
      * Checks whether the token is of the specified type.
@@ -145,7 +145,7 @@ private:
 
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-std::optional<T> token::value_as() const noexcept {
+std::optional<T> token::value() const noexcept {
     T value{};
 
     auto const result = std::from_chars(
@@ -163,7 +163,7 @@ std::optional<T> token::value_as() const noexcept {
 
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-std::optional<T> token::value_as() const noexcept {
+std::optional<T> token::value() const noexcept {
     T value{};
 
     std::stringstream ss;
