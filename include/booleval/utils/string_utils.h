@@ -52,71 +52,64 @@ enum class split_options : uint8_t {
 };
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum<Enum>::value, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator|(Enum lhs, Enum rhs) {
-    using underlying_type = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(
-        static_cast<underlying_type>(lhs) |
-        static_cast<underlying_type>(rhs)
+        static_cast<std::underlying_type_t<Enum>>(lhs) |
+        static_cast<std::underlying_type_t<Enum>>(rhs)
     );
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum<Enum>::value, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator&(Enum lhs, Enum rhs) {
-    using underlying_type = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(
-        static_cast<underlying_type>(lhs) &
-        static_cast<underlying_type>(rhs)
+        static_cast<std::underlying_type_t<Enum>>(lhs) &
+        static_cast<std::underlying_type_t<Enum>>(rhs)
     );
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum<Enum>::value, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator^(Enum lhs, Enum rhs) {
-    using underlying_type = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(
-        static_cast<underlying_type>(lhs) ^
-        static_cast<underlying_type>(rhs)
+        static_cast<std::underlying_type_t<Enum>>(lhs) ^
+        static_cast<std::underlying_type_t<Enum>>(rhs)
     );
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum<Enum>::value, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator~(Enum rhs) {
-    using underlying_type = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(
-        ~static_cast<underlying_type>(rhs)
+        ~static_cast<std::underlying_type_t<Enum>>(rhs)
     );
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum<Enum>::value, Enum>&
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
 operator|=(Enum& lhs, Enum rhs) {
-    using underlying_type = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(
-        static_cast<underlying_type>(lhs) |
-        static_cast<underlying_type>(rhs)
+        static_cast<std::underlying_type_t<Enum>>(lhs) |
+        static_cast<std::underlying_type_t<Enum>>(rhs)
     );
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum<Enum>::value, Enum>&
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
 operator&=(Enum& lhs, Enum rhs) {
-    using underlying_type = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(
-        static_cast<underlying_type>(lhs) &
-        static_cast<underlying_type>(rhs)
+        static_cast<std::underlying_type_t<Enum>>(lhs) &
+        static_cast<std::underlying_type_t<Enum>>(rhs)
     );
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum<Enum>::value, Enum>&
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
 operator^=(Enum& lhs, Enum rhs) {
-    using underlying_type = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(
-        static_cast<underlying_type>(lhs) ^
-        static_cast<underlying_type>(rhs)
+        static_cast<std::underlying_type_t<Enum>>(lhs) ^
+        static_cast<std::underlying_type_t<Enum>>(rhs)
     );
 }
 
@@ -130,7 +123,7 @@ operator^=(Enum& lhs, Enum rhs) {
  * @return True if the bits are present, false otherwise
  */
 template <typename Enum,
-          typename = std::enable_if_t<std::is_enum<Enum>::value>>
+          typename std::enable_if_t<std::is_enum_v<Enum>>* = nullptr>
 constexpr bool is_set(Enum lhs, Enum rhs) {
     return (lhs & rhs) == lhs ||
            (lhs & rhs) == rhs;
