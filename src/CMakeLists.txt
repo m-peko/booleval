@@ -10,8 +10,8 @@ set (
         node/result_visitor.cpp
         node/tree_node.cpp
 
-        token/token_type.cpp
         token/token.cpp
+        token/token_type.cpp
         token/tokenizer.cpp
 
         utils/string_utils.cpp
@@ -25,8 +25,8 @@ set (
         ${BOOLEVAL_INCLUDE_DIR}/booleval/node/result_visitor.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/node/tree_node.h
 
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.h
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h
