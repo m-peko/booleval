@@ -30,7 +30,11 @@
 #ifndef BOOLEVAL_TOKEN_H
 #define BOOLEVAL_TOKEN_H
 
+#include <sstream>
+#include <charconv>
+#include <optional>
 #include <string_view>
+#include <type_traits>
 #include <booleval/token/token_type.h>
 
 namespace booleval {
@@ -86,6 +90,26 @@ public:
     std::string_view value() const noexcept;
 
     /**
+     * Gets the token value as an integral value.
+     * If value cannot be parsed, std::nullopt is returned.
+     *
+     * @return Optional token value
+     */
+    template <typename T,
+              typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+    std::optional<T> value_as() const noexcept;
+
+    /**
+     * Gets the token value as a floating point value.
+     * If value cannot be parsed, std::nullopt is returned.
+     *
+     * @return Optional token value
+     */
+    template <typename T,
+              typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+    std::optional<T> value_as() const noexcept;
+
+    /**
      * Checks whether the token is of the specified type.
      *
      * @return True if the token is of the specified type, false otherwise
@@ -118,6 +142,40 @@ private:
     token_type type_;
     std::string_view value_;
 };
+
+template <typename T,
+          typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+std::optional<T> token::value_as() const noexcept {
+    T value{};
+
+    auto const result = std::from_chars(
+        value_.data(),
+        value_.data() + value_.size(),
+        value
+    );
+
+    if (std::errc() == result.ec) {
+        return value;
+    }
+
+    return std::nullopt;
+}
+
+template <typename T,
+          typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+std::optional<T> token::value_as() const noexcept {
+    T value{};
+
+    std::stringstream ss;
+    ss << value_;
+    ss >> value;
+
+    if (ss.fail()) {
+        return std::nullopt;
+    }
+
+    return value;
+}
 
 template <typename... TokenType>
 bool token::is_one_of(token_type const first, token_type const second, TokenType const ... nth) const noexcept {

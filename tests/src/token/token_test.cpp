@@ -80,6 +80,39 @@ TEST_F(TokenTest, Value) {
     EXPECT_EQ(token.value(), "field");
 }
 
+TEST_F(TokenTest, ValueAsInt) {
+    using namespace booleval;
+
+    token::token token;
+    token.value("1");
+    EXPECT_EQ(token.value_as<uint8_t>(), 1U);
+
+    token.value("a");
+    EXPECT_EQ(token.value_as<uint8_t>(), std::nullopt);
+}
+
+TEST_F(TokenTest, ValueAsDouble) {
+    using namespace booleval;
+
+    token::token token;
+    token.value("1.23456789");
+    EXPECT_DOUBLE_EQ(token.value_as<double>().value(), 1.23456789);
+
+    token.value("a");
+    EXPECT_EQ(token.value_as<double>(), std::nullopt);
+}
+
+TEST_F(TokenTest, ValueAsFloat) {
+    using namespace booleval;
+
+    token::token token;
+    token.value("1.23456789");
+    EXPECT_FLOAT_EQ(token.value_as<float>().value(), 1.23456789);
+
+    token.value("a");
+    EXPECT_EQ(token.value_as<float>(), std::nullopt);
+}
+
 TEST_F(TokenTest, IsType) {
     using namespace booleval;
 
