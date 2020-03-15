@@ -171,14 +171,14 @@ int main() {
             "field_b": pass_obj.field_b
         });
 
-        std::cout << std::boolalpha << passes << std::endl;
+        std::cout << std::boolalpha << passes << std::endl;  // output: true
 
         auto fails = evaluator.evaluate({
             "field_a": fail_obj.field_a,
             "field_b": fail_obj.field_b
         });
 
-        std::cout << std::boolalpha << fails << std::endl;
+        std::cout << std::boolalpha << fails << std::endl;   // output: false
     } else {
         std::cerr << "Evaluator is not activated!" << std::endl;
     }
