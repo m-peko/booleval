@@ -6,8 +6,6 @@ Small C++17 library for evaluating logical expressions.
 
 The library is under development and subject to change. Contributions are welcome. You can also log an issue if you have a wish for enhancement or if you spot a bug.
 
----
-
 ## Overview
 
 1. [About](#about)
@@ -18,8 +16,6 @@ The library is under development and subject to change. Contributions are welcom
 6. [Tests](#tests)
 7. [Example](#example)
 
----
-
 <a name="about"></a>
 
 ## About
@@ -27,11 +23,11 @@ The library is under development and subject to change. Contributions are welcom
 `booleval` is a small C++17 library for evaluating logical expressions. It implements recursive descent parser mechanism for building an expression tree for a user-defined logical expression. After the expression tree is being built, map of fields and values representing a certain object can be passed to the `evaluator` component of this library which will evaluate those values to `true` or `false` according to the user-defined logical expression.
 
 <br/>
-<img src="docs/booleval.png"/>
+<p align="center">
+    <img src="docs/booleval.png"/>
+</p>
 <br/>
 <br/>
-
----
 
 <a name="motivation"></a>
 
@@ -40,8 +36,6 @@ The library is under development and subject to change. Contributions are welcom
 Providing an end-user a functionality of specifying a logical expression is a common way of filtering out a large amounts of objects. E.g. [`tcpdump`](https://www.tcpdump.org/manpages/tcpdump.1.html) and [BPF](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (Berkeley Packet Filter), network tools available on most UNIX-like operating systems, have pretty much the same syntax for their filter expression.
 
 Due to the missing reflection feature in C++ which would make this feature far more easier to implement, a library like this needs to be implemented.
-
----
 
 <a name="specification"></a>
 
@@ -77,8 +71,6 @@ Equality operator is a default operator between two fields. Thus, it does not ne
 |LEFT parentheses|&empty;|(|
 |RIGHT parentheses|&empty;|)|
 
----
-
 <a name="requirements"></a>
 
 ## Requirements
@@ -86,8 +78,6 @@ Equality operator is a default operator between two fields. Thus, it does not ne
 `booleval` project requires C++17 compiler and has been tested on GCC 8.3.0.
 
 There are no 3rd party dependencies.
-
----
 
 <a name="compilation"></a>
 
@@ -106,8 +96,6 @@ $ cmake ../
 $ # compile
 $ make
 ```
-
----
 
 <a name="tests"></a>
 
@@ -139,8 +127,6 @@ issue tracker indicating the following information:
 - architecture
 - library version
 - minimal reproducible example
-
----
 
 <a name="example"></a>
 
