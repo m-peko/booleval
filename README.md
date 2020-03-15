@@ -2,75 +2,156 @@
 
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/m-peko/booleval/blob/master/LICENSE) [![Build status](https://ci.appveyor.com/api/projects/status/gusrrn0mn67q2yaj?svg=true)](https://ci.appveyor.com/project/m-peko/booleval)
 
-Recursive descent parser for evaluating boolean expressions.
+Small C++17 library for evaluating logical expressions.
 
-## Expression
+The library is under development and subject to change. Contributions are welcome. You can also log an issue if you have a wish for enhancement or if you spot a bug.
 
-Valid: `(field_a foo and field_b bar) or (field_a bar and field_b baz)`
+---
 
-Invalid: `(field_a foo and field_b bar` _Note: Missing closing parentheses_
+## Overview
 
-## Supported tokens
+1. [About](#about)
+2. [Motivation](#motivation)
+3. [Specification](#specification)
+4. [Requirements](#requirements)
+5. [Compilation](#compilation)
+6. [Tests](#tests)
+7. [Example](#example)
 
-Logical operators: `and` / `&&`, `or` / `||`
+---
 
-Relational operators: `neq` / `!=`, `greater` / `>`, `less` / `<` *
+<a name="about"></a>
 
-_* Note: Equality operator does not have a corresponding token. Instead it is a default operator between two fields._
+## About
 
-Parentheses: `(`, `)`
+`booleval` is a small C++17 library for evaluating logical expressions. It implements recursive descent parser mechanism for building an expression tree for a user-defined logical expression. After the expression tree is being built, map of fields and values representing a certain object can be passed to the `evaluator` component of this library which will evaluate those values to `true` or `false` according to the user-defined logical expression.
 
-## Compiling
+<br/>
+<img src="docs/booleval.png"/>
+<br/>
+<br/>
 
-In order to compile, execute:
+---
+
+<a name="motivation"></a>
+
+## Motivation
+
+Providing an end-user a functionality of specifying a logical expression is a common way of filtering out a large amounts of objects. E.g. [`tcpdump`](https://www.tcpdump.org/manpages/tcpdump.1.html) and [BPF](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (Berkeley Packet Filter), network tools available on most UNIX-like operating systems, have pretty much the same syntax for their filter expression.
+
+Due to the missing reflection feature in C++ which would make this feature far more easier to implement, a library like this needs to be implemented.
+
+---
+
+<a name="specification"></a>
+
+## Specification
+
+Logical expression that checks whether a field with the name `field_a` has a value of `foo` can be constructed in a two different ways:
+
+- EQUAL TO operator is specified in the expression: `field_a eq foo`
+- EQUAL TO operator is **not** specified in the expression: `field_a foo`
+
+Equality operator is a default operator between two fields. Thus, it does not need to be specified in the logical expression.
+
+### Examples of valid expressions
+- `(field_a foo and field_b bar) or field_a bar`
+- `(field_a eq foo and field_b eq bar) or field_a eq bar`
+
+### Examples of invalid expressions
+- `(field_a foo and field_b bar` _Note: Missing closing parentheses_
+- `field_a foo bar` _Note: Two field values in a row_
+
+### Supported tokens
+
+|Name|Keyword|Symbol|
+|:---:|:---:|:---:|
+|AND operator|AND / and|&&|
+|OR operator|OR / or|\| \||
+|EQUAL TO operator|EQ / eq|!=|
+|NOT EQUAL TO operator|NEQ / neq|!=|
+|GREATER THAN operator|GT / gt|>|
+|LESS THAN operator|LT / lt|<|
+|GREATER THAN OR EQUAL TO operator|GEQ / geq|>=|
+|LESS THAN OR EQUAL TO operator|LEQ / leq|<=|
+|LEFT parentheses|&empty;|(|
+|RIGHT parentheses|&empty;|)|
+
+---
+
+<a name="requirements"></a>
+
+## Requirements
+
+`booleval` project requires C++17 compiler and has been tested on GCC 8.3.0.
+
+There are no 3rd party dependencies.
+
+---
+
+<a name="compilation"></a>
+
+## Compilation
+
+In order to compile the library, run the following commands:
 
 ```Shell
-# create the build directory
-mkdir build
-cd build
+$ # create the build directory
+$ mkdir build
+$ cd build
 
-# configure the project
-cmake ../
+$ # configure the project
+$ cmake ../
 
-# compile
-make
+$ # compile
+$ make
 ```
 
-## Running tests
+---
 
-In order to run unit tests, please execute following commands:
+<a name="tests"></a>
+
+## Tests
+
+In order to run unit tests, run the following commands:
 
 ```Shell
-# fetch the googletest submodule, needed for tests
-git submodule init
-git submodule update
+$ # fetch the googletest submodule, needed for tests
+$ git submodule init
+$ git submodule update
 
-mkdir build
-cd build
+$ mkdir build
+$ cd build
 
-# configure the project
-cmake ..
+$ # configure the project
+$ cmake ..
 
-# compile tests
-make tests
+$ # compile tests
+$ make tests
 
-# run tests
-make test
+$ # run tests
+$ make test
 ```
 
-If you find that any tests fail, please create a ticket in the
-issue tracker indicating the platform and architecture you're using.
+If you find that any tests **fail**, please create a ticket in the
+issue tracker indicating the following information:
+- platform
+- architecture
+- library version
+- minimal reproducible example
+
+---
+
+<a name="example"></a>
 
 ## Example
 
-```c++
-#include <map>
-#include <string>
-#include <iostream>
-#include <booleval/evaluator.h>
+Let's say we have a large number of objects coming through our interface. Objects can be specified as following:
 
+```c++
 struct Object {
-    Object(std::string const& a, std::string const& b)
+    Object(std::string const& a,
+           std::string const& b)
         : field_a(a),
           field_b(b)
     {}
@@ -78,10 +159,18 @@ struct Object {
     std::string field_a;
     std::string field_b;
 };
+```
+
+In our application, we want to let end-users to specify some sort of a rule which will filter out only those objects that contain certain field values. This rule can have a form of a following logical expression `field_a foo and field_b bar`. Now, we can use `booleval::evaluator` component to check whether objects conform specified rule.
+
+```c++
+#include <string>
+#include <iostream>
+#include <booleval/evaluator.h>
 
 int main() {
-    Object valid_obj("foo", "bar");
-    Object invalid_obj("bar", "baz");
+    Object pass_obj("foo", "bar");
+    Object fail_obj("bar", "baz");
 
     booleval::Evaluator evaluator;
 
@@ -91,13 +180,19 @@ int main() {
     }
 
     if (evaluator.is_activated()) {
-        // 'valid_obj' satisfies expression
-        // output: 1 i.e. true
-        std::cout << evaluator.evaluate({ "field_a": valid_obj.field_a, "field_b": valid_obj.field_b }) << std::endl;
-        
-        // 'invalid_obj' does not satisfy expression
-        // output: 0 i.e. false
-        std::cout << evaluator.evaluate({ "field_a": invalid_obj.field_a, "field_b": invalid_obj.field_b }) << std::endl;
+        auto passes = evaluator.evaluate({
+            "field_a": pass_obj.field_a,
+            "field_b": pass_obj.field_b
+        });
+
+        std::cout << std::boolalpha << passes << std::endl;
+
+        auto fails = evaluator.evaluate({
+            "field_a": fail_obj.field_a,
+            "field_b": fail_obj.field_b
+        });
+
+        std::cout << std::boolalpha << fails << std::endl;
     } else {
         std::cerr << "Evaluator is not activated!" << std::endl;
     }
