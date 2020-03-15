@@ -58,9 +58,9 @@ TEST_F(EvaluatorTest, MultipleFieldsExpression) {
     EXPECT_TRUE(evaluator.evaluate({}));
 }
 
-TEST_F(EvaluatorTest, ValidExpression) {
+TEST_F(EvaluatorTest, EqualToOperator) {
     booleval::evaluator evaluator;
-    EXPECT_TRUE(evaluator.build_expression_tree("field_a foo and field_b bar"));
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a foo and field_b eq bar"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate({
         { "field_a", "foo" },

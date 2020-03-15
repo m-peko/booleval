@@ -126,6 +126,24 @@ public:
      */
     bool visit_lt(tree_node const& node) override;
 
+    /**
+     * Visits tree node representing relational operation GEQ (GREATER THAN OR EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of relational operation GT
+     */
+    bool visit_geq(tree_node const& node) override;
+
+    /**
+     * Visits tree node representing relational operation LEQ (LESS THAN OR EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return Result of relational operation LT
+     */
+    bool visit_leq(tree_node const& node) override;
+
 private:
     field_map fields_;
 };

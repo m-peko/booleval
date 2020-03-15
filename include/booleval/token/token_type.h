@@ -57,22 +57,26 @@ enum class token_type : uint8_t {
     neq = 5,
     gt  = 6,
     lt  = 7,
+    geq = 8,
+    leq = 9,
 
     // Parentheses
-    lp = 8,
-    rp = 9
+    lp = 10,
+    rp = 11
 };
 
 inline std::unordered_map<
     std::string_view,
     token_type
 > const keyword_expressions = {
-    { "and",     token_type::logical_and },
-    { "or",      token_type::logical_or  },
-    { "eq",      token_type::eq  },
-    { "neq",     token_type::neq },
-    { "greater", token_type::gt  },
-    { "less",    token_type::lt  }
+    { "and", token_type::logical_and },
+    { "or",  token_type::logical_or  },
+    { "eq",  token_type::eq  },
+    { "neq", token_type::neq },
+    { "gt",  token_type::gt  },
+    { "lt",  token_type::lt  },
+    { "geq", token_type::geq },
+    { "leq", token_type::leq }
 };
 
 inline std::unordered_map<
@@ -85,6 +89,8 @@ inline std::unordered_map<
     { "!=", token_type::neq },
     { ">",  token_type::gt  },
     { "<",  token_type::lt  },
+    { ">=", token_type::geq },
+    { "<=", token_type::leq },
     { "(",  token_type::lp  },
     { ")",  token_type::rp  }
 };
