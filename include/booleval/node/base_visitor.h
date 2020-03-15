@@ -118,6 +118,24 @@ public:
      * @return ReturnType
      */
     virtual ReturnType visit_lt(tree_node const& node) = 0;
+
+    /**
+     * Visits tree node representing relational operation GEQ (GREATER THAN OR EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
+    virtual ReturnType visit_geq(tree_node const& node) = 0;
+
+    /**
+     * Visits tree node representing relational operation LEQ (LESS THAN OR EQUAL TO).
+     *
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
+     */
+    virtual ReturnType visit_leq(tree_node const& node) = 0;
 };
 
 template <typename ReturnType>
@@ -144,6 +162,12 @@ ReturnType base_visitor<ReturnType>::visit(tree_node const& node) {
 
     case token::token_type::lt:
         return visit_lt(node);
+
+    case token::token_type::geq:
+        return visit_geq(node);
+
+    case token::token_type::leq:
+        return visit_leq(node);
 
     default:
         return ReturnType{};

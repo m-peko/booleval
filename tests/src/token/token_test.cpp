@@ -85,10 +85,10 @@ TEST_F(TokenTest, ValueAsInt) {
 
     token::token token;
     token.value("1");
-    EXPECT_EQ(token.value_as<uint8_t>(), 1U);
+    EXPECT_EQ(token.value<uint8_t>(), 1U);
 
     token.value("a");
-    EXPECT_EQ(token.value_as<uint8_t>(), std::nullopt);
+    EXPECT_EQ(token.value<uint8_t>(), std::nullopt);
 }
 
 TEST_F(TokenTest, ValueAsDouble) {
@@ -96,10 +96,10 @@ TEST_F(TokenTest, ValueAsDouble) {
 
     token::token token;
     token.value("1.23456789");
-    EXPECT_DOUBLE_EQ(token.value_as<double>().value(), 1.23456789);
+    EXPECT_DOUBLE_EQ(token.value<double>().value(), 1.23456789);
 
     token.value("a");
-    EXPECT_EQ(token.value_as<double>(), std::nullopt);
+    EXPECT_EQ(token.value<double>(), std::nullopt);
 }
 
 TEST_F(TokenTest, ValueAsFloat) {
@@ -107,10 +107,10 @@ TEST_F(TokenTest, ValueAsFloat) {
 
     token::token token;
     token.value("1.23456789");
-    EXPECT_FLOAT_EQ(token.value_as<float>().value(), 1.23456789);
+    EXPECT_FLOAT_EQ(token.value<float>().value(), 1.23456789);
 
     token.value("a");
-    EXPECT_EQ(token.value_as<float>(), std::nullopt);
+    EXPECT_EQ(token.value<float>(), std::nullopt);
 }
 
 TEST_F(TokenTest, IsType) {

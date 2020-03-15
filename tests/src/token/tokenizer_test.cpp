@@ -68,7 +68,7 @@ TEST_F(TokenizerTest, TokenizeEmptyExpression) {
 TEST_F(TokenizerTest, TokenizeKeywordBasedExpression) {
     using namespace booleval;
 
-    std::string_view expression{ "(field_a foo and field_b neq bar) or field_c greater baz" };
+    std::string_view expression{ "(field_a foo and field_b neq bar) or field_c eq baz" };
 
     token::tokenizer tokenizer;
     tokenizer.expression(expression);
@@ -94,7 +94,7 @@ TEST_F(TokenizerTest, TokenizeKeywordBasedExpression) {
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::rp));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_or));
     EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
-    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::gt));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
 
     EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
     EXPECT_EQ(tokenizer.next_token().value(), "baz");

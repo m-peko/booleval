@@ -73,6 +73,18 @@ bool result_visitor::visit_lt(tree_node const& node) {
     return fields_[key.value()] < value.value();
 }
 
+bool result_visitor::visit_geq(tree_node const& node) {
+    auto key = node.left->token;
+    auto value = node.right->token;
+    return fields_[key.value()] >= value.value();
+}
+
+bool result_visitor::visit_leq(tree_node const& node) {
+    auto key = node.left->token;
+    auto value = node.right->token;
+    return fields_[key.value()] <= value.value();
+}
+
 } // node
 
 } // booleval
