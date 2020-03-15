@@ -158,7 +158,7 @@ int main() {
     Object pass_obj("foo", "bar");
     Object fail_obj("bar", "baz");
 
-    booleval::Evaluator evaluator;
+    booleval::evaluator evaluator;
 
     auto success = evaluator.build_expression_tree("field_a foo and field_b bar");
     if (!success) {
