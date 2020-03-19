@@ -50,11 +50,11 @@ class result_visitor : public base_visitor<bool> {
 
 public:
     result_visitor() = default;
-    result_visitor(result_visitor&& other) = default;
-    result_visitor(result_visitor const& other) = default;
+    result_visitor(result_visitor&& rhs) = default;
+    result_visitor(result_visitor const& rhs) = default;
 
-    result_visitor& operator=(result_visitor&& other) = default;
-    result_visitor& operator=(result_visitor const& other) = default;
+    result_visitor& operator=(result_visitor&& rhs) = default;
+    result_visitor& operator=(result_visitor const& rhs) = default;
 
     ~result_visitor() = default;
 

@@ -58,7 +58,7 @@ bool evaluator::build_expression_tree(std::string_view expression) {
     return is_activated_;
 }
 
-bool evaluator::evaluate(std::map<std::string_view, std::string_view> const& fields) {
+bool evaluator::evaluate(field_map const& fields) {
     if (is_activated_) {
         result_visitor_.fields(fields);
         return result_visitor_.visit(*root_);

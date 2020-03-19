@@ -33,20 +33,22 @@ The library is under development and subject to change. Contributions are welcom
 
 ## Motivation
 
-Providing an end-user a functionality of specifying a logical expression is a common way of filtering out a large amounts of objects. E.g. [`tcpdump`](https://www.tcpdump.org/manpages/tcpdump.1.html) and [BPF](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (Berkeley Packet Filter), network tools available on most UNIX-like operating systems, have pretty much the same syntax for their filter expression.
+In programming languages like Java and C# accessing arbitrary fields inside a class represents an omnipresent problem. However, it got solved by introducing a **reflections** feature. This feature provides us information about the class to which a certain object belongs to and, also, the methods of that class which we can invoke at runtime.
 
-Due to the missing reflection feature in C++ which would make this feature far more easier to implement, a library like this needs to be implemented.
+Since the reflection feature is missing in C++, `booleval` library is implemented. It checks whether the members of a class to which an object belongs to have certain values. Members of a class are specified in a string format and can be used to form a logical expression.
+
+Providing an end-user a functionality of specifying a logical expression is a common way of filtering out a large amounts of objects. E.g. [`tcpdump`](https://www.tcpdump.org/manpages/tcpdump.1.html) and [BPF](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (Berkeley Packet Filter), network tools available on most UNIX-like operating systems, have pretty much the same syntax for their filter expression.
 
 <a name="specification"></a>
 
 ## Specification
 
-Logical expression that checks whether a field with the name `field_a` has a value of `foo` can be constructed in a two different ways:
+EQUAL TO operator is an optional operator. Therefore, logical expression that checks whether a field with the name `field_a` has a value of `foo` can be constructed in a two different ways:
 
 - EQUAL TO operator is specified in the expression: `field_a eq foo`
 - EQUAL TO operator is **not** specified in the expression: `field_a foo`
 
-Equality operator is a default operator between two fields. Thus, it does not need to be specified in the logical expression.
+To conclude, equality operator is a default operator between two fields. Thus, it **does not need** to be specified in the logical expression.
 
 ### Examples of valid expressions
 - `(field_a foo and field_b bar) or field_a bar`

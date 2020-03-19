@@ -34,8 +34,8 @@
 #include <memory>
 #include <string_view>
 #include <booleval/node/tree_node.h>
-#include <booleval/node/result_visitor.h>
 #include <booleval/token/tokenizer.h>
+#include <booleval/node/result_visitor.h>
 
 namespace booleval {
 
@@ -46,13 +46,15 @@ namespace booleval {
  * It builds an expression tree and traverses that tree in order to evaluate fields.
  */
 class evaluator {
+    using field_map = std::map<std::string_view, std::string_view>;
+
 public:
     evaluator();
-    evaluator(evaluator&& other) = default;
-    evaluator(evaluator const& other) = default;
+    evaluator(evaluator&& rhs) = default;
+    evaluator(evaluator const& rhs) = default;
 
-    evaluator& operator=(evaluator&& other) = default;
-    evaluator& operator=(evaluator const& other) = default;
+    evaluator& operator=(evaluator&& rhs) = default;
+    evaluator& operator=(evaluator const& rhs) = default;
 
     ~evaluator() = default;
 
@@ -80,7 +82,7 @@ public:
      *
      * @return True if the key value map satisfies expression, otherwise false
      */
-    bool evaluate(std::map<std::string_view, std::string_view> const& fields);
+    bool evaluate(field_map const& fields);
 
 private:
     /**
