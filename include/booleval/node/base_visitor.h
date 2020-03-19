@@ -47,11 +47,11 @@ template <typename ReturnType>
 class base_visitor {
 public:
     base_visitor() = default;
-    base_visitor(base_visitor&& other) = default;
-    base_visitor(base_visitor const& other) = default;
+    base_visitor(base_visitor&& rhs) = default;
+    base_visitor(base_visitor const& rhs) = default;
 
-    base_visitor& operator=(base_visitor&& other) = default;
-    base_visitor& operator=(base_visitor const& other) = default;
+    base_visitor& operator=(base_visitor&& rhs) = default;
+    base_visitor& operator=(base_visitor const& rhs) = default;
 
     ~base_visitor() = default;
 

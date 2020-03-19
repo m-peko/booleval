@@ -50,11 +50,11 @@ class evaluator {
 
 public:
     evaluator();
-    evaluator(evaluator&& other) = default;
-    evaluator(evaluator const& other) = default;
+    evaluator(evaluator&& rhs) = default;
+    evaluator(evaluator const& rhs) = default;
 
-    evaluator& operator=(evaluator&& other) = default;
-    evaluator& operator=(evaluator const& other) = default;
+    evaluator& operator=(evaluator&& rhs) = default;
+    evaluator& operator=(evaluator const& rhs) = default;
 
     ~evaluator() = default;
 

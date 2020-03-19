@@ -47,12 +47,12 @@ namespace token {
 class tokenizer {
 public:
     tokenizer() = default;
-    tokenizer(tokenizer&& other) = default;
-    tokenizer(tokenizer const& other) = default;
+    tokenizer(tokenizer&& rhs) = default;
+    tokenizer(tokenizer const& rhs) = default;
     tokenizer(std::string_view expression) noexcept;
 
-    tokenizer& operator=(tokenizer&& other) = default;
-    tokenizer& operator=(tokenizer const& other) = default;
+    tokenizer& operator=(tokenizer&& rhs) = default;
+    tokenizer& operator=(tokenizer const& rhs) = default;
 
     ~tokenizer() = default;
 

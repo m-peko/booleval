@@ -50,13 +50,13 @@ struct tree_node {
     std::shared_ptr<tree_node> right;
 
     tree_node();
-    tree_node(tree_node&& other) = default;
-    tree_node(tree_node const& other) = default;
+    tree_node(tree_node&& rhs) = default;
+    tree_node(tree_node const& rhs) = default;
     tree_node(token::token_type const type);
     tree_node(token::token const& token);
 
-    tree_node& operator=(tree_node&& other) = default;
-    tree_node& operator=(tree_node const& other) = default;
+    tree_node& operator=(tree_node&& rhs) = default;
+    tree_node& operator=(tree_node const& rhs) = default;
 
     ~tree_node() = default;
 };
