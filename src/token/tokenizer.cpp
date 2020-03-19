@@ -69,7 +69,7 @@ void tokenizer::tokenize() {
 
     std::vector<char> single_char_symbols;
     for (auto const& p : symbol_expressions) {
-        if (1 == p.first.length()) {
+        if (1 == p.first.size()) {
             single_char_symbols.push_back(p.first.front());
         }
     }

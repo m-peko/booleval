@@ -30,9 +30,14 @@
 #ifndef BOOLEVAL_STRING_UTILS_H
 #define BOOLEVAL_STRING_UTILS_H
 
+#include <array>
+#include <limits>
 #include <string>
 #include <vector>
 #include <numeric>
+#include <sstream>
+#include <charconv>
+#include <optional>
 #include <string_view>
 
 namespace booleval {
@@ -133,49 +138,55 @@ constexpr bool is_set(Enum lhs, Enum rhs) {
  * Removes whitespace characters from the left side of the string view.
  *
  * @param strv String view to remove whitespace characters from
+ * @param c    Character to trim from the left side of the string view
  */
-void ltrim(std::string_view& strv);
+void ltrim(std::string_view& strv, char const c = ' ');
 
 /**
  * Removes whitespace characters from the right side of the string view.
  *
  * @param strv String view to remove whitespace characters from
+ * @param c    Character to trim from the right side of the string view
  */
-void rtrim(std::string_view& strv);
+void rtrim(std::string_view& strv, char const c = ' ');
 
 /**
  * Removes whitespace characters from the both sides of the string view.
  *
  * @param strv String view to remove whitespace characters from
+ * @param c    Character to trim from the both sides of the string view
  */
-void trim(std::string_view& strv);
+void trim(std::string_view& strv, char const c = ' ');
 
 /**
  * Removes whitespace characters from the left side of the string view.
  *
  * @param strv String view to remove whitespace characters from
+ * @param c    Character to trim from the left side of the string view
  *
  * @return Modified string view
  */
-std::string_view ltrim_copy(std::string_view strv);
+std::string_view ltrim_copy(std::string_view strv, char const c = ' ');
 
 /**
  * Removes whitespace characters from the right side of the string view.
  *
  * @param strv String view to remove whitespace characters from
+ * @param c    Character to trim from the right side of the string view
  *
  * @return Modified string view
  */
-std::string_view rtrim_copy(std::string_view strv);
+std::string_view rtrim_copy(std::string_view strv, char const c = ' ');
 
 /**
  * Removes whitespace characters from the both sides of the string view.
  *
  * @param strv String view to remove whitespace characters from
+ * @param c    Character to trim from the both sides of the string view
  *
  * @return Modified string view
  */
-std::string_view trim_copy(std::string_view strv);
+std::string_view trim_copy(std::string_view strv, char const c = ' ');
 
 /**
  * Checks whether string view is empty or contains only whitespace characters.
@@ -223,6 +234,95 @@ std::string join(InputIt const& first, InputIt const& last, std::string const& s
             return result + separator + value;
         }
     );
+}
+
+/**
+ * Converts from string view to integral value.
+ * If value cannot be parsed, std::nullopt is returned.
+ *
+ * @param strv String view to convert to integral value
+ *
+ * @return Optional value
+ */
+template <typename T,
+          typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+std::optional<T> from(std::string_view strv) {
+    T value{};
+
+    auto const result = std::from_chars(
+        strv.data(),
+        strv.data() + strv.size(),
+        value
+    );
+
+    if (std::errc() == result.ec) {
+        return value;
+    }
+
+    return std::nullopt;
+}
+
+/**
+ * Converts from string view to floating point value.
+ * If value cannot be parsed, std::nullopt is returned.
+ *
+ * @param strv String view to convert to floating point value
+ *
+ * @return Optional value
+ */
+template <typename T,
+          typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+std::optional<T> from(std::string_view strv) {
+    T value{};
+
+    std::stringstream ss;
+    ss << strv;
+    ss >> value;
+
+    if (ss.fail()) {
+        return std::nullopt;
+    }
+
+    return value;
+}
+
+/**
+ * Converts from integral value to string view.
+ *
+ * @param value Integral value to convert to string view
+ *
+ * @return String view
+ */
+template <typename T,
+          typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+std::string to(T const value) {
+    constexpr size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
+    std::array<char, buffer_size> buffer;
+
+    auto const result = std::to_chars(
+        buffer.data(),
+        buffer.data() + buffer.size(),
+        value
+    );
+
+    if (std::errc() == result.ec) {
+        return std::string(buffer.data(), result.ptr - buffer.data());
+    }
+
+    return {};
+}
+
+/**
+ * Converts from floating point value to string view.
+ *
+ * @param value Floating point value to convert to string view
+ *
+ * @return String view
+ */
+template <typename T,
+          typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+std::string to(T const value) {
+    return std::to_string(value);
 }
 
 } // utils
