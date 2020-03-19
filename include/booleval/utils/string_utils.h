@@ -128,7 +128,7 @@ operator^=(Enum& lhs, Enum rhs) {
  * @return True if the bits are present, false otherwise
  */
 template <typename Enum,
-          typename std::enable_if_t<std::is_enum_v<Enum>>* = nullptr>
+          typename = std::enable_if_t<std::is_enum_v<Enum>>>
 constexpr bool is_set(Enum lhs, Enum rhs) {
     return (lhs & rhs) == lhs ||
            (lhs & rhs) == rhs;

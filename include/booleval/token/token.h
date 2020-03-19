@@ -58,7 +58,7 @@ public:
     token& operator=(token const& rhs) = default;
     bool operator==(token const& rhs) const noexcept;
 
-    virtual ~token() = default;
+    ~token() = default;
 
     /**
      * Sets the token type.
@@ -95,7 +95,7 @@ public:
      * @return Optional token value
      */
     template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+              typename = std::enable_if_t<std::is_arithmetic_v<T>>>
     std::optional<T> value() const noexcept;
 
     /**
@@ -132,8 +132,7 @@ private:
     std::string_view value_;
 };
 
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+template <typename T, typename>
 std::optional<T> token::value() const noexcept {
     return utils::from<T>(value_);
 }
