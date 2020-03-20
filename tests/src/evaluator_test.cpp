@@ -60,15 +60,131 @@ TEST_F(EvaluatorTest, MultipleFieldsExpression) {
 
 TEST_F(EvaluatorTest, EqualToOperator) {
     booleval::evaluator evaluator;
-    EXPECT_TRUE(evaluator.build_expression_tree("field_a foo and field_b eq bar"));
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a foo"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "foo" }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", "bar" }
+    }));
+}
+
+TEST_F(EvaluatorTest, NotEqualToOperator) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a neq foo"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "bar" }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", "foo" }
+    }));
+}
+
+TEST_F(EvaluatorTest, GreaterThanOperator) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a gt 1.23"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", 1.24 }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", 1.22 }
+    }));
+}
+
+TEST_F(EvaluatorTest, LessThanOperator) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a lt 2"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", 1 }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", 3 }
+    }));
+}
+
+TEST_F(EvaluatorTest, GreaterThanOrEqualToOperator) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a geq 1.234567"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", 1.234567 }
+    }));
+
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", 2.345678 }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", 0.123456 }
+    }));
+}
+
+TEST_F(EvaluatorTest, LessThanOrEqualToOperator) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a leq 1.234567"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", 1.234567 }
+    }));
+
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", 0.123456 }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", 2.345678 }
+    }));
+}
+
+TEST_F(EvaluatorTest, AndOperator) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a foo and field_b 1"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate({
         { "field_a", "foo" },
-        { "field_b", "bar" }
+        { "field_b", 1 }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", "foo" },
+        { "field_b", 2 }
     }));
 
     EXPECT_FALSE(evaluator.evaluate({
         { "field_a", "bar" },
-        { "field_b", "foo" }
+        { "field_b", 1 }
+    }));
+}
+
+TEST_F(EvaluatorTest, OrOperator) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("field_a foo or field_b 1"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "foo" },
+        { "field_b", 1 }
+    }));
+
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "foo" },
+        { "field_b", 2 }
+    }));
+
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "bar" },
+        { "field_b", 1 }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", "bar" },
+        { "field_b", 2 }
     }));
 }
