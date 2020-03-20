@@ -35,41 +35,41 @@ namespace booleval {
 
 namespace utils {
 
-void ltrim(std::string_view& strv) {
+void ltrim(std::string_view& strv, char const c) {
     strv.remove_prefix(
         std::min(
-            strv.find_first_not_of(' '),
+            strv.find_first_not_of(c),
             strv.size()
         )
     );
 }
 
-void rtrim(std::string_view& strv) {
+void rtrim(std::string_view& strv, char const c) {
     strv.remove_suffix(
         std::min(
-            strv.size() - strv.find_last_not_of(' ') - 1,
+            strv.size() - strv.find_last_not_of(c) - 1,
             strv.size()
         )
     );
 }
 
-void trim(std::string_view& strv) {
-    ltrim(strv);
-    rtrim(strv);
+void trim(std::string_view& strv, char const c) {
+    ltrim(strv, c);
+    rtrim(strv, c);
 }
 
-std::string_view ltrim_copy(std::string_view strv) {
-    ltrim(strv);
+std::string_view ltrim_copy(std::string_view strv, char const c) {
+    ltrim(strv, c);
     return strv;
 }
 
-std::string_view rtrim_copy(std::string_view strv) {
-    rtrim(strv);
+std::string_view rtrim_copy(std::string_view strv, char const c) {
+    rtrim(strv, c);
     return strv;
 }
 
-std::string_view trim_copy(std::string_view strv) {
-    trim(strv);
+std::string_view trim_copy(std::string_view strv, char const c) {
+    trim(strv, c);
     return strv;
 }
 

@@ -30,12 +30,11 @@
 #ifndef BOOLEVAL_TOKEN_H
 #define BOOLEVAL_TOKEN_H
 
-#include <sstream>
-#include <charconv>
 #include <optional>
 #include <string_view>
 #include <type_traits>
 #include <booleval/token/token_type.h>
+#include <booleval/utils/string_utils.h>
 
 namespace booleval {
 
@@ -59,7 +58,7 @@ public:
     token& operator=(token const& rhs) = default;
     bool operator==(token const& rhs) const noexcept;
 
-    virtual ~token() = default;
+    ~token() = default;
 
     /**
      * Sets the token type.
@@ -90,23 +89,13 @@ public:
     std::string_view value() const noexcept;
 
     /**
-     * Gets the token value as an integral value.
+     * Gets the token value as an arithmetic value.
      * If value cannot be parsed, std::nullopt is returned.
      *
      * @return Optional token value
      */
     template <typename T,
-              typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-    std::optional<T> value() const noexcept;
-
-    /**
-     * Gets the token value as a floating point value.
-     * If value cannot be parsed, std::nullopt is returned.
-     *
-     * @return Optional token value
-     */
-    template <typename T,
-              typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+              typename = std::enable_if_t<std::is_arithmetic_v<T>>>
     std::optional<T> value() const noexcept;
 
     /**
@@ -143,38 +132,9 @@ private:
     std::string_view value_;
 };
 
-template <typename T,
-          typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+template <typename T, typename>
 std::optional<T> token::value() const noexcept {
-    T value{};
-
-    auto const result = std::from_chars(
-        value_.data(),
-        value_.data() + value_.size(),
-        value
-    );
-
-    if (std::errc() == result.ec) {
-        return value;
-    }
-
-    return std::nullopt;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-std::optional<T> token::value() const noexcept {
-    T value{};
-
-    std::stringstream ss;
-    ss << value_;
-    ss >> value;
-
-    if (ss.fail()) {
-        return std::nullopt;
-    }
-
-    return value;
+    return utils::from_chars<T>(value_);
 }
 
 template <typename... TokenType>

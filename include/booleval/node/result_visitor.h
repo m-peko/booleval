@@ -33,6 +33,7 @@
 #include <map>
 #include <string_view>
 #include <booleval/node/tree_node.h>
+#include <booleval/utils/any_value.h>
 #include <booleval/node/base_visitor.h>
 
 namespace booleval {
@@ -46,7 +47,7 @@ namespace node {
  * final result of the expression based on the specified field map.
  */
 class result_visitor : public base_visitor<bool> {
-    using field_map = std::map<std::string_view, std::string_view>;
+    using field_map = std::map<std::string_view, utils::any_value>;
 
 public:
     result_visitor() = default;

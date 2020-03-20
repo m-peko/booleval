@@ -54,7 +54,7 @@ TEST_F(StringUtilsTest, IsSetSplitOption) {
     EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
 }
 
-TEST_F(StringUtilsTest, LeftTrim) {
+TEST_F(StringUtilsTest, LeftTrimWhitespaces) {
     using namespace booleval::utils;
 
     EXPECT_EQ(ltrim_copy("abc"), "abc");
@@ -64,7 +64,17 @@ TEST_F(StringUtilsTest, LeftTrim) {
     EXPECT_EQ(ltrim_copy("  a b c "), "a b c ");
 }
 
-TEST_F(StringUtilsTest, RightTrim) {
+TEST_F(StringUtilsTest, LeftTrimZeros) {
+    using namespace booleval::utils;
+
+    EXPECT_EQ(ltrim_copy("abc", '0'), "abc");
+    EXPECT_EQ(ltrim_copy("0abc", '0'), "abc");
+    EXPECT_EQ(ltrim_copy("00abc", '0'), "abc");
+    EXPECT_EQ(ltrim_copy("00abc0", '0'), "abc0");
+    EXPECT_EQ(ltrim_copy("00a0b0c0", '0'), "a0b0c0");
+}
+
+TEST_F(StringUtilsTest, RightTrimWhitespaces) {
     using namespace booleval::utils;
 
     EXPECT_EQ(rtrim_copy("abc"), "abc");
@@ -74,13 +84,32 @@ TEST_F(StringUtilsTest, RightTrim) {
     EXPECT_EQ(rtrim_copy(" a b c  "), " a b c");
 }
 
-TEST_F(StringUtilsTest, Trim) {
+TEST_F(StringUtilsTest, RightTrimZeros) {
+    using namespace booleval::utils;
+
+    EXPECT_EQ(rtrim_copy("abc", '0'), "abc");
+    EXPECT_EQ(rtrim_copy("abc0", '0'), "abc");
+    EXPECT_EQ(rtrim_copy("abc00", '0'), "abc");
+    EXPECT_EQ(rtrim_copy("0abc00", '0'), "0abc");
+    EXPECT_EQ(rtrim_copy("0a0b0c00", '0'), "0a0b0c");
+}
+
+TEST_F(StringUtilsTest, TrimWhitespaces) {
     using namespace booleval::utils;
 
     EXPECT_EQ(trim_copy("abc"), "abc");
     EXPECT_EQ(trim_copy(" abc "), "abc");
     EXPECT_EQ(trim_copy("  abc  "), "abc");
     EXPECT_EQ(trim_copy("  a b c  "), "a b c");
+}
+
+TEST_F(StringUtilsTest, TrimZeros) {
+    using namespace booleval::utils;
+
+    EXPECT_EQ(trim_copy("abc", '0'), "abc");
+    EXPECT_EQ(trim_copy("0abc0", '0'), "abc");
+    EXPECT_EQ(trim_copy("00abc00", '0'), "abc");
+    EXPECT_EQ(trim_copy("00a0b0c00", '0'), "a0b0c");
 }
 
 TEST_F(StringUtilsTest, IsEmpty) {
@@ -173,4 +202,20 @@ TEST_F(StringUtilsTest, JoinWithCommaSeparator) {
     auto tokens = { "a", "b", "c", "d" };
     auto result = join(std::begin(tokens), std::end(tokens), ",");
     EXPECT_EQ(result, "a,b,c,d");
+}
+
+TEST_F(StringUtilsTest, From) {
+    using namespace booleval::utils;
+
+    EXPECT_EQ(from_chars<uint8_t>("1").value(), 1U);
+    EXPECT_DOUBLE_EQ(from_chars<double>("1.23456789").value(), 1.23456789);
+    EXPECT_FLOAT_EQ(from_chars<float>("1.23456789").value(), 1.23456789);
+}
+
+TEST_F(StringUtilsTest, To) {
+    using namespace booleval::utils;
+
+    EXPECT_EQ(to_chars<uint8_t>(1), "1");
+    EXPECT_EQ(to_chars<double>(1.234567), "1.234567");
+    EXPECT_EQ(to_chars<float>(1.234567), "1.234567");
 }
