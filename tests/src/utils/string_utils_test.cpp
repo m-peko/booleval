@@ -207,15 +207,15 @@ TEST_F(StringUtilsTest, JoinWithCommaSeparator) {
 TEST_F(StringUtilsTest, From) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(from<uint8_t>("1").value(), 1U);
-    EXPECT_DOUBLE_EQ(from<double>("1.23456789").value(), 1.23456789);
-    EXPECT_FLOAT_EQ(from<float>("1.23456789").value(), 1.23456789);
+    EXPECT_EQ(from_chars<uint8_t>("1").value(), 1U);
+    EXPECT_DOUBLE_EQ(from_chars<double>("1.23456789").value(), 1.23456789);
+    EXPECT_FLOAT_EQ(from_chars<float>("1.23456789").value(), 1.23456789);
 }
 
 TEST_F(StringUtilsTest, To) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(to<uint8_t>(1), "1");
-    EXPECT_EQ(to<double>(1.234567), "1.234567");
-    EXPECT_EQ(to<float>(1.234567), "1.234567");
+    EXPECT_EQ(to_chars<uint8_t>(1), "1");
+    EXPECT_EQ(to_chars<double>(1.234567), "1.234567");
+    EXPECT_EQ(to_chars<float>(1.234567), "1.234567");
 }

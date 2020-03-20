@@ -134,7 +134,7 @@ private:
 
 template <typename T, typename>
 std::optional<T> token::value() const noexcept {
-    return utils::from<T>(value_);
+    return utils::from_chars<T>(value_);
 }
 
 template <typename... TokenType>

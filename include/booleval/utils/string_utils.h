@@ -246,7 +246,7 @@ std::string join(InputIt const& first, InputIt const& last, std::string const& s
  */
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-std::optional<T> from(std::string_view strv) {
+std::optional<T> from_chars(std::string_view strv) {
     T value{};
 
     auto const result = std::from_chars(
@@ -272,7 +272,7 @@ std::optional<T> from(std::string_view strv) {
  */
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-std::optional<T> from(std::string_view strv) {
+std::optional<T> from_chars(std::string_view strv) {
     T value{};
 
     std::stringstream ss;
@@ -295,7 +295,7 @@ std::optional<T> from(std::string_view strv) {
  */
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-std::string to(T const value) {
+std::string to_chars(T const value) {
     constexpr size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
     std::array<char, buffer_size> buffer;
 
@@ -321,7 +321,7 @@ std::string to(T const value) {
  */
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-std::string to(T const value) {
+std::string to_chars(T const value) {
     return std::to_string(value);
 }
 
