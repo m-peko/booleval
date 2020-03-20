@@ -134,22 +134,22 @@ issue tracker indicating the following information:
 
 ## Example
 
-Let's say we have a large number of objects coming through our interface. Objects can be specified as following:
+Let's say we have a large number of objects coming through our interface. Objects can be of the following `struct Object` type:
 
 ```c++
 struct Object {
     Object(std::string const& a,
-           std::string const& b)
+           uint32_t const b)
         : field_a(a),
           field_b(b)
     {}
 
     std::string field_a;
-    std::string field_b;
+    uint32_t field_b;
 };
 ```
 
-In our application, we want to let end-users to specify some sort of a rule which will filter out only those objects that contain certain field values. This rule can have a form of a following logical expression `field_a foo and field_b bar`. Now, we can use `booleval::evaluator` component to check whether objects conform specified rule.
+In our application, we want to let end-users to specify some sort of a rule which will filter out only those objects that contain certain field values. This rule can have a form of a following logical expression `field_a foo and field_b 123`. Now, we can use `booleval::evaluator` component to check whether objects conform specified rule.
 
 ```c++
 #include <string>
@@ -157,12 +157,12 @@ In our application, we want to let end-users to specify some sort of a rule whic
 #include <booleval/evaluator.h>
 
 int main() {
-    Object pass_obj("foo", "bar");
-    Object fail_obj("bar", "baz");
+    Object pass_obj("foo", 123);
+    Object fail_obj("bar", 456);
 
     booleval::evaluator evaluator;
 
-    auto success = evaluator.build_expression_tree("field_a foo and field_b bar");
+    auto success = evaluator.build_expression_tree("field_a foo and field_b 123");
     if (!success) {
         std::cerr << "Error while building expression tree!" << std::endl;
     }
