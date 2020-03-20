@@ -287,11 +287,11 @@ std::optional<T> from_chars(std::string_view strv) {
 }
 
 /**
- * Converts from integral value to string view.
+ * Converts from integral value to string.
  *
- * @param value Integral value to convert to string view
+ * @param value Integral value to convert to string
  *
- * @return String view
+ * @return String
  */
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
@@ -313,16 +313,20 @@ std::string to_chars(T const value) {
 }
 
 /**
- * Converts from floating point value to string view.
+ * Converts from floating point value to string.
  *
- * @param value Floating point value to convert to string view
+ * @param value Floating point value to convert to string
  *
- * @return String view
+ * @return String
  */
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 std::string to_chars(T const value) {
-    return std::to_string(value);
+    auto str = std::to_string(value);
+    std::string_view strv{ str.c_str(), str.size() };
+    rtrim(strv, '0');
+    str = strv;
+    return str;
 }
 
 } // utils
