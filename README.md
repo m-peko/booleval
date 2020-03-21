@@ -62,7 +62,7 @@ To conclude, equality operator is a default operator between two fields. Thus, i
 
 |Name|Keyword|Symbol|
 |:---:|:---:|:---:|
-|AND operator|AND / and|&&|
+|AND operator|AND / and|==|
 |OR operator|OR / or|\| \||
 |EQUAL TO operator|EQ / eq|!=|
 |NOT EQUAL TO operator|NEQ / neq|!=|
