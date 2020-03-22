@@ -89,20 +89,20 @@ std::vector<std::string_view> split(std::string_view strv, std::string_view deli
     while (first != std::end(strv)) {
         auto const second = std::find_first_of(
             first, std::cend(strv),
-			std::cbegin(delims_impl), std::cend(delims_impl)
+            std::cbegin(delims_impl), std::cend(delims_impl)
         );
 
-		if (first != second) {
-			tokens.emplace_back(
+        if (first != second) {
+            tokens.emplace_back(
                 strv.substr(
                     std::distance(std::begin(strv), first),
                     std::distance(first, second)
                 )
             );
-		}
+        }
 
-		if (std::end(strv) == second) {
-			break;
+        if (std::end(strv) == second) {
+            break;
         }
 
         if (is_set(options, split_options::include_delimiters)) {
@@ -112,10 +112,10 @@ std::vector<std::string_view> split(std::string_view strv, std::string_view deli
             }
         }
 
-		first = std::next(second);
-	}
+        first = std::next(second);
+    }
 
-	return tokens;
+    return tokens;
 }
 
 } // utils
