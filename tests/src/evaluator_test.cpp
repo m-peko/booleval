@@ -188,3 +188,23 @@ TEST_F(EvaluatorTest, OrOperator) {
         { "field_b", 2 }
     }));
 }
+
+TEST_F(EvaluatorTest, MultipleOperators) {
+    booleval::evaluator evaluator;
+    EXPECT_TRUE(evaluator.build_expression_tree("(field_a foo and field_b 1) or (field_a bar and field_b 2)"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "foo" },
+        { "field_b", 1 }
+    }));
+
+    EXPECT_TRUE(evaluator.evaluate({
+        { "field_a", "bar" },
+        { "field_b", 2 }
+    }));
+
+    EXPECT_FALSE(evaluator.evaluate({
+        { "field_a", "bar" },
+        { "field_b", 1 }
+    }));
+}

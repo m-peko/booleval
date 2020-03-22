@@ -70,8 +70,22 @@ bool evaluator::evaluate(field_map const& fields) {
 std::shared_ptr<node::tree_node> evaluator::parse_expression() {
     auto left = parse_and_operation();
 
-    if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is_not(token::token_type::logical_or)) {
+    auto const is_relational_operator = tokenizer_.has_tokens() &&
+        tokenizer_.weak_next_token().is_one_of(
+            token::token_type::eq,
+            token::token_type::neq,
+            token::token_type::gt,
+            token::token_type::lt,
+            token::token_type::geq,
+            token::token_type::leq
+        );
+
+    if (is_relational_operator) {
         return nullptr;
+    }
+
+    if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is_not(token::token_type::logical_or)) {
+        return left;
     }
 
     while (tokenizer_.has_tokens() && tokenizer_.next_token().is(token::token_type::logical_or)) {
