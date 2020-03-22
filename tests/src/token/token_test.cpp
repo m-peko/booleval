@@ -45,7 +45,8 @@ TEST_F(TokenTest, ConstructorFromType) {
 
     token::token token(token::token_type::logical_and);
     EXPECT_EQ(token.type(), token::token_type::logical_and);
-    EXPECT_EQ(token.value(), "and");
+    EXPECT_TRUE(token.value() == "and" ||
+                token.value() == "AND");
 }
 
 TEST_F(TokenTest, ConstructorFromValue) {
@@ -53,7 +54,8 @@ TEST_F(TokenTest, ConstructorFromValue) {
 
     token::token token("and");
     EXPECT_EQ(token.type(), token::token_type::logical_and);
-    EXPECT_EQ(token.value(), "and");
+    EXPECT_TRUE(token.value() == "and" ||
+                token.value() == "AND");
 }
 
 TEST_F(TokenTest, ConstructorFromTypeAndValue) {

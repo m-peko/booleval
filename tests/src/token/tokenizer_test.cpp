@@ -65,10 +65,45 @@ TEST_F(TokenizerTest, TokenizeEmptyExpression) {
     EXPECT_FALSE(tokenizer.has_tokens());
 }
 
-TEST_F(TokenizerTest, TokenizeKeywordBasedExpression) {
+TEST_F(TokenizerTest, TokenizeLowercaseKeywordBasedExpression) {
     using namespace booleval;
 
     std::string_view expression{ "(field_a foo and field_b neq bar) or field_c eq baz" };
+
+    token::tokenizer tokenizer;
+    tokenizer.expression(expression);
+    EXPECT_EQ(tokenizer.expression(), expression);
+
+    tokenizer.tokenize();
+    EXPECT_TRUE(tokenizer.has_tokens());
+
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::lp));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "foo");
+
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_and));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::neq));
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "bar");
+
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::rp));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::logical_or));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "baz");
+}
+
+TEST_F(TokenizerTest, TokenizeUppercaseKeywordBasedExpression) {
+    using namespace booleval;
+
+    std::string_view expression{ "(field_a foo AND field_b NEQ bar) OR field_c EQ baz" };
 
     token::tokenizer tokenizer;
     tokenizer.expression(expression);

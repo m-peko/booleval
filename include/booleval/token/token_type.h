@@ -65,18 +65,26 @@ enum class token_type : uint8_t {
     rp = 11
 };
 
-inline std::unordered_map<
+inline std::unordered_multimap<
     std::string_view,
     token_type
 > const keyword_expressions = {
     { "and", token_type::logical_and },
+    { "AND", token_type::logical_and },
     { "or",  token_type::logical_or  },
+    { "OR",  token_type::logical_or  },
     { "eq",  token_type::eq  },
+    { "EQ",  token_type::eq  },
     { "neq", token_type::neq },
+    { "NEQ", token_type::neq },
     { "gt",  token_type::gt  },
+    { "GT",  token_type::gt  },
     { "lt",  token_type::lt  },
+    { "LT",  token_type::lt  },
     { "geq", token_type::geq },
-    { "leq", token_type::leq }
+    { "GEQ", token_type::geq },
+    { "leq", token_type::leq },
+    { "LEQ", token_type::leq }
 };
 
 inline std::unordered_map<
