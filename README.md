@@ -169,15 +169,15 @@ int main() {
 
     if (evaluator.is_activated()) {
         auto passes = evaluator.evaluate({
-            "field_a": pass_obj.field_a,
-            "field_b": pass_obj.field_b
+            { "field_a", pass_obj.field_a },
+            { "field_b", pass_obj.field_b }
         });
 
         std::cout << std::boolalpha << passes << std::endl;  // output: true
 
         auto fails = evaluator.evaluate({
-            "field_a": fail_obj.field_a,
-            "field_b": fail_obj.field_b
+            { "field_a", fail_obj.field_a },
+            { "field_b", fail_obj.field_b }
         });
 
         std::cout << std::boolalpha << fails << std::endl;   // output: false
