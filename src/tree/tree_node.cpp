@@ -27,42 +27,30 @@
  *
  */
 
-#ifndef BOOLEVAL_TREE_NODE_H
-#define BOOLEVAL_TREE_NODE_H
-
-#include <memory>
-#include <booleval/token/token.h>
-#include <booleval/token/token_type.h>
+#include <booleval/tree/tree_node.h>
 
 namespace booleval {
 
-namespace node {
+namespace tree {
 
-/**
- * struct tree_node
- *
- * Represents the tree node containing references to left and right child nodes
- * as well as the token that the node represents in the actual expression tree.
- */
-struct tree_node {
-    token::token token;
-    std::shared_ptr<tree_node> left;
-    std::shared_ptr<tree_node> right;
+tree_node::tree_node()
+    : token(token::token_type::unknown),
+      left(nullptr),
+      right(nullptr)
+{}
 
-    tree_node();
-    tree_node(tree_node&& rhs) = default;
-    tree_node(tree_node const& rhs) = default;
-    tree_node(token::token_type const type);
-    tree_node(token::token const& token);
+tree_node::tree_node(token::token_type const type)
+    : token(type),
+      left(nullptr),
+      right(nullptr)
+{}
 
-    tree_node& operator=(tree_node&& rhs) = default;
-    tree_node& operator=(tree_node const& rhs) = default;
+tree_node::tree_node(token::token const& token)
+    : token(token),
+      left(nullptr),
+      right(nullptr)
+{}
 
-    ~tree_node() = default;
-};
-
-} // node
+} // tree
 
 } // booleval
-
-#endif // BOOLEVAL_TREE_NODE_H

@@ -31,12 +31,10 @@
 #define BOOLEVAL_EVALUATOR_H
 
 #include <map>
-#include <memory>
 #include <string_view>
-#include <booleval/node/tree_node.h>
 #include <booleval/utils/any_value.h>
-#include <booleval/token/tokenizer.h>
-#include <booleval/node/result_visitor.h>
+#include <booleval/tree/result_visitor.h>
+#include <booleval/tree/expression_tree.h>
 
 namespace booleval {
 
@@ -68,13 +66,13 @@ public:
     bool is_activated() const noexcept;
 
     /**
-     * Checks whether the expression tree is successfully built.
+     * Sets the expression to be used for evaluation.
      *
-     * @param expression Expression used for building the tree
+     * @param expression Expression to be used for evaluation
      *
-     * @return True if the tree is successfully built, otherwise false
+     * @return True if the expression is valid, otherwise false
      */
-    bool build_expression_tree(std::string_view expression);
+    bool expression(std::string_view expression);
 
     /**
      * Evaluates expression tree based on the key value map passed in.
@@ -86,46 +84,9 @@ public:
     bool evaluate(field_map const& fields);
 
 private:
-    /**
-     * Parses logical operation OR.
-     *
-     * @return Root tree node for the current part of the expression
-     */
-    std::shared_ptr<node::tree_node> parse_expression();
-
-    /**
-     * Parses logical operation AND.
-     *
-     * @return Root tree node for the current part of the expression
-     */
-    std::shared_ptr<node::tree_node> parse_and_operation();
-
-    /**
-     * Parses new expression within parentheses.
-     *
-     * @return Root tree node for the parsed expression
-     */
-    std::shared_ptr<node::tree_node> parse_parentheses();
-
-    /**
-     * Parses relational operation (EQ, NEQ, GT, LT, ...).
-     *
-     * @return Root tree node for the parsed operation
-     */
-    std::shared_ptr<node::tree_node> parse_relational_operation();
-
-    /**
-     * Parses terminal, i.e. field token.
-     *
-     * @return Leaf node
-     */
-    std::shared_ptr<node::tree_node> parse_terminal();
-
-private:
     bool is_activated_;
-    token::tokenizer tokenizer_;
-    std::shared_ptr<node::tree_node> root_;
-    node::result_visitor result_visitor_;
+    tree::result_visitor result_visitor_;
+    tree::expression_tree expression_tree_;
 };
 
 } // booleval

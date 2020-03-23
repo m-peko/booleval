@@ -162,9 +162,9 @@ int main() {
 
     booleval::evaluator evaluator;
 
-    auto success = evaluator.build_expression_tree("field_a foo and field_b 123");
-    if (!success) {
-        std::cerr << "Error while building expression tree!" << std::endl;
+    auto valid = evaluator.expression("field_a foo and field_b 123");
+    if (!valid) {
+        std::cerr << "Expression not valid!" << std::endl;
     }
 
     if (evaluator.is_activated()) {

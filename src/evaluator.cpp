@@ -28,7 +28,6 @@
  */
 
 #include <booleval/evaluator.h>
-#include <booleval/token/token.h>
 
 namespace booleval {
 
@@ -40,18 +39,14 @@ bool evaluator::is_activated() const noexcept {
     return is_activated_;
 }
 
-bool evaluator::build_expression_tree(std::string_view expression) {
+bool evaluator::expression(std::string_view expression) {
     is_activated_ = false;
-
-    tokenizer_.expression(expression);
-    tokenizer_.tokenize();
 
     if (expression.empty()) {
         return true;
     }
 
-    root_ = parse_expression();
-    if (nullptr != root_) {
+    if (expression_tree_.build(expression)) {
         is_activated_ = true;
     }
 
@@ -61,113 +56,10 @@ bool evaluator::build_expression_tree(std::string_view expression) {
 bool evaluator::evaluate(field_map const& fields) {
     if (is_activated_) {
         result_visitor_.fields(fields);
-        return result_visitor_.visit(*root_);
+        return result_visitor_.visit(*expression_tree_.root());
     } else {
         return true;
     }
-}
-
-std::shared_ptr<node::tree_node> evaluator::parse_expression() {
-    auto left = parse_and_operation();
-
-    auto const is_relational_operator = tokenizer_.has_tokens() &&
-        tokenizer_.weak_next_token().is_one_of(
-            token::token_type::eq,
-            token::token_type::neq,
-            token::token_type::gt,
-            token::token_type::lt,
-            token::token_type::geq,
-            token::token_type::leq
-        );
-
-    if (is_relational_operator) {
-        return nullptr;
-    }
-
-    if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is_not(token::token_type::logical_or)) {
-        return left;
-    }
-
-    while (tokenizer_.has_tokens() && tokenizer_.next_token().is(token::token_type::logical_or)) {
-        auto logical_or = std::make_shared<node::tree_node>(token::token_type::logical_or);
-
-        auto right = parse_and_operation();
-        logical_or->left  = left;
-        logical_or->right = right;
-        left = logical_or;
-    }
-
-    return left;
-}
-
-std::shared_ptr<node::tree_node> evaluator::parse_and_operation() {
-    std::shared_ptr<node::tree_node> left;
-    auto left_p = parse_parentheses();
-    if (nullptr != left_p) {
-        left = left_p;
-    } else {
-        left = parse_relational_operation();
-    }
-
-    while (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::logical_and)) {
-        tokenizer_.pass_token();
-
-        auto logical_and = std::make_shared<node::tree_node>(token::token_type::logical_and);
-
-        std::shared_ptr<node::tree_node> right;
-        auto right_p = parse_parentheses();
-        if (nullptr != right_p) {
-            right = right_p;
-        } else {
-            right = parse_relational_operation();
-        }
-
-        logical_and->left  = left;
-        logical_and->right = right;
-        left = logical_and;
-    }
-
-    return left;
-}
-
-std::shared_ptr<node::tree_node> evaluator::parse_parentheses() {
-    if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::lp)) {
-        tokenizer_.pass_token();
-
-        auto expression = parse_expression();
-        if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::rp)) {
-            tokenizer_.pass_token();
-            return expression;
-        }
-    }
-
-    return nullptr;
-}
-
-std::shared_ptr<node::tree_node> evaluator::parse_relational_operation() {
-    auto left = parse_terminal();
-    if (tokenizer_.has_tokens()) {
-        auto operation = std::make_shared<node::tree_node>(tokenizer_.next_token());
-
-        auto right = parse_terminal();
-        operation->left  = left;
-        operation->right = right;
-        return operation;
-    }
-
-    return nullptr;
-}
-
-std::shared_ptr<node::tree_node> evaluator::parse_terminal() {
-    if (tokenizer_.has_tokens()) {
-        auto token = tokenizer_.next_token();
-
-        if (token.is(token::token_type::field)) {
-            return std::make_shared<node::tree_node>(token);
-        }
-    }
-
-    return nullptr;
 }
 
 } // booleval

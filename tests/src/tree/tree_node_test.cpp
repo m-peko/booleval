@@ -27,30 +27,48 @@
  *
  */
 
-#include <booleval/node/tree_node.h>
+#include <gtest/gtest.h>
+#include <booleval/token/token.h>
+#include <booleval/tree/tree_node.h>
+#include <booleval/token/token_type.h>
 
-namespace booleval {
+class TreeNodeTest : public testing::Test {};
 
-namespace node {
+TEST_F(TreeNodeTest, DefaultConstructor) {
+    using namespace booleval;
 
-tree_node::tree_node()
-    : token(token::token_type::unknown),
-      left(nullptr),
-      right(nullptr)
-{}
+    tree::tree_node node;
+    EXPECT_EQ(node.token.type(), token::token_type::unknown);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}
 
-tree_node::tree_node(token::token_type const type)
-    : token(type),
-      left(nullptr),
-      right(nullptr)
-{}
+TEST_F(TreeNodeTest, ConstructorFromTokenType) {
+    using namespace booleval;
 
-tree_node::tree_node(token::token const& token)
-    : token(token),
-      left(nullptr),
-      right(nullptr)
-{}
+    tree::tree_node node(token::token_type::logical_and);
+    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}
 
-} // node
+TEST_F(TreeNodeTest, ConstructorFromToken) {
+    using namespace booleval;
 
-} // booleval
+    token::token and_token(token::token_type::logical_and);
+    tree::tree_node node(and_token);
+    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}
+
+TEST_F(TreeNodeTest, ConstructorFromFieldToken) {
+    using namespace booleval;
+
+    token::token field_token("foo");
+    tree::tree_node node(field_token);
+    EXPECT_EQ(node.token.value(), "foo");
+    EXPECT_EQ(node.token.type(), token::token_type::field);
+    EXPECT_EQ(node.left, nullptr);
+    EXPECT_EQ(node.right, nullptr);
+}

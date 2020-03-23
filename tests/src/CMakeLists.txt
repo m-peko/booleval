@@ -34,9 +34,9 @@ endmacro ()
 
 # Tests
 
-create_test (node/tree_node)
 create_test (token/token)
 create_test (token/tokenizer)
+create_test (tree/tree_node)
 create_test (utils/any_value)
 create_test (utils/string_utils)
 create_test (evaluator)
