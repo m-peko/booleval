@@ -39,6 +39,12 @@ namespace booleval {
 
 namespace tree {
 
+/**
+ * class expression_tree
+ *
+ * Represents a class for building an expression tree by using a recursive
+ * descent parser method.
+ */
 class expression_tree {
 public:
     expression_tree();
