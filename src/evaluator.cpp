@@ -67,7 +67,7 @@ bool evaluator::evaluate(field_map const& fields) {
     }
 }
 
-std::shared_ptr<node::tree_node> evaluator::parse_expression() {
+std::shared_ptr<tree::tree_node> evaluator::parse_expression() {
     auto left = parse_and_operation();
 
     auto const is_relational_operator = tokenizer_.has_tokens() &&
@@ -89,7 +89,7 @@ std::shared_ptr<node::tree_node> evaluator::parse_expression() {
     }
 
     while (tokenizer_.has_tokens() && tokenizer_.next_token().is(token::token_type::logical_or)) {
-        auto logical_or = std::make_shared<node::tree_node>(token::token_type::logical_or);
+        auto logical_or = std::make_shared<tree::tree_node>(token::token_type::logical_or);
 
         auto right = parse_and_operation();
         logical_or->left  = left;
@@ -100,8 +100,8 @@ std::shared_ptr<node::tree_node> evaluator::parse_expression() {
     return left;
 }
 
-std::shared_ptr<node::tree_node> evaluator::parse_and_operation() {
-    std::shared_ptr<node::tree_node> left;
+std::shared_ptr<tree::tree_node> evaluator::parse_and_operation() {
+    std::shared_ptr<tree::tree_node> left;
     auto left_p = parse_parentheses();
     if (nullptr != left_p) {
         left = left_p;
@@ -112,9 +112,9 @@ std::shared_ptr<node::tree_node> evaluator::parse_and_operation() {
     while (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::logical_and)) {
         tokenizer_.pass_token();
 
-        auto logical_and = std::make_shared<node::tree_node>(token::token_type::logical_and);
+        auto logical_and = std::make_shared<tree::tree_node>(token::token_type::logical_and);
 
-        std::shared_ptr<node::tree_node> right;
+        std::shared_ptr<tree::tree_node> right;
         auto right_p = parse_parentheses();
         if (nullptr != right_p) {
             right = right_p;
@@ -130,7 +130,7 @@ std::shared_ptr<node::tree_node> evaluator::parse_and_operation() {
     return left;
 }
 
-std::shared_ptr<node::tree_node> evaluator::parse_parentheses() {
+std::shared_ptr<tree::tree_node> evaluator::parse_parentheses() {
     if (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::lp)) {
         tokenizer_.pass_token();
 
@@ -144,10 +144,10 @@ std::shared_ptr<node::tree_node> evaluator::parse_parentheses() {
     return nullptr;
 }
 
-std::shared_ptr<node::tree_node> evaluator::parse_relational_operation() {
+std::shared_ptr<tree::tree_node> evaluator::parse_relational_operation() {
     auto left = parse_terminal();
     if (tokenizer_.has_tokens()) {
-        auto operation = std::make_shared<node::tree_node>(tokenizer_.next_token());
+        auto operation = std::make_shared<tree::tree_node>(tokenizer_.next_token());
 
         auto right = parse_terminal();
         operation->left  = left;
@@ -158,12 +158,12 @@ std::shared_ptr<node::tree_node> evaluator::parse_relational_operation() {
     return nullptr;
 }
 
-std::shared_ptr<node::tree_node> evaluator::parse_terminal() {
+std::shared_ptr<tree::tree_node> evaluator::parse_terminal() {
     if (tokenizer_.has_tokens()) {
         auto token = tokenizer_.next_token();
 
         if (token.is(token::token_type::field)) {
-            return std::make_shared<node::tree_node>(token);
+            return std::make_shared<tree::tree_node>(token);
         }
     }
 

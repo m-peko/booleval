@@ -7,12 +7,12 @@ include_directories (
 
 set (
     SOURCE_FILES
-        node/result_visitor.cpp
-        node/tree_node.cpp
-
         token/token.cpp
         token/token_type.cpp
         token/tokenizer.cpp
+
+        tree/result_visitor.cpp
+        tree/tree_node.cpp
 
         utils/any_value.cpp
         utils/string_utils.cpp
@@ -22,13 +22,13 @@ set (
 
 set (
     INCLUDE_FILES
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/node/base_visitor.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/node/result_visitor.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/node/tree_node.h
-
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.h
+
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/base_visitor.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/result_visitor.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/tree_node.h
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_value.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h

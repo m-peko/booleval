@@ -27,130 +27,155 @@
  *
  */
 
-#ifndef BOOLEVAL_RESULT_VISITOR_H
-#define BOOLEVAL_RESULT_VISITOR_H
+#ifndef BOOLEVAL_BASE_VISITOR_H
+#define BOOLEVAL_BASE_VISITOR_H
 
-#include <map>
-#include <string_view>
-#include <booleval/node/tree_node.h>
-#include <booleval/utils/any_value.h>
-#include <booleval/node/base_visitor.h>
+#include <booleval/tree/tree_node.h>
+#include <booleval/token/token_type.h>
 
 namespace booleval {
 
-namespace node {
+namespace tree {
 
 /**
- * class result_visitor
+ * class base_visitor
  *
- * Represents a visitor for expression tree nodes in order to get the
- * final result of the expression based on the specified field map.
+ * Represents a base class for any other visitor class. It contains set of
+ * functions for visiting tree nodes of different types.
  */
-class result_visitor : public base_visitor<bool> {
-    using field_map = std::map<std::string_view, utils::any_value>;
-
+template <typename ReturnType>
+class base_visitor {
 public:
-    result_visitor() = default;
-    result_visitor(result_visitor&& rhs) = default;
-    result_visitor(result_visitor const& rhs) = default;
+    base_visitor() = default;
+    base_visitor(base_visitor&& rhs) = default;
+    base_visitor(base_visitor const& rhs) = default;
 
-    result_visitor& operator=(result_visitor&& rhs) = default;
-    result_visitor& operator=(result_visitor const& rhs) = default;
+    base_visitor& operator=(base_visitor&& rhs) = default;
+    base_visitor& operator=(base_visitor const& rhs) = default;
 
-    ~result_visitor() = default;
-
-    /**
-     * Sets the key value map used for evaluation of expression tree.
-     *
-     * @param fields Key value map
-     */
-    void fields(field_map const& fields) noexcept;
+    ~base_visitor() = default;
 
     /**
-     * Gets the key value map used for evaluation of expression tree.
+     * Visits tree node by checking token type and passing node itself
+     * to specialized visitor's function.
      *
-     * @return Key value map
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
      */
-    field_map const& fields() const noexcept;
+    ReturnType visit(tree_node const& node);
 
     /**
      * Visits tree node representing logical operation AND.
      *
      * @param node Currently visited tree node
      *
-     * @return Result of logical operation AND
+     * @return ReturnType
      */
-    bool visit_and(tree_node const& node) override;
+    virtual ReturnType visit_and(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing logical operation OR.
      *
      * @param node Currently visited tree node
      *
-     * @return Result of logical operation OR
+     * @return ReturnType
      */
-    bool visit_or(tree_node const& node) override;
+    virtual ReturnType visit_or(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation EQ (EQUAL TO).
      *
      * @param node Currently visited tree node
      *
-     * @return Result of relational operation EQ
+     * @return ReturnType
      */
-    bool visit_eq(tree_node const& node) override;
+    virtual ReturnType visit_eq(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation NEQ (NOT EQUAL TO).
      *
      * @param node Currently visited tree node
      *
-     * @return Result of relational operation NEQ
+     * @return ReturnType
      */
-    bool visit_neq(tree_node const& node) override;
+    virtual ReturnType visit_neq(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation GT (GREATER THAN).
      *
      * @param node Currently visited tree node
      *
-     * @return Result of relational operation GT
+     * @return ReturnType
      */
-    bool visit_gt(tree_node const& node) override;
+    virtual ReturnType visit_gt(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation LT (LESS THAN).
      *
      * @param node Currently visited tree node
      *
-     * @return Result of relational operation LT
+     * @return ReturnType
      */
-    bool visit_lt(tree_node const& node) override;
+    virtual ReturnType visit_lt(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation GEQ (GREATER THAN OR EQUAL TO).
      *
      * @param node Currently visited tree node
      *
-     * @return Result of relational operation GT
+     * @return ReturnType
      */
-    bool visit_geq(tree_node const& node) override;
+    virtual ReturnType visit_geq(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation LEQ (LESS THAN OR EQUAL TO).
      *
      * @param node Currently visited tree node
      *
-     * @return Result of relational operation LT
+     * @return ReturnType
      */
-    bool visit_leq(tree_node const& node) override;
-
-private:
-    field_map fields_;
+    virtual ReturnType visit_leq(tree_node const& node) = 0;
 };
 
-} // node
+template <typename ReturnType>
+ReturnType base_visitor<ReturnType>::visit(tree_node const& node) {
+    if (nullptr == node.left || nullptr == node.right) {
+        return ReturnType{};
+    }
+
+    switch (node.token.type()) {
+    case token::token_type::logical_and:
+        return visit_and(node);
+
+    case token::token_type::logical_or:
+        return visit_or(node);
+
+    case token::token_type::eq:
+        return visit_eq(node);
+
+    case token::token_type::neq:
+        return visit_neq(node);
+
+    case token::token_type::gt:
+        return visit_gt(node);
+
+    case token::token_type::lt:
+        return visit_lt(node);
+
+    case token::token_type::geq:
+        return visit_geq(node);
+
+    case token::token_type::leq:
+        return visit_leq(node);
+
+    default:
+        return ReturnType{};
+    }
+}
+
+} // tree
 
 } // booleval
 
-#endif // BOOLEVAL_RESULT_VISITOR_H
+#endif // BOOLEVAL_BASE_VISITOR_H

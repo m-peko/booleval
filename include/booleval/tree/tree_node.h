@@ -27,48 +27,42 @@
  *
  */
 
-#include <gtest/gtest.h>
-#include <booleval/node/tree_node.h>
+#ifndef BOOLEVAL_TREE_NODE_H
+#define BOOLEVAL_TREE_NODE_H
+
+#include <memory>
 #include <booleval/token/token.h>
 #include <booleval/token/token_type.h>
 
-class TreeNodeTest : public testing::Test {};
+namespace booleval {
 
-TEST_F(TreeNodeTest, DefaultConstructor) {
-    using namespace booleval;
+namespace tree {
 
-    node::tree_node node;
-    EXPECT_EQ(node.token.type(), token::token_type::unknown);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
+/**
+ * struct tree_node
+ *
+ * Represents the tree node containing references to left and right child nodes
+ * as well as the token that the node represents in the actual expression tree.
+ */
+struct tree_node {
+    token::token token;
+    std::shared_ptr<tree_node> left;
+    std::shared_ptr<tree_node> right;
 
-TEST_F(TreeNodeTest, ConstructorFromTokenType) {
-    using namespace booleval;
+    tree_node();
+    tree_node(tree_node&& rhs) = default;
+    tree_node(tree_node const& rhs) = default;
+    tree_node(token::token_type const type);
+    tree_node(token::token const& token);
 
-    node::tree_node node(token::token_type::logical_and);
-    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
+    tree_node& operator=(tree_node&& rhs) = default;
+    tree_node& operator=(tree_node const& rhs) = default;
 
-TEST_F(TreeNodeTest, ConstructorFromToken) {
-    using namespace booleval;
+    ~tree_node() = default;
+};
 
-    token::token and_token(token::token_type::logical_and);
-    node::tree_node node(and_token);
-    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
+} // tree
 
-TEST_F(TreeNodeTest, ConstructorFromFieldToken) {
-    using namespace booleval;
+} // booleval
 
-    token::token field_token("foo");
-    node::tree_node node(field_token);
-    EXPECT_EQ(node.token.value(), "foo");
-    EXPECT_EQ(node.token.type(), token::token_type::field);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
+#endif // BOOLEVAL_TREE_NODE_H

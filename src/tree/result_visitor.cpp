@@ -27,11 +27,11 @@
  *
  */
 
-#include <booleval/node/result_visitor.h>
+#include <booleval/tree/result_visitor.h>
 
 namespace booleval {
 
-namespace node {
+namespace tree {
 
 void result_visitor::fields(field_map const& fields) noexcept {
     fields_ = fields;
@@ -85,6 +85,6 @@ bool result_visitor::visit_leq(tree_node const& node) {
     return fields_[key.value()] <= value.value();
 }
 
-} // node
+} // tree
 
 } // booleval

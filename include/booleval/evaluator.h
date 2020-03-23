@@ -33,10 +33,10 @@
 #include <map>
 #include <memory>
 #include <string_view>
-#include <booleval/node/tree_node.h>
+#include <booleval/tree/tree_node.h>
 #include <booleval/utils/any_value.h>
 #include <booleval/token/tokenizer.h>
-#include <booleval/node/result_visitor.h>
+#include <booleval/tree/result_visitor.h>
 
 namespace booleval {
 
@@ -91,41 +91,41 @@ private:
      *
      * @return Root tree node for the current part of the expression
      */
-    std::shared_ptr<node::tree_node> parse_expression();
+    std::shared_ptr<tree::tree_node> parse_expression();
 
     /**
      * Parses logical operation AND.
      *
      * @return Root tree node for the current part of the expression
      */
-    std::shared_ptr<node::tree_node> parse_and_operation();
+    std::shared_ptr<tree::tree_node> parse_and_operation();
 
     /**
      * Parses new expression within parentheses.
      *
      * @return Root tree node for the parsed expression
      */
-    std::shared_ptr<node::tree_node> parse_parentheses();
+    std::shared_ptr<tree::tree_node> parse_parentheses();
 
     /**
      * Parses relational operation (EQ, NEQ, GT, LT, ...).
      *
      * @return Root tree node for the parsed operation
      */
-    std::shared_ptr<node::tree_node> parse_relational_operation();
+    std::shared_ptr<tree::tree_node> parse_relational_operation();
 
     /**
      * Parses terminal, i.e. field token.
      *
      * @return Leaf node
      */
-    std::shared_ptr<node::tree_node> parse_terminal();
+    std::shared_ptr<tree::tree_node> parse_terminal();
 
 private:
     bool is_activated_;
     token::tokenizer tokenizer_;
-    std::shared_ptr<node::tree_node> root_;
-    node::result_visitor result_visitor_;
+    std::shared_ptr<tree::tree_node> root_;
+    tree::result_visitor result_visitor_;
 };
 
 } // booleval
