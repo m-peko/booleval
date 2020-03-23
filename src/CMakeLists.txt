@@ -11,6 +11,7 @@ set (
         token/token_type.cpp
         token/tokenizer.cpp
 
+        tree/expression_tree.cpp
         tree/result_visitor.cpp
         tree/tree_node.cpp
 
@@ -27,6 +28,7 @@ set (
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.h
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/base_visitor.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/expression_tree.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/result_visitor.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/tree_node.h
 
