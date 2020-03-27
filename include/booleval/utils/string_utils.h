@@ -296,7 +296,7 @@ std::optional<T> from_chars(std::string_view strv) {
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 std::string to_chars(T const value) {
-    constexpr size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
+    constexpr std::size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
     std::array<char, buffer_size> buffer;
 
     auto const result = std::to_chars(
