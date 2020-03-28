@@ -65,7 +65,7 @@ public:
      *
      * @param type Token type
      */
-    virtual void type(token_type const type) noexcept;
+    void type(token_type const type) noexcept;
 
     /**
      * Gets the token type.
@@ -86,7 +86,7 @@ public:
      *
      * @return Token value
      */
-    std::string_view value() const noexcept;
+    [[nodiscard]] std::string_view value() const noexcept;
 
     /**
      * Gets the token value as an arithmetic value.
@@ -96,28 +96,28 @@ public:
      */
     template <typename T,
               typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-    std::optional<T> value() const noexcept;
+    [[nodiscard]] std::optional<T> value() const noexcept;
 
     /**
      * Checks whether the token is of the specified type.
      *
      * @return True if the token is of the specified type, false otherwise
      */
-    bool is(token_type const type) const noexcept;
+    [[nodiscard]] bool is(token_type const type) const noexcept;
 
     /**
      * Checks whether the token is not of the specified type.
      *
      * @return True if the token is not of the specified type, false otherwise
      */
-    bool is_not(token_type const type) const noexcept;
+    [[nodiscard]] bool is_not(token_type const type) const noexcept;
 
     /**
      * Checks whether the token is of the first or second specified type.
      *
      * @return True if the token is of the first or second specified type, false otherwise
      */
-    bool is_one_of(token_type const first, token_type const second) const noexcept;
+    [[nodiscard]] bool is_one_of(token_type const first, token_type const second) const noexcept;
 
     /**
      * Checks whether the token is one of the multiple specified types.
@@ -125,7 +125,7 @@ public:
      * @return True if the token is one of the multiple specified types, false otherwise
      */
     template <typename... TokenType>
-    bool is_one_of(token_type const first, token_type const second, TokenType const ... nth) const noexcept;
+    [[nodiscard]] bool is_one_of(token_type const first, token_type const second, TokenType const ... nth) const noexcept;
 
 private:
     token_type type_;

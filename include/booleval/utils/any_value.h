@@ -71,55 +71,55 @@ public:
 
     template <typename T,
               typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    bool operator==(T const rhs);
+    [[nodiscard]] bool operator==(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    bool operator==(T const rhs);
+    [[nodiscard]] bool operator==(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    bool operator!=(T const rhs);
+    [[nodiscard]] bool operator!=(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    bool operator!=(T const rhs);
+    [[nodiscard]] bool operator!=(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    bool operator>(T const rhs);
+    [[nodiscard]] bool operator>(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    bool operator>(T const rhs);
+    [[nodiscard]] bool operator>(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    bool operator<(T const rhs);
+    [[nodiscard]] bool operator<(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    bool operator<(T const rhs);
+    [[nodiscard]] bool operator<(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    bool operator>=(T const rhs);
+    [[nodiscard]] bool operator>=(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    bool operator>=(T const rhs);
+    [[nodiscard]] bool operator>=(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    bool operator<=(T const rhs);
+    [[nodiscard]] bool operator<=(T const rhs);
 
     template <typename T,
               typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    bool operator<=(T const rhs);
+    [[nodiscard]] bool operator<=(T const rhs);
 
     ~any_value() = default;
 
-    std::string const& str() const noexcept;
+    [[nodiscard]] std::string const& str() const noexcept;
 
     friend bool operator==(any_value const& lhs, any_value const& rhs);
     friend bool operator!=(any_value const& lhs, any_value const& rhs);

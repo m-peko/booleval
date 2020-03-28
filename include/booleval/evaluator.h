@@ -63,7 +63,7 @@ public:
      *
      * @return True if the evaluation is activated, otherwise false
      */
-    bool is_activated() const noexcept;
+    [[nodiscard]] bool is_activated() const noexcept;
 
     /**
      * Sets the expression to be used for evaluation.
@@ -72,7 +72,7 @@ public:
      *
      * @return True if the expression is valid, otherwise false
      */
-    bool expression(std::string_view expression);
+    [[nodiscard]] bool expression(std::string_view expression);
 
     /**
      * Evaluates expression tree based on the key value map passed in.
@@ -81,7 +81,7 @@ public:
      *
      * @return True if the key value map satisfies expression, otherwise false
      */
-    bool evaluate(field_map const& fields);
+    [[nodiscard]] bool evaluate(field_map const& fields);
 
 private:
     bool is_activated_;
