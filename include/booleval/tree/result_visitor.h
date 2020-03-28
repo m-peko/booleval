@@ -71,7 +71,7 @@ public:
      *
      * @return Key value map
      */
-    field_map const& fields() const noexcept;
+    [[nodiscard]] field_map const& fields() const noexcept;
 
     /**
      * Visits tree node representing logical operation AND.
@@ -80,7 +80,7 @@ public:
      *
      * @return Result of logical operation AND
      */
-    bool visit_and(tree_node const& node) override;
+    [[nodiscard]] bool visit_and(tree_node const& node) override;
 
     /**
      * Visits tree node representing logical operation OR.
@@ -98,7 +98,7 @@ public:
      *
      * @return Result of relational operation EQ
      */
-    bool visit_eq(tree_node const& node) override;
+    [[nodiscard]] bool visit_eq(tree_node const& node) override;
 
     /**
      * Visits tree node representing relational operation NEQ (NOT EQUAL TO).
@@ -107,7 +107,7 @@ public:
      *
      * @return Result of relational operation NEQ
      */
-    bool visit_neq(tree_node const& node) override;
+    [[nodiscard]] bool visit_neq(tree_node const& node) override;
 
     /**
      * Visits tree node representing relational operation GT (GREATER THAN).
@@ -116,7 +116,7 @@ public:
      *
      * @return Result of relational operation GT
      */
-    bool visit_gt(tree_node const& node) override;
+    [[nodiscard]] bool visit_gt(tree_node const& node) override;
 
     /**
      * Visits tree node representing relational operation LT (LESS THAN).
@@ -125,7 +125,7 @@ public:
      *
      * @return Result of relational operation LT
      */
-    bool visit_lt(tree_node const& node) override;
+    [[nodiscard]] bool visit_lt(tree_node const& node) override;
 
     /**
      * Visits tree node representing relational operation GEQ (GREATER THAN OR EQUAL TO).
@@ -134,7 +134,7 @@ public:
      *
      * @return Result of relational operation GT
      */
-    bool visit_geq(tree_node const& node) override;
+    [[nodiscard]] bool visit_geq(tree_node const& node) override;
 
     /**
      * Visits tree node representing relational operation LEQ (LESS THAN OR EQUAL TO).
@@ -143,7 +143,7 @@ public:
      *
      * @return Result of relational operation LT
      */
-    bool visit_leq(tree_node const& node) override;
+    [[nodiscard]] bool visit_leq(tree_node const& node) override;
 
 private:
     field_map fields_;

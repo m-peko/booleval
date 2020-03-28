@@ -57,7 +57,7 @@ enum class split_options : uint8_t {
 };
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator|(Enum lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) |
@@ -66,7 +66,7 @@ operator|(Enum lhs, Enum rhs) {
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator&(Enum lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) &
@@ -75,7 +75,7 @@ operator&(Enum lhs, Enum rhs) {
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator^(Enum lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) ^
@@ -84,7 +84,7 @@ operator^(Enum lhs, Enum rhs) {
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator~(Enum rhs) {
     return static_cast<Enum>(
         ~static_cast<std::underlying_type_t<Enum>>(rhs)
@@ -92,7 +92,7 @@ operator~(Enum rhs) {
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
+[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
 operator|=(Enum& lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) |
@@ -101,7 +101,7 @@ operator|=(Enum& lhs, Enum rhs) {
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
+[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
 operator&=(Enum& lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) &
@@ -110,7 +110,7 @@ operator&=(Enum& lhs, Enum rhs) {
 }
 
 template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
+[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
 operator^=(Enum& lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) ^
@@ -129,7 +129,7 @@ operator^=(Enum& lhs, Enum rhs) {
  */
 template <typename Enum,
           typename = std::enable_if_t<std::is_enum_v<Enum>>>
-constexpr bool is_set(Enum lhs, Enum rhs) {
+[[nodiscard]] constexpr bool is_set(Enum lhs, Enum rhs) {
     return (lhs & rhs) == lhs ||
            (lhs & rhs) == rhs;
 }
@@ -166,7 +166,7 @@ void trim(std::string_view& strv, char const c = ' ');
  *
  * @return Modified string view
  */
-std::string_view ltrim_copy(std::string_view strv, char const c = ' ');
+[[nodiscard]] std::string_view ltrim_copy(std::string_view strv, char const c = ' ');
 
 /**
  * Removes whitespace characters from the right side of the string view.
@@ -176,7 +176,7 @@ std::string_view ltrim_copy(std::string_view strv, char const c = ' ');
  *
  * @return Modified string view
  */
-std::string_view rtrim_copy(std::string_view strv, char const c = ' ');
+[[nodiscard]] std::string_view rtrim_copy(std::string_view strv, char const c = ' ');
 
 /**
  * Removes whitespace characters from the both sides of the string view.
@@ -186,7 +186,7 @@ std::string_view rtrim_copy(std::string_view strv, char const c = ' ');
  *
  * @return Modified string view
  */
-std::string_view trim_copy(std::string_view strv, char const c = ' ');
+[[nodiscard]] std::string_view trim_copy(std::string_view strv, char const c = ' ');
 
 /**
  * Checks whether string view is empty or contains only whitespace characters.
@@ -195,7 +195,7 @@ std::string_view trim_copy(std::string_view strv, char const c = ' ');
  *
  * @return True if string view is empty, otherwise false
  */
-bool is_empty(std::string_view strv);
+[[nodiscard]] bool is_empty(std::string_view strv);
 
 /**
  * Splits string view by delimiters.
@@ -208,9 +208,9 @@ bool is_empty(std::string_view strv);
  *
  * @return Tokens computed by splitting the given string view
  */
-std::vector<std::string_view> split(std::string_view strv,
-                                    std::string_view delims = " ",
-                                    split_options const options = split_options::exclude_delimiters);
+[[nodiscard]] std::vector<std::string_view> split(std::string_view strv,
+                                                  std::string_view delims = " ",
+                                                  split_options const options = split_options::exclude_delimiters);
 
 /**
  * Joins the elements from specified range into a string.
@@ -222,7 +222,7 @@ std::vector<std::string_view> split(std::string_view strv,
  * @return String computed by joining the elements from range
  */
 template <typename InputIt>
-std::string join(InputIt const& first, InputIt const& last, std::string const& separator = "") {
+[[nodiscard]] std::string join(InputIt const& first, InputIt const& last, std::string const& separator = "") {
     if (first == last) {
         return {};
     }
@@ -246,7 +246,7 @@ std::string join(InputIt const& first, InputIt const& last, std::string const& s
  */
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-std::optional<T> from_chars(std::string_view strv) {
+[[nodiscard]] std::optional<T> from_chars(std::string_view strv) {
     T value{};
 
     auto const result = std::from_chars(
@@ -272,7 +272,7 @@ std::optional<T> from_chars(std::string_view strv) {
  */
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-std::optional<T> from_chars(std::string_view strv) {
+[[nodiscard]] std::optional<T> from_chars(std::string_view strv) {
     T value{};
 
     std::stringstream ss;
@@ -295,8 +295,8 @@ std::optional<T> from_chars(std::string_view strv) {
  */
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-std::string to_chars(T const value) {
-    constexpr size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
+[[nodiscard]] std::string to_chars(T const value) {
+    constexpr std::size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
     std::array<char, buffer_size> buffer;
 
     auto const result = std::to_chars(
@@ -321,7 +321,7 @@ std::string to_chars(T const value) {
  */
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-std::string to_chars(T const value) {
+[[nodiscard]] std::string to_chars(T const value) {
     auto str = std::to_string(value);
     std::string_view strv{ str.c_str(), str.size() };
     rtrim(strv, '0');

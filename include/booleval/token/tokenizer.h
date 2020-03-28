@@ -68,14 +68,14 @@ public:
      *
      * @return Expression to be tokenized
      */
-    std::string_view expression() const noexcept;
+    [[nodiscard]] std::string_view expression() const noexcept;
 
     /**
      * Checks whether more tokens exist or not.
      *
      * @return True if there is more tokens, otherwise false
      */
-    bool has_tokens() const noexcept;
+    [[nodiscard]] bool has_tokens() const noexcept;
 
     /**
      * Passes the token by incrementing the current token index.
@@ -87,14 +87,14 @@ public:
      *
      * @return Next token
      */
-    token const& next_token();
+    [[nodiscard]] token const& next_token();
 
     /**
      * Gets the next token without incrementing the current token index.
      *
      * @return Next token
      */
-    token const& weak_next_token();
+    [[nodiscard]] token const& weak_next_token();
 
     /**
      * Tokenizes the expression and transforms it into the collection of tokens.
@@ -108,7 +108,7 @@ public:
 
 private:
     std::string_view expression_;
-    size_t current_token_index_;
+    std::size_t current_token_index_;
     std::vector<token> tokens_;
 };
 

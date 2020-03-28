@@ -61,7 +61,7 @@ public:
      *
      * @return Root tree node
      */
-    std::shared_ptr<tree::tree_node> root() noexcept;
+    [[nodiscard]] std::shared_ptr<tree::tree_node> root() noexcept;
 
     /**
      * Builds the expression tree.
@@ -70,7 +70,7 @@ public:
      *
      * @return True if the expression tree is built successfully, otherwise false
      */
-    bool build(std::string_view expression);
+    [[nodiscard]] bool build(std::string_view expression);
 
 private:
     /**
@@ -78,35 +78,35 @@ private:
      *
      * @return Root tree node for the current part of the expression
      */
-    std::shared_ptr<tree::tree_node> parse_expression();
+    [[nodiscard]] std::shared_ptr<tree::tree_node> parse_expression();
 
     /**
      * Parses logical operation AND.
      *
      * @return Root tree node for the parsed logical operation
      */
-    std::shared_ptr<tree::tree_node> parse_and_operation();
+    [[nodiscard]] std::shared_ptr<tree::tree_node> parse_and_operation();
 
     /**
      * Parses new expression within parentheses.
      *
      * @return Root tree node for the parsed expression within parentheses
      */
-    std::shared_ptr<tree::tree_node> parse_parentheses();
+    [[nodiscard]] std::shared_ptr<tree::tree_node> parse_parentheses();
 
     /**
      * Parses relational operation (EQ, NEQ, GT, LT, GEQ and LEQ).
      *
      * @return Root tree node for the parsed relational operation
      */
-    std::shared_ptr<tree::tree_node> parse_relational_operation();
+    [[nodiscard]] std::shared_ptr<tree::tree_node> parse_relational_operation();
 
     /**
      * Parses terminal.
      *
      * @return Leaf node
      */
-    std::shared_ptr<tree::tree_node> parse_terminal();
+    [[nodiscard]] std::shared_ptr<tree::tree_node> parse_terminal();
 
 private:
     token::tokenizer tokenizer_;

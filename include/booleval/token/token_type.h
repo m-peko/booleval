@@ -44,7 +44,7 @@ namespace token {
  * Represents a token type. Supported types are logical operators,
  * relational operators, parentheses and field.
  */
-enum class token_type : uint8_t {
+enum class [[nodiscard]] token_type : uint8_t {
     unknown = 0,
     field   = 1,
 
@@ -119,7 +119,7 @@ token_type map_to_token_type(std::string_view const value);
  *
  * @return Token value
  */
-std::string_view map_to_token_value(token_type const type);
+[[nodiscard]] std::string_view map_to_token_value(token_type const type);
 
 } // token
 

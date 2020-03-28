@@ -63,7 +63,7 @@ public:
      *
      * @return ReturnType
      */
-    ReturnType visit(tree_node const& node);
+    [[nodiscard]] ReturnType visit(tree_node const& node);
 
     /**
      * Visits tree node representing logical operation AND.
@@ -72,7 +72,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_and(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_and(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing logical operation OR.
@@ -81,7 +81,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_or(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_or(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation EQ (EQUAL TO).
@@ -90,7 +90,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_eq(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_eq(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation NEQ (NOT EQUAL TO).
@@ -99,7 +99,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_neq(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_neq(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation GT (GREATER THAN).
@@ -108,7 +108,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_gt(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_gt(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation LT (LESS THAN).
@@ -117,7 +117,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_lt(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_lt(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation GEQ (GREATER THAN OR EQUAL TO).
@@ -126,7 +126,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_geq(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_geq(tree_node const& node) = 0;
 
     /**
      * Visits tree node representing relational operation LEQ (LESS THAN OR EQUAL TO).
@@ -135,7 +135,7 @@ public:
      *
      * @return ReturnType
      */
-    virtual ReturnType visit_leq(tree_node const& node) = 0;
+    [[nodiscard]] virtual ReturnType visit_leq(tree_node const& node) = 0;
 };
 
 template <typename ReturnType>
