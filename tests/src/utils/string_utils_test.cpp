@@ -57,59 +57,59 @@ TEST_F(StringUtilsTest, IsSetSplitOption) {
 TEST_F(StringUtilsTest, LeftTrimWhitespaces) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(ltrim_copy("abc"), "abc");
-    EXPECT_EQ(ltrim_copy(" abc"), "abc");
-    EXPECT_EQ(ltrim_copy("  abc"), "abc");
-    EXPECT_EQ(ltrim_copy("  abc "), "abc ");
-    EXPECT_EQ(ltrim_copy("  a b c "), "a b c ");
+    EXPECT_EQ(ltrim("abc"), "abc");
+    EXPECT_EQ(ltrim(" abc"), "abc");
+    EXPECT_EQ(ltrim("  abc"), "abc");
+    EXPECT_EQ(ltrim("  abc "), "abc ");
+    EXPECT_EQ(ltrim("  a b c "), "a b c ");
 }
 
 TEST_F(StringUtilsTest, LeftTrimZeros) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(ltrim_copy("abc", '0'), "abc");
-    EXPECT_EQ(ltrim_copy("0abc", '0'), "abc");
-    EXPECT_EQ(ltrim_copy("00abc", '0'), "abc");
-    EXPECT_EQ(ltrim_copy("00abc0", '0'), "abc0");
-    EXPECT_EQ(ltrim_copy("00a0b0c0", '0'), "a0b0c0");
+    EXPECT_EQ(ltrim("abc", '0'), "abc");
+    EXPECT_EQ(ltrim("0abc", '0'), "abc");
+    EXPECT_EQ(ltrim("00abc", '0'), "abc");
+    EXPECT_EQ(ltrim("00abc0", '0'), "abc0");
+    EXPECT_EQ(ltrim("00a0b0c0", '0'), "a0b0c0");
 }
 
 TEST_F(StringUtilsTest, RightTrimWhitespaces) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(rtrim_copy("abc"), "abc");
-    EXPECT_EQ(rtrim_copy("abc "), "abc");
-    EXPECT_EQ(rtrim_copy("abc  "), "abc");
-    EXPECT_EQ(rtrim_copy(" abc  "), " abc");
-    EXPECT_EQ(rtrim_copy(" a b c  "), " a b c");
+    EXPECT_EQ(rtrim("abc"), "abc");
+    EXPECT_EQ(rtrim("abc "), "abc");
+    EXPECT_EQ(rtrim("abc  "), "abc");
+    EXPECT_EQ(rtrim(" abc  "), " abc");
+    EXPECT_EQ(rtrim(" a b c  "), " a b c");
 }
 
 TEST_F(StringUtilsTest, RightTrimZeros) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(rtrim_copy("abc", '0'), "abc");
-    EXPECT_EQ(rtrim_copy("abc0", '0'), "abc");
-    EXPECT_EQ(rtrim_copy("abc00", '0'), "abc");
-    EXPECT_EQ(rtrim_copy("0abc00", '0'), "0abc");
-    EXPECT_EQ(rtrim_copy("0a0b0c00", '0'), "0a0b0c");
+    EXPECT_EQ(rtrim("abc", '0'), "abc");
+    EXPECT_EQ(rtrim("abc0", '0'), "abc");
+    EXPECT_EQ(rtrim("abc00", '0'), "abc");
+    EXPECT_EQ(rtrim("0abc00", '0'), "0abc");
+    EXPECT_EQ(rtrim("0a0b0c00", '0'), "0a0b0c");
 }
 
 TEST_F(StringUtilsTest, TrimWhitespaces) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(trim_copy("abc"), "abc");
-    EXPECT_EQ(trim_copy(" abc "), "abc");
-    EXPECT_EQ(trim_copy("  abc  "), "abc");
-    EXPECT_EQ(trim_copy("  a b c  "), "a b c");
+    EXPECT_EQ(trim("abc"), "abc");
+    EXPECT_EQ(trim(" abc "), "abc");
+    EXPECT_EQ(trim("  abc  "), "abc");
+    EXPECT_EQ(trim("  a b c  "), "a b c");
 }
 
 TEST_F(StringUtilsTest, TrimZeros) {
     using namespace booleval::utils;
 
-    EXPECT_EQ(trim_copy("abc", '0'), "abc");
-    EXPECT_EQ(trim_copy("0abc0", '0'), "abc");
-    EXPECT_EQ(trim_copy("00abc00", '0'), "abc");
-    EXPECT_EQ(trim_copy("00a0b0c00", '0'), "a0b0c");
+    EXPECT_EQ(trim("abc", '0'), "abc");
+    EXPECT_EQ(trim("0abc0", '0'), "abc");
+    EXPECT_EQ(trim("00abc00", '0'), "abc");
+    EXPECT_EQ(trim("00a0b0c00", '0'), "a0b0c");
 }
 
 TEST_F(StringUtilsTest, IsEmpty) {

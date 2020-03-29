@@ -139,34 +139,18 @@ template <typename Enum,
  *
  * @param strv String view to remove whitespace characters from
  * @param c    Character to trim from the left side of the string view
- */
-void ltrim(std::string_view& strv, char const c = ' ');
-
-/**
- * Removes whitespace characters from the right side of the string view.
- *
- * @param strv String view to remove whitespace characters from
- * @param c    Character to trim from the right side of the string view
- */
-void rtrim(std::string_view& strv, char const c = ' ');
-
-/**
- * Removes whitespace characters from the both sides of the string view.
- *
- * @param strv String view to remove whitespace characters from
- * @param c    Character to trim from the both sides of the string view
- */
-void trim(std::string_view& strv, char const c = ' ');
-
-/**
- * Removes whitespace characters from the left side of the string view.
- *
- * @param strv String view to remove whitespace characters from
- * @param c    Character to trim from the left side of the string view
  *
  * @return Modified string view
  */
-[[nodiscard]] std::string_view ltrim_copy(std::string_view strv, char const c = ' ');
+[[nodiscard]] constexpr std::string_view ltrim(std::string_view strv, char const c = ' ') {
+    strv.remove_prefix(
+        std::min(
+            strv.find_first_not_of(c),
+            strv.size()
+        )
+    );
+    return strv;
+}
 
 /**
  * Removes whitespace characters from the right side of the string view.
@@ -176,7 +160,15 @@ void trim(std::string_view& strv, char const c = ' ');
  *
  * @return Modified string view
  */
-[[nodiscard]] std::string_view rtrim_copy(std::string_view strv, char const c = ' ');
+[[nodiscard]] constexpr std::string_view rtrim(std::string_view strv, char const c = ' ') {
+    strv.remove_suffix(
+        std::min(
+            strv.size() - strv.find_last_not_of(c) - 1,
+            strv.size()
+        )
+    );
+    return strv;
+}
 
 /**
  * Removes whitespace characters from the both sides of the string view.
@@ -186,7 +178,10 @@ void trim(std::string_view& strv, char const c = ' ');
  *
  * @return Modified string view
  */
-[[nodiscard]] std::string_view trim_copy(std::string_view strv, char const c = ' ');
+[[nodiscard]] constexpr std::string_view trim(std::string_view strv, char const c = ' ') {
+    strv = ltrim(strv, c);
+    return rtrim(strv, c);
+}
 
 /**
  * Checks whether string view is empty or contains only whitespace characters.
@@ -195,7 +190,9 @@ void trim(std::string_view& strv, char const c = ' ');
  *
  * @return True if string view is empty, otherwise false
  */
-[[nodiscard]] bool is_empty(std::string_view strv);
+[[nodiscard]] constexpr bool is_empty(std::string_view strv) {
+    return strv.empty() || std::string_view::npos == strv.find_first_not_of(' ');
+}
 
 /**
  * Splits string view by delimiters.
@@ -324,8 +321,7 @@ template <typename T,
 [[nodiscard]] std::string to_chars(T const value) {
     auto str = std::to_string(value);
     std::string_view strv{ str.c_str(), str.size() };
-    rtrim(strv, '0');
-    str = strv;
+    str = rtrim(strv, '0');
     return str;
 }
 
