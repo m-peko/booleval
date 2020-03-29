@@ -7,7 +7,6 @@ include_directories (
 
 set (
     SOURCE_FILES
-        token/token.cpp
         token/token_type.cpp
         token/tokenizer.cpp
 
