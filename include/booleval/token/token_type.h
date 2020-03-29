@@ -30,9 +30,10 @@
 #ifndef BOOLEVAL_TOKEN_TYPE_H
 #define BOOLEVAL_TOKEN_TYPE_H
 
+#include <array>
 #include <cstdint>
+#include <utility>
 #include <string_view>
-#include <unordered_map>
 
 namespace booleval {
 
@@ -65,10 +66,11 @@ enum class [[nodiscard]] token_type : uint8_t {
     rp = 11
 };
 
-inline std::unordered_multimap<
-    std::string_view,
-    token_type
-> const keyword_expressions = {
+constexpr std::size_t count_of_keyword_expressions{ 16 };
+constexpr std::array<
+    std::pair<std::string_view, token_type>,
+    count_of_keyword_expressions
+> keyword_expressions = {{
     { "and", token_type::logical_and },
     { "AND", token_type::logical_and },
     { "or",  token_type::logical_or  },
@@ -85,12 +87,13 @@ inline std::unordered_multimap<
     { "GEQ", token_type::geq },
     { "leq", token_type::leq },
     { "LEQ", token_type::leq }
-};
+}};
 
-inline std::unordered_map<
-    std::string_view,
-    token_type
-> const symbol_expressions = {
+constexpr std::size_t count_of_symbol_expressions{ 10 };
+constexpr std::array<
+    std::pair<std::string_view, token_type>,
+    count_of_symbol_expressions
+> symbol_expressions = {{
     { "&&", token_type::logical_and },
     { "||", token_type::logical_or  },
     { "==", token_type::eq  },
@@ -101,7 +104,7 @@ inline std::unordered_map<
     { "<=", token_type::leq },
     { "(",  token_type::lp  },
     { ")",  token_type::rp  }
-};
+}};
 
 /**
  * Maps token value to token type.

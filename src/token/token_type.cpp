@@ -35,12 +35,26 @@ namespace booleval {
 namespace token {
 
 token_type map_to_token_type(std::string_view const value) {
-    auto keyword_search = keyword_expressions.find(value);
+    auto keyword_search = std::find_if(
+        std::begin(keyword_expressions),
+        std::end(keyword_expressions),
+        [value](auto&& p) {
+            return p.first == value;
+        }
+    );
+
     if (std::end(keyword_expressions) != keyword_search) {
         return keyword_search->second;
     }
 
-    auto symbol_search = symbol_expressions.find(value);
+    auto symbol_search = std::find_if(
+        std::begin(symbol_expressions),
+        std::end(symbol_expressions),
+        [value](auto&& p) {
+            return p.first == value;
+        }
+    );
+
     if (std::end(symbol_expressions) != symbol_search) {
         return symbol_search->second;
     }
