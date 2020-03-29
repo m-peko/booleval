@@ -49,7 +49,7 @@ namespace utils {
  *
  * Represents an option used when splitting a string.
  */
-enum class split_options : uint8_t {
+enum class [[nodiscard]] split_options : uint8_t {
     off                = 0x00,
     include_whitespace = 0x01,
     include_delimiters = 0x02,
@@ -57,7 +57,7 @@ enum class split_options : uint8_t {
 };
 
 template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator|(Enum lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) |
@@ -66,7 +66,7 @@ operator|(Enum lhs, Enum rhs) {
 }
 
 template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator&(Enum lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) &
@@ -75,7 +75,7 @@ operator&(Enum lhs, Enum rhs) {
 }
 
 template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator^(Enum lhs, Enum rhs) {
     return static_cast<Enum>(
         static_cast<std::underlying_type_t<Enum>>(lhs) ^
@@ -84,7 +84,7 @@ operator^(Enum lhs, Enum rhs) {
 }
 
 template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
+constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
 operator~(Enum rhs) {
     return static_cast<Enum>(
         ~static_cast<std::underlying_type_t<Enum>>(rhs)
