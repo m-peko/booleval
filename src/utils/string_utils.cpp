@@ -27,55 +27,12 @@
  *
  */
 
-#include <string>
 #include <algorithm>
 #include <booleval/utils/string_utils.h>
 
 namespace booleval {
 
 namespace utils {
-
-void ltrim(std::string_view& strv, char const c) {
-    strv.remove_prefix(
-        std::min(
-            strv.find_first_not_of(c),
-            strv.size()
-        )
-    );
-}
-
-void rtrim(std::string_view& strv, char const c) {
-    strv.remove_suffix(
-        std::min(
-            strv.size() - strv.find_last_not_of(c) - 1,
-            strv.size()
-        )
-    );
-}
-
-void trim(std::string_view& strv, char const c) {
-    ltrim(strv, c);
-    rtrim(strv, c);
-}
-
-std::string_view ltrim_copy(std::string_view strv, char const c) {
-    ltrim(strv, c);
-    return strv;
-}
-
-std::string_view rtrim_copy(std::string_view strv, char const c) {
-    rtrim(strv, c);
-    return strv;
-}
-
-std::string_view trim_copy(std::string_view strv, char const c) {
-    trim(strv, c);
-    return strv;
-}
-
-bool is_empty(std::string_view strv) {
-    return strv.empty() || std::string_view::npos == strv.find_first_not_of(' ');
-}
 
 std::vector<std::string_view> split(std::string_view strv, std::string_view delims, split_options const options) {
     std::string delims_impl{ delims };

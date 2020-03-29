@@ -49,11 +49,26 @@ struct tree_node {
     std::shared_ptr<tree_node> left;
     std::shared_ptr<tree_node> right;
 
-    tree_node();
+    tree_node()
+        : token(token::token_type::unknown),
+          left(nullptr),
+          right(nullptr)
+    {}
+
     tree_node(tree_node&& rhs) = default;
     tree_node(tree_node const& rhs) = default;
-    tree_node(token::token_type const type);
-    tree_node(token::token const& token);
+
+    tree_node(token::token_type const type)
+        : token(type),
+          left(nullptr),
+          right(nullptr)
+    {}
+
+    tree_node(token::token const& token)
+        : token(token),
+          left(nullptr),
+          right(nullptr)
+    {}
 
     tree_node& operator=(tree_node&& rhs) = default;
     tree_node& operator=(tree_node const& rhs) = default;

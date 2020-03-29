@@ -55,22 +55,26 @@ public:
     token(token const& rhs) = default;
 
     token(token_type const type) noexcept
-        : type_(type), value_(map_to_token_value(type))
+        : type_(type),
+          value_(map_to_token_value(type))
     {}
 
     token(std::string_view const value) noexcept
-        : type_(map_to_token_type(value)), value_(value)
+        : type_(map_to_token_type(value)),
+          value_(value)
     {}
 
     token(token_type const type, std::string_view const value) noexcept
-        : type_(type), value_(value)
+        : type_(type),
+          value_(value)
     {}
 
     token& operator=(token&& rhs) = default;
     token& operator=(token const& rhs) = default;
 
     [[nodiscard]] constexpr bool operator==(token const& rhs) const noexcept {
-        return type_  == rhs.type_ && value_ == rhs.value_;
+        return type_  == rhs.type_ &&
+               value_ == rhs.value_;
     }
 
     ~token() = default;
