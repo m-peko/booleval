@@ -63,7 +63,7 @@ public:
      *
      * @return ReturnType
      */
-    [[nodiscard]] ReturnType visit(tree_node const& node);
+    [[nodiscard]] constexpr ReturnType visit(tree_node const& node);
 
     /**
      * Visits tree node representing logical operation AND.
@@ -139,7 +139,7 @@ public:
 };
 
 template <typename ReturnType>
-ReturnType base_visitor<ReturnType>::visit(tree_node const& node) {
+constexpr ReturnType base_visitor<ReturnType>::visit(tree_node const& node) {
     if (nullptr == node.left || nullptr == node.right) {
         return ReturnType{};
     }
