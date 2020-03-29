@@ -47,12 +47,12 @@ namespace token {
  */
 class token {
 public:
-    token() noexcept
+    constexpr token() noexcept
         : type_(token_type::unknown)
     {}
 
-    token(token&& rhs) = default;
-    token(token const& rhs) = default;
+    constexpr token(token&& rhs) = default;
+    constexpr token(token const& rhs) = default;
 
     token(token_type const type) noexcept
         : type_(type),
@@ -64,7 +64,7 @@ public:
           value_(value)
     {}
 
-    token(token_type const type, std::string_view const value) noexcept
+    constexpr token(token_type const type, std::string_view const value) noexcept
         : type_(type),
           value_(value)
     {}
