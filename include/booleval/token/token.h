@@ -69,7 +69,7 @@ public:
     token& operator=(token&& rhs) = default;
     token& operator=(token const& rhs) = default;
 
-    [[nodiscard]] bool operator==(token const& rhs) const noexcept {
+    [[nodiscard]] constexpr bool operator==(token const& rhs) const noexcept {
         return type_  == rhs.type_ && value_ == rhs.value_;
     }
 
@@ -92,7 +92,7 @@ public:
      *
      * @return Token type
      */
-    token_type type() const noexcept {
+    constexpr token_type type() const noexcept {
         return type_;
     }
 
@@ -111,7 +111,7 @@ public:
      *
      * @return Token value
      */
-    [[nodiscard]] std::string_view value() const noexcept {
+    [[nodiscard]] constexpr std::string_view value() const noexcept {
         return value_;
     }
 
@@ -123,7 +123,7 @@ public:
      */
     template <typename T,
               typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-    [[nodiscard]] std::optional<T> value() const noexcept {
+    [[nodiscard]] constexpr std::optional<T> value() const noexcept {
         return utils::from_chars<T>(value_);
     }
 
@@ -132,7 +132,7 @@ public:
      *
      * @return True if the token is of the specified type, false otherwise
      */
-    [[nodiscard]] bool is(token_type const type) const noexcept {
+    [[nodiscard]] constexpr bool is(token_type const type) const noexcept {
         return type_ == type;
     }
 
@@ -141,7 +141,7 @@ public:
      *
      * @return True if the token is not of the specified type, false otherwise
      */
-    [[nodiscard]] bool is_not(token_type const type) const noexcept {
+    [[nodiscard]] constexpr bool is_not(token_type const type) const noexcept {
         return type_ != type;
     }
 
@@ -150,7 +150,7 @@ public:
      *
      * @return True if the token is of the first or second specified type, false otherwise
      */
-    [[nodiscard]] bool is_one_of(token_type const first, token_type const second) const noexcept {
+    [[nodiscard]] constexpr bool is_one_of(token_type const first, token_type const second) const noexcept {
         return is(first) || is(second);
     }
 
@@ -160,9 +160,9 @@ public:
      * @return True if the token is one of the multiple specified types, false otherwise
      */
     template <typename... TokenType>
-    [[nodiscard]] bool is_one_of(token_type const first,
-                                 token_type const second,
-                                 TokenType const ... nth) const noexcept {
+    [[nodiscard]] constexpr bool is_one_of(token_type const first,
+                                           token_type const second,
+                                           TokenType const ... nth) const noexcept {
         return is(first) || is_one_of(second, nth...);
     }
 
