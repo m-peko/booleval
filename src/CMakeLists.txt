@@ -12,7 +12,6 @@ set (
 
         tree/expression_tree.cpp
         tree/result_visitor.cpp
-        tree/tree_node.cpp
 
         utils/any_value.cpp
         utils/string_utils.cpp
