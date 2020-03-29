@@ -89,7 +89,7 @@ public:
      *
      * @return Result of logical operation OR
      */
-    bool visit_or(tree_node const& node) override;
+    [[nodiscard]] bool visit_or(tree_node const& node) override;
 
     /**
      * Visits tree node representing relational operation EQ (EQUAL TO).
