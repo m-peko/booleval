@@ -121,8 +121,8 @@ public:
 
     [[nodiscard]] std::string const& str() const noexcept;
 
-    [[nodiscard]] friend bool operator==(any_value const& lhs, any_value const& rhs);
-    [[nodiscard]] friend bool operator!=(any_value const& lhs, any_value const& rhs);
+    friend bool operator==(any_value const& lhs, any_value const& rhs);
+    friend bool operator!=(any_value const& lhs, any_value const& rhs);
 
 private:
     std::string value_;
