@@ -13,9 +13,16 @@ else (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_EXTENSIONS OFF)
 
 # Compilation flags
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++17")
+if (MSVC)
+    # Don't always use Wall, since VC's /Wall is ridiculously verbose.
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall /O2")
+else ()
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O3")
+endif ()
 
 # Build output checks
 option (LIBBOOLEVAL_BUILD_SHARED "Build libbooleval as a shared library." ON)
