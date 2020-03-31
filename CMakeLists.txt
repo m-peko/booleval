@@ -19,7 +19,7 @@ set (CMAKE_CXX_EXTENSIONS OFF)
 # Compilation flags
 if (MSVC)
     # Don't always use Wall, since VC's /Wall is ridiculously verbose.
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall /O2")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /O2")
 else ()
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O3")
 endif ()
@@ -33,6 +33,10 @@ if (LIBBOOLEVAL_BUILD_SHARED)
         "Use LIBBOOLEVAL_BUILD_SHARED=0 to perform a static build"
     )
     set (LIBBOOLEVAL_TYPE SHARED)
+
+    # Automatically create a .def file with all symbols found
+    # in the input .obj files for a SHARED library on Windows.
+    set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 else (LIBBOOLEVAL_BUILD_SHARED)
     message (STATUS "Build will generate a static library.")
     set (LIBBOOLEVAL_TYPE STATIC)
@@ -66,6 +70,10 @@ if (BOOLEVAL_BUILD_TESTS)
         set (GOOGLETEST_INCLUDE ${GOOGLETEST_ROOT}/googletest/include)
         set (GOOGLETEST_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/googletest)
         set (GOOGLETEST_LIBRARY ${GOOGLETEST_BINARY_DIR}/googletest)
+
+        if (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
+            set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        endif (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
 
         enable_testing ()
         add_subdirectory (googletest)

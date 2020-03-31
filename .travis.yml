@@ -35,6 +35,10 @@ matrix:
           - g++-8
           - clang-7
 
+  - name: "Windows MSVC"
+    os: windows
+    compiler: msvc
+
 script:
   # Fetch submodules
   - git submodule init
@@ -44,8 +48,10 @@ script:
   - mkdir -p build
   - cd build
 
-  # Build
+  # Generate build files
   - cmake ..
-  - make
-  - make tests
-  - make test
+
+  # Compile and execute tests
+  - cmake --build .
+  - cmake --build . --target tests
+  - ctest
