@@ -209,7 +209,7 @@ TEST_F(StringUtilsTest, From) {
 
     EXPECT_EQ(from_chars<uint8_t>("1").value(), 1U);
     EXPECT_DOUBLE_EQ(from_chars<double>("1.23456789").value(), 1.23456789);
-    EXPECT_FLOAT_EQ(from_chars<float>("1.23456789").value(), 1.23456789);
+    EXPECT_FLOAT_EQ(from_chars<float>("1.23456789").value(), 1.23456789F);
 }
 
 TEST_F(StringUtilsTest, To) {
@@ -217,5 +217,5 @@ TEST_F(StringUtilsTest, To) {
 
     EXPECT_EQ(to_chars<uint8_t>(1), "1");
     EXPECT_EQ(to_chars<double>(1.234567), "1.234567");
-    EXPECT_EQ(to_chars<float>(1.234567), "1.234567");
+    EXPECT_EQ(to_chars<float>(1.234567F), "1.234567");
 }
