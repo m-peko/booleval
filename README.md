@@ -1,6 +1,6 @@
 # booleval
 
-[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/m-peko/booleval/blob/master/LICENSE) [![Build status](https://ci.appveyor.com/api/projects/status/gusrrn0mn67q2yaj?svg=true)](https://ci.appveyor.com/project/m-peko/booleval)
+[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/m-peko/booleval/blob/master/LICENSE) [![Build Status](https://travis-ci.org/m-peko/booleval.svg?branch=master)](https://travis-ci.org/m-peko/booleval)
 
 Small C++17 library for evaluating logical expressions.
 
@@ -77,7 +77,11 @@ To conclude, equality operator is a default operator between two fields. Thus, i
 
 ## Requirements
 
-`booleval` project requires C++17 compiler and has been tested on GCC 8.3.0.
+`booleval` project requires C++17 compiler and has been tested on:
+
+- gcc 8.4.0
+- clang 7.0.0
+- msvc 19.16
 
 There are no 3rd party dependencies.
 

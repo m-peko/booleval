@@ -63,7 +63,7 @@ std::vector<std::string_view> split(std::string_view strv, std::string_view deli
         }
 
         if (is_set(options, split_options::include_delimiters)) {
-            std::string_view delim{ second, 1 };
+            std::string_view delim{ &*second, 1 };
             if (!is_empty(delim)) {
                 tokens.emplace_back(delim);
             }

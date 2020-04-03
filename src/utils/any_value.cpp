@@ -37,11 +37,11 @@ std::string const& any_value::str() const noexcept {
     return value_;
 }
 
-bool operator==(any_value const& lhs, any_value const& rhs) {
+[[nodiscard]] bool operator==(any_value const& lhs, any_value const& rhs) {
     return lhs.value_ == rhs.value_;
 }
 
-bool operator!=(any_value const& lhs, any_value const& rhs) {
+[[nodiscard]] bool operator!=(any_value const& lhs, any_value const& rhs) {
     return lhs.value_ != rhs.value_;
 }
 

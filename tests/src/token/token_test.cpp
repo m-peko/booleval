@@ -109,7 +109,7 @@ TEST_F(TokenTest, ValueAsFloat) {
 
     token::token token;
     token.value("1.23456789");
-    EXPECT_FLOAT_EQ(token.value<float>().value(), 1.23456789);
+    EXPECT_FLOAT_EQ(token.value<float>().value(), 1.23456789F);
 
     token.value("a");
     EXPECT_EQ(token.value<float>(), std::nullopt);
