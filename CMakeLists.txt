@@ -18,10 +18,19 @@ set (CMAKE_CXX_EXTENSIONS OFF)
 
 # Compilation flags
 if (MSVC)
-    # Don't always use Wall, since VC's /Wall is ridiculously verbose.
+    # Don't always use Wall, since VC's /Wall is too verbose.
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /O2")
 else ()
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O3")
+    option (BOOLEVAL_ENABLE_COVERAGE "Enable code coverage reporting" OFF)
+    if (BOOLEVAL_ENABLE_COVERAGE)
+        message (
+            STATUS
+            "Code coverage reporting is enabled."
+        )
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O0 --coverage")
+    else ()
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O3")
+    endif ()
 endif ()
 
 # Build output checks

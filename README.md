@@ -1,6 +1,8 @@
 # booleval
 
-[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/m-peko/booleval/blob/master/LICENSE) [![Build Status](https://travis-ci.org/m-peko/booleval.svg?branch=master)](https://travis-ci.org/m-peko/booleval)
+[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/m-peko/booleval/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/m-peko/booleval.svg?branch=master)](https://travis-ci.org/m-peko/booleval)
+[![codecov](https://codecov.io/gh/m-peko/booleval/branch/master/graph/badge.svg)](https://codecov.io/gh/m-peko/booleval)
 
 Small C++17 library for evaluating logical expressions.
 
