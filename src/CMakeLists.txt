@@ -42,6 +42,8 @@ add_library (
     ${INCLUDE_FILES}
 )
 
+target_link_libraries (booleval --coverage)
+
 set_target_properties (booleval PROPERTIES OUTPUT_NAME booleval)
 set_target_properties (booleval PROPERTIES VERSION ${LIBBOOLEVAL_VERSION} SOVERSION ${LIBBOOLEVAL_VERSION} )
 
