@@ -30,6 +30,7 @@ set (
         ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/result_visitor.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/tree_node.h
 
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_mem_fn.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_value.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h
 
