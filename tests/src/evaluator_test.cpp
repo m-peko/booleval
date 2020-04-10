@@ -34,24 +34,26 @@ class EvaluatorTest : public testing::Test {
 public:
     template <typename T>
     class obj {
-        T value_a_;
-
     public:
         obj() : value_a_{} {}
         obj(T value) : value_a_{ value } {}
         T value_a() const noexcept { return value_a_; }
+
+    private:
+        T value_a_;
     };
 
     template <typename T, typename U>
     class multi_obj {
-        T value_a_;
-        U value_b_;
-
     public:
         multi_obj() : value_a_{}, value_b_{} {}
         multi_obj(T value_a, U value_b) : value_a_{ value_a }, value_b_{ value_b } {}
         T value_a() const noexcept { return value_a_; }
         U value_b() const noexcept { return value_b_; }
+
+    private:
+        T value_a_;
+        U value_b_;
     };
 };
 

@@ -32,9 +32,6 @@
 #include <booleval/evaluator.h>
 
 struct obj {
-    std::string field_a_;
-    uint32_t field_b_;
-
 public:
     obj(std::string const& field_a, uint32_t const field_b)
         : field_a_(field_a),
@@ -48,6 +45,10 @@ public:
     uint32_t field_b() const noexcept {
         return field_b_;
     }
+
+private:
+    std::string field_a_;
+    uint32_t field_b_;
 };
 
 int main() {

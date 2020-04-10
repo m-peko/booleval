@@ -36,12 +36,13 @@ class AnyMemFnTest : public testing::Test {
 public:
     template <typename T>
     class obj {
-        T value_;
-
     public:
         obj() : value_{} {}
         obj(T value) : value_{ value } {}
         T value() const noexcept { return value_; }
+
+    private:
+        T value_;
     };
 };
 
