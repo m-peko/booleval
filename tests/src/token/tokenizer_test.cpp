@@ -169,3 +169,34 @@ TEST_F(TokenizerTest, TokenizeSymbolBasedExpression) {
     EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
     EXPECT_EQ(tokenizer.next_token().value(), "baz");
 }
+
+TEST_F(TokenizerTest, Reset) {
+    using namespace booleval;
+
+    std::string_view expression{ "field_a foo" };
+    token::tokenizer tokenizer;
+    tokenizer.expression(expression);
+    EXPECT_EQ(tokenizer.expression(), expression);
+
+    tokenizer.tokenize();
+    EXPECT_TRUE(tokenizer.has_tokens());
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "field_a");
+
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "foo");
+
+    tokenizer.reset();
+    EXPECT_TRUE(tokenizer.has_tokens());
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "field_a");
+
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "foo");
+}
