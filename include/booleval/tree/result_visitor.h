@@ -31,10 +31,10 @@
 #define BOOLEVAL_RESULT_VISITOR_H
 
 #include <map>
+#include <functional>
 #include <string_view>
 #include <booleval/tree/tree_node.h>
-#include <booleval/utils/any_value.h>
-#include <booleval/tree/base_visitor.h>
+#include <booleval/utils/any_mem_fn.h>
 
 namespace booleval {
 
@@ -44,10 +44,10 @@ namespace tree {
  * class result_visitor
  *
  * Represents a visitor for expression tree nodes in order to get the
- * final result of the expression based on the specified field map.
+ * final result of the expression based on the fields of an object being passed.
  */
-class result_visitor : public base_visitor<bool> {
-    using field_map = std::map<std::string_view, utils::any_value>;
+class result_visitor {
+    using field_map = std::map<std::string_view, utils::any_mem_fn>;
 
 public:
     result_visitor() = default;
@@ -60,94 +60,108 @@ public:
     ~result_visitor() = default;
 
     /**
-     * Sets the key value map used for evaluation of expression tree.
+     * Sets the key - member function map used for evaluation of expression tree.
      *
-     * @param fields Key value map
+     * @param fields Key - member function map
      */
-    void fields(field_map const& fields) noexcept;
+    void fields(field_map const& fields) noexcept {
+        fields_ = fields;
+    }
 
     /**
-     * Gets the key value map used for evaluation of expression tree.
+     * Visits tree node by checking token type and passing node itself
+     * to specialized visitor's function.
      *
-     * @return Key value map
+     * @param node Currently visited tree node
+     *
+     * @return ReturnType
      */
-    [[nodiscard]] field_map const& fields() const noexcept;
+    template <typename T>
+    [[nodiscard]] bool visit(tree_node const& node, T const& obj);
+
+private:
 
     /**
      * Visits tree node representing logical operation AND.
      *
      * @param node Currently visited tree node
+     * @param obj  Object to be evaluated
      *
      * @return Result of logical operation AND
      */
-    [[nodiscard]] bool visit_and(tree_node const& node) override;
+    template <typename T>
+    [[nodiscard]] bool visit_and(tree_node const& node, T const& obj) {
+        return visit(*node.left, obj) && visit(*node.right, obj);
+    }
 
     /**
      * Visits tree node representing logical operation OR.
      *
      * @param node Currently visited tree node
+     * @param obj  Object to be evaluated
      *
      * @return Result of logical operation OR
      */
-    [[nodiscard]] bool visit_or(tree_node const& node) override;
+    template <typename T>
+    [[nodiscard]] bool visit_or(tree_node const& node, T const& obj) {
+        return visit(*node.left, obj) || visit(*node.right, obj);
+    }
 
     /**
-     * Visits tree node representing relational operation EQ (EQUAL TO).
+     * Visits tree node representing one of relational operations.
      *
      * @param node Currently visited tree node
+     * @param obj  Object to be evaluated
+     * @param cmp  Comparison function
      *
-     * @return Result of relational operation EQ
+     * @return Result of relational operation
      */
-    [[nodiscard]] bool visit_eq(tree_node const& node) override;
-
-    /**
-     * Visits tree node representing relational operation NEQ (NOT EQUAL TO).
-     *
-     * @param node Currently visited tree node
-     *
-     * @return Result of relational operation NEQ
-     */
-    [[nodiscard]] bool visit_neq(tree_node const& node) override;
-
-    /**
-     * Visits tree node representing relational operation GT (GREATER THAN).
-     *
-     * @param node Currently visited tree node
-     *
-     * @return Result of relational operation GT
-     */
-    [[nodiscard]] bool visit_gt(tree_node const& node) override;
-
-    /**
-     * Visits tree node representing relational operation LT (LESS THAN).
-     *
-     * @param node Currently visited tree node
-     *
-     * @return Result of relational operation LT
-     */
-    [[nodiscard]] bool visit_lt(tree_node const& node) override;
-
-    /**
-     * Visits tree node representing relational operation GEQ (GREATER THAN OR EQUAL TO).
-     *
-     * @param node Currently visited tree node
-     *
-     * @return Result of relational operation GT
-     */
-    [[nodiscard]] bool visit_geq(tree_node const& node) override;
-
-    /**
-     * Visits tree node representing relational operation LEQ (LESS THAN OR EQUAL TO).
-     *
-     * @param node Currently visited tree node
-     *
-     * @return Result of relational operation LT
-     */
-    [[nodiscard]] bool visit_leq(tree_node const& node) override;
+    template <typename T, typename Cmp>
+    [[nodiscard]] bool visit(tree_node const& node, T const& obj, Cmp&& cmp) {
+        auto key = node.left->token;
+        auto value = node.right->token;
+        return cmp(fields_[key.value()].invoke(obj), value.value());
+    }
 
 private:
     field_map fields_;
 };
+
+template <typename T>
+bool result_visitor::visit(tree_node const& node, T const& obj) {
+    if (nullptr == node.left || nullptr == node.right) {
+        return false;
+    }
+
+    switch (node.token.type()) {
+    case token::token_type::logical_and:
+        return visit_and(node, obj);
+
+    case token::token_type::logical_or:
+        return visit_or(node, obj);
+
+    case token::token_type::eq:
+        return visit(node, obj, std::equal_to<>());
+
+    case token::token_type::neq:
+        return visit(node, obj, std::not_equal_to<>());
+
+    case token::token_type::gt:
+        return visit(node, obj, std::greater<>());
+
+    case token::token_type::lt:
+        return visit(node, obj, std::less<>());
+
+    case token::token_type::geq:
+        return visit(node, obj, std::greater_equal<>());
+
+    case token::token_type::leq:
+        return visit(node, obj, std::less_equal<>());
+
+    default:
+        return false;
+    }
+}
 
 } // tree
 

@@ -23,10 +23,7 @@ if (MSVC)
 else ()
     option (BOOLEVAL_ENABLE_COVERAGE "Enable code coverage reporting" OFF)
     if (BOOLEVAL_ENABLE_COVERAGE)
-        message (
-            STATUS
-            "Code coverage reporting is enabled."
-        )
+        message (STATUS "Code coverage reporting is enabled.")
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O0 --coverage")
     else ()
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O3")

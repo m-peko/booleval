@@ -53,13 +53,8 @@ bool evaluator::expression(std::string_view expression) {
     return is_activated_;
 }
 
-bool evaluator::evaluate(field_map const& fields) {
-    if (is_activated_) {
-        result_visitor_.fields(fields);
-        return result_visitor_.visit(*expression_tree_.root());
-    } else {
-        return true;
-    }
+void evaluator::map(field_map const& fields) {
+    result_visitor_.fields(fields);
 }
 
 } // booleval
