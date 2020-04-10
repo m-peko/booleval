@@ -50,6 +50,9 @@ bool expression_tree::build(std::string_view expression) {
     root_ = parse_expression();
     if (nullptr == root_) {
         return false;
+    } else if (tokenizer_.has_tokens()) {
+        root_ = nullptr;
+        return false;
     }
 
     return true;
@@ -77,10 +80,15 @@ std::shared_ptr<tree::tree_node> expression_tree::parse_expression() {
         return left;
     }
 
-    while (tokenizer_.has_tokens() && tokenizer_.next_token().is(token::token_type::logical_or)) {
+    while (tokenizer_.has_tokens() && tokenizer_.weak_next_token().is(token::token_type::logical_or)) {
+        tokenizer_.pass_token();
         auto logical_or = std::make_shared<tree::tree_node>(token::token_type::logical_or);
 
         auto right = parse_and_operation();
+        if (nullptr == right) {
+            return nullptr;
+        }
+
         logical_or->left  = left;
         logical_or->right = right;
         left = logical_or;
@@ -103,6 +111,10 @@ std::shared_ptr<tree::tree_node> expression_tree::parse_and_operation() {
         auto right = parse_parentheses();
         if (nullptr == right) {
             right = parse_relational_operation();
+        }
+
+        if (nullptr == right) {
+            return nullptr;
         }
 
         logical_and->left  = left;

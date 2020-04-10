@@ -37,7 +37,7 @@ class TokenizerTest : public testing::Test {};
 TEST_F(TokenizerTest, ConstructorFromExpression) {
     using namespace booleval;
 
-    std::string_view expression{ "field foo" };
+    std::string_view expression{ "field_a foo" };
     token::tokenizer tokenizer(expression);
     EXPECT_EQ(tokenizer.expression(), expression);
     EXPECT_FALSE(tokenizer.has_tokens());
@@ -46,7 +46,7 @@ TEST_F(TokenizerTest, ConstructorFromExpression) {
 TEST_F(TokenizerTest, Expression) {
     using namespace booleval;
 
-    std::string_view expression{ "field foo" };
+    std::string_view expression{ "field_a foo" };
     token::tokenizer tokenizer;
     tokenizer.expression(expression);
     EXPECT_EQ(tokenizer.expression(), expression);

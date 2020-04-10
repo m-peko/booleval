@@ -36,6 +36,7 @@ endmacro ()
 
 create_test (token/token)
 create_test (token/tokenizer)
+create_test (tree/expression_tree)
 create_test (tree/tree_node)
 create_test (utils/any_mem_fn)
 create_test (utils/any_value)
