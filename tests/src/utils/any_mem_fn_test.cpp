@@ -41,7 +41,7 @@ public:
     public:
         obj() : value_{} {}
         obj(T value) : value_{ value } {}
-        T value() { return value_; }
+        T value() const noexcept { return value_; }
     };
 };
 

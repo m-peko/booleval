@@ -39,7 +39,7 @@ public:
     public:
         obj() : value_a_{} {}
         obj(T value) : value_a_{ value } {}
-        T value_a() { return value_a_; }
+        T value_a() const noexcept { return value_a_; }
     };
 
     template <typename T, typename U>
@@ -50,8 +50,8 @@ public:
     public:
         multi_obj() : value_a_{}, value_b_{} {}
         multi_obj(T value_a, U value_b) : value_a_{ value_a }, value_b_{ value_b } {}
-        T value_a() { return value_a_; }
-        U value_b() { return value_b_; }
+        T value_a() const noexcept { return value_a_; }
+        U value_b() const noexcept { return value_b_; }
     };
 };
 

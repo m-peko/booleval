@@ -41,11 +41,11 @@ public:
           field_b_(field_b)
     {}
 
-    std::string const& field_a() {
+    std::string const& field_a() const noexcept {
         return field_a_;
     }
 
-    uint32_t field_b() {
+    uint32_t field_b() const noexcept {
         return field_b_;
     }
 };

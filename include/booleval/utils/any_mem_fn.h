@@ -56,6 +56,13 @@ public:
         };
     }
 
+    template <typename Ret, typename C>
+    any_mem_fn(Ret (C::*m)() const) {
+        fn_ = [m](std::any a) {
+            return (std::any_cast<C>(a).*m)();
+        };
+    }
+
     any_mem_fn& operator=(any_mem_fn&& rhs) = default;
     any_mem_fn& operator=(any_mem_fn const& rhs) = default;
 
