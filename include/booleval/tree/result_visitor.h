@@ -82,29 +82,17 @@ public:
 private:
 
     /**
-     * Visits tree node representing logical operation AND.
+     * Visits tree node representing one of logical operations.
      *
      * @param node Currently visited tree node
      * @param obj  Object to be evaluated
+     * @param func Logical operation function
      *
-     * @return Result of logical operation AND
+     * @return Result of logical operation
      */
-    template <typename T>
-    [[nodiscard]] bool visit_and(tree_node const& node, T const& obj) {
-        return visit(*node.left, obj) && visit(*node.right, obj);
-    }
-
-    /**
-     * Visits tree node representing logical operation OR.
-     *
-     * @param node Currently visited tree node
-     * @param obj  Object to be evaluated
-     *
-     * @return Result of logical operation OR
-     */
-    template <typename T>
-    [[nodiscard]] bool visit_or(tree_node const& node, T const& obj) {
-        return visit(*node.left, obj) || visit(*node.right, obj);
+    template <typename T, typename F>
+    [[nodiscard]] bool visit_logical(tree_node const& node, T const& obj, F&& func) {
+        return func(visit(*node.left, obj), visit(*node.right, obj));
     }
 
     /**
@@ -112,15 +100,15 @@ private:
      *
      * @param node Currently visited tree node
      * @param obj  Object to be evaluated
-     * @param cmp  Comparison function
+     * @param func Comparison function
      *
      * @return Result of relational operation
      */
-    template <typename T, typename Cmp>
-    [[nodiscard]] bool visit(tree_node const& node, T const& obj, Cmp&& cmp) {
+    template <typename T, typename F>
+    [[nodiscard]] bool visit_relational(tree_node const& node, T const& obj, F&& func) {
         auto key = node.left->token;
         auto value = node.right->token;
-        return cmp(fields_[key.value()].invoke(obj), value.value());
+        return func(fields_[key.value()].invoke(obj), value.value());
     }
 
 private:
@@ -135,28 +123,28 @@ bool result_visitor::visit(tree_node const& node, T const& obj) {
 
     switch (node.token.type()) {
     case token::token_type::logical_and:
-        return visit_and(node, obj);
+        return visit_logical(node, obj, std::logical_and<>());
 
     case token::token_type::logical_or:
-        return visit_or(node, obj);
+        return visit_logical(node, obj, std::logical_or<>());
 
     case token::token_type::eq:
-        return visit(node, obj, std::equal_to<>());
+        return visit_relational(node, obj, std::equal_to<>());
 
     case token::token_type::neq:
-        return visit(node, obj, std::not_equal_to<>());
+        return visit_relational(node, obj, std::not_equal_to<>());
 
     case token::token_type::gt:
-        return visit(node, obj, std::greater<>());
+        return visit_relational(node, obj, std::greater<>());
 
     case token::token_type::lt:
-        return visit(node, obj, std::less<>());
+        return visit_relational(node, obj, std::less<>());
 
     case token::token_type::geq:
-        return visit(node, obj, std::greater_equal<>());
+        return visit_relational(node, obj, std::greater_equal<>());
 
     case token::token_type::leq:
-        return visit(node, obj, std::less_equal<>());
+        return visit_relational(node, obj, std::less_equal<>());
 
     default:
         return false;

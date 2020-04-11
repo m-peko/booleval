@@ -68,8 +68,8 @@ int main() {
             { "field_b", &obj::field_b }
         });
 
-        std::cout << std::boolalpha << evaluator.evaluate(pass) << std::endl;  // output: true
-        std::cout << std::boolalpha << evaluator.evaluate(fail) << std::endl;   // output: false
+        std::cout << std::boolalpha << evaluator.evaluate(pass) << std::endl;
+        std::cout << std::boolalpha << evaluator.evaluate(fail) << std::endl;
     } else {
         std::cerr << "Evaluator is not activated!" << std::endl;
     }
