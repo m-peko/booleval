@@ -114,8 +114,8 @@ TEST_F(EvaluatorTest, NotEqualToOperator) {
 }
 
 TEST_F(EvaluatorTest, GreaterThanOperator) {
-    obj<float> foo{ 1.24 };
-    obj<float> bar{ 1.22 };
+    obj<float> foo{ 1.24F };
+    obj<float> bar{ 1.22F };
 
     booleval::evaluator evaluator;
     evaluator.map({
