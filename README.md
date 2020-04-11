@@ -140,18 +140,26 @@ issue tracker indicating the following information:
 
 ## Example
 
-Let's say we have a large number of objects coming through our interface. Objects can be of the following `struct Object` type:
+Let's say we have a large number of objects coming through our interface. Objects can be of the following `class obj` type:
 
 ```c++
-struct Object {
-    Object(std::string const& a,
-           uint32_t const b)
-        : field_a(a),
-          field_b(b)
+struct obj {
+    std::string field_a_;
+    uint32_t field_b_;
+
+public:
+    obj(std::string const& field_a, uint32_t const field_b)
+        : field_a_(field_a),
+          field_b_(field_b)
     {}
 
-    std::string field_a;
-    uint32_t field_b;
+    std::string const& field_a() {
+        return field_a_;
+    }
+
+    uint32_t field_b() {
+        return field_b_;
+    }
 };
 ```
 
@@ -163,8 +171,8 @@ In our application, we want to let end-users to specify some sort of a rule whic
 #include <booleval/evaluator.h>
 
 int main() {
-    Object pass_obj("foo", 123);
-    Object fail_obj("bar", 456);
+    obj pass("foo", 123);
+    obj fail("bar", 456);
 
     booleval::evaluator evaluator;
 
@@ -174,24 +182,17 @@ int main() {
     }
 
     if (evaluator.is_activated()) {
-        auto passes = evaluator.evaluate({
-            { "field_a", pass_obj.field_a },
-            { "field_b", pass_obj.field_b }
+        evaluator.map({
+            { "field_a", &obj::field_a },
+            { "field_b", &obj::field_b }
         });
 
-        std::cout << std::boolalpha << passes << std::endl;  // output: true
-
-        auto fails = evaluator.evaluate({
-            { "field_a", fail_obj.field_a },
-            { "field_b", fail_obj.field_b }
-        });
-
-        std::cout << std::boolalpha << fails << std::endl;   // output: false
+        std::cout << std::boolalpha << evaluator.evaluate(pass) << std::endl;  // output: true
+        std::cout << std::boolalpha << evaluator.evaluate(fail) << std::endl;   // output: false
     } else {
         std::cerr << "Evaluator is not activated!" << std::endl;
     }
 
     return 0;
 }
-
 ```

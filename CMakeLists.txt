@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.2)
 
 project (booleval)
 
+option (BOOLEVAL_BUILD_EXAMPLES "Build examples" ON)
 option (BOOLEVAL_BUILD_TESTS "Build tests" ON)
 
 # Compile in release mode by default
@@ -23,10 +24,7 @@ if (MSVC)
 else ()
     option (BOOLEVAL_ENABLE_COVERAGE "Enable code coverage reporting" OFF)
     if (BOOLEVAL_ENABLE_COVERAGE)
-        message (
-            STATUS
-            "Code coverage reporting is enabled."
-        )
+        message (STATUS "Code coverage reporting is enabled.")
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O0 --coverage")
     else ()
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O3")
@@ -69,6 +67,11 @@ endif ()
 ##########################
 
 add_subdirectory (src)
+
+if (BOOLEVAL_BUILD_EXAMPLES)
+    message (STATUS "Examples have been enabled")
+    add_subdirectory (examples)
+endif ()
 
 if (BOOLEVAL_BUILD_TESTS)
     # Only include googletest if the git submodule has been fetched

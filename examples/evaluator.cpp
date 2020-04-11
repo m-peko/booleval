@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Marin Peko
+ * Copyright (c) 2020, Marin Peko
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,34 +27,52 @@
  *
  */
 
+#include <string>
+#include <iostream>
 #include <booleval/evaluator.h>
 
-namespace booleval {
+struct obj {
+public:
+    obj(std::string const& field_a, uint32_t const field_b)
+        : field_a_(field_a),
+          field_b_(field_b)
+    {}
 
-evaluator::evaluator()
-    : is_activated_(false)
-{}
-
-bool evaluator::is_activated() const noexcept {
-    return is_activated_;
-}
-
-bool evaluator::expression(std::string_view expression) {
-    is_activated_ = false;
-
-    if (expression.empty()) {
-        return true;
+    std::string const& field_a() const noexcept {
+        return field_a_;
     }
 
-    if (expression_tree_.build(expression)) {
-        is_activated_ = true;
+    uint32_t field_b() const noexcept {
+        return field_b_;
     }
 
-    return is_activated_;
-}
+private:
+    std::string field_a_;
+    uint32_t field_b_;
+};
 
-void evaluator::map(field_map const& fields) {
-    result_visitor_.fields(fields);
-}
+int main() {
+    obj pass("foo", 123);
+    obj fail("bar", 456);
 
-} // booleval
+    booleval::evaluator evaluator;
+
+    auto valid = evaluator.expression("field_a foo and field_b 123");
+    if (!valid) {
+        std::cerr << "Expression not valid!" << std::endl;
+    }
+
+    if (evaluator.is_activated()) {
+        evaluator.map({
+            { "field_a", &obj::field_a },
+            { "field_b", &obj::field_b }
+        });
+
+        std::cout << std::boolalpha << evaluator.evaluate(pass) << std::endl;  // output: true
+        std::cout << std::boolalpha << evaluator.evaluate(fail) << std::endl;   // output: false
+    } else {
+        std::cerr << "Evaluator is not activated!" << std::endl;
+    }
+
+    return 0;
+}

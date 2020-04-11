@@ -47,7 +47,7 @@ TEST_F(AnyValueTest, FloatingPointValue) {
 
     any_value value{ 1.234567 };
     EXPECT_EQ(value, "1.234567");
-    EXPECT_EQ(value, 1.234567);
+    EXPECT_EQ(value, 1.234567F);
 }
 
 TEST_F(AnyValueTest, ConstCharPointerValue) {
@@ -56,7 +56,6 @@ TEST_F(AnyValueTest, ConstCharPointerValue) {
     char const* ptr{ "abc" };
     any_value value{ ptr };
     EXPECT_EQ(value, ptr);
-    EXPECT_TRUE(value == ptr);
 }
 
 TEST_F(AnyValueTest, StringValue) {
@@ -65,7 +64,6 @@ TEST_F(AnyValueTest, StringValue) {
     std::string str{ "abc" };
     any_value value{ str };
     EXPECT_EQ(value, str);
-    EXPECT_TRUE(value == str);
 }
 
 TEST_F(AnyValueTest, StringViewValue) {
@@ -74,7 +72,6 @@ TEST_F(AnyValueTest, StringViewValue) {
     std::string_view strv{ "abc" };
     any_value value{ strv };
     EXPECT_EQ(value, strv);
-    EXPECT_TRUE(value == strv);
 }
 
 TEST_F(AnyValueTest, IntComparisons) {
@@ -100,15 +97,15 @@ TEST_F(AnyValueTest, FloatingPointComparisons) {
 
     any_value value{ 1.234567 };
 
-    EXPECT_TRUE(value == 1.234567);
-    EXPECT_TRUE(value != 7.654321);
+    EXPECT_TRUE(value == 1.234567F);
+    EXPECT_TRUE(value != 7.654321F);
 
-    EXPECT_TRUE(value > 0.123456);
-    EXPECT_TRUE(value < 2.345678);
+    EXPECT_TRUE(value > 0.123456F);
+    EXPECT_TRUE(value < 2.345678F);
 
-    EXPECT_TRUE(value >= 0.123456);
-    EXPECT_TRUE(value >= 1.234567);
+    EXPECT_TRUE(value >= 0.123456F);
+    EXPECT_TRUE(value >= 1.234567F);
 
-    EXPECT_TRUE(value <= 1.234567);
-    EXPECT_TRUE(value <= 2.345678);
+    EXPECT_TRUE(value <= 1.234567F);
+    EXPECT_TRUE(value <= 2.345678F);
 }

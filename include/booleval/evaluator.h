@@ -32,7 +32,7 @@
 
 #include <map>
 #include <string_view>
-#include <booleval/utils/any_value.h>
+#include <booleval/utils/any_mem_fn.h>
 #include <booleval/tree/result_visitor.h>
 #include <booleval/tree/expression_tree.h>
 
@@ -45,7 +45,7 @@ namespace booleval {
  * It builds an expression tree and traverses that tree in order to evaluate fields.
  */
 class evaluator {
-    using field_map = std::map<std::string_view, utils::any_value>;
+    using field_map = std::map<std::string_view, utils::any_mem_fn>;
 
 public:
     evaluator();
@@ -75,13 +75,27 @@ public:
     [[nodiscard]] bool expression(std::string_view expression);
 
     /**
-     * Evaluates expression tree based on the key value map passed in.
+     * Sets the key - member function map used for evaluation of expression tree.
      *
-     * @param fields Key value map to be evaluated
-     *
-     * @return True if the key value map satisfies expression, otherwise false
+     * @param fields Key - member function map
      */
-    [[nodiscard]] bool evaluate(field_map const& fields);
+    void map(field_map const& fields);
+
+    /**
+     * Evaluates expression tree for the object passed in.
+     *
+     * @param obj Object to be evaluated
+     *
+     * @return True if the object's members satisfy the expression, otherwise false
+     */
+    template <typename T>
+    [[nodiscard]] bool evaluate(T const& obj) {
+        if (is_activated_) {
+            return result_visitor_.visit(*expression_tree_.root(), obj);
+        } else {
+            return true;
+        }
+    }
 
 private:
     bool is_activated_;

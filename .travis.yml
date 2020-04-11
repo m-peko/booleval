@@ -73,7 +73,10 @@ script:
   # Generate build files
   - cmake .. -DBOOLEVAL_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE-False}
 
-  # Compile and execute tests
+  # Compile examples and tests
   - cmake --build .
+  - cmake --build . --target examples
   - cmake --build . --target tests
+
+  # Execute tests
   - ctest

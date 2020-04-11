@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Marin Peko
+ * Copyright (c) 2020, Marin Peko
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,34 +27,58 @@
  *
  */
 
-#include <booleval/evaluator.h>
+#ifndef BOOLEVAL_ANY_MEM_FN_H
+#define BOOLEVAL_ANY_MEM_FN_H
+
+#include <any>
+#include <functional>
+#include <booleval/utils/any_value.h>
 
 namespace booleval {
 
-evaluator::evaluator()
-    : is_activated_(false)
-{}
+namespace utils {
 
-bool evaluator::is_activated() const noexcept {
-    return is_activated_;
-}
+/**
+ * class any_mem_fn
+ *
+ * Represents class member function of any signature.
+ */
+class any_mem_fn {
+public:
+    any_mem_fn() = default;
+    any_mem_fn(any_mem_fn&& rhs) = default;
+    any_mem_fn(any_mem_fn const& rhs) = default;
 
-bool evaluator::expression(std::string_view expression) {
-    is_activated_ = false;
-
-    if (expression.empty()) {
-        return true;
+    template <typename Ret, typename C>
+    any_mem_fn(Ret (C::*m)()) {
+        fn_ = [m](std::any a) {
+            return (std::any_cast<C>(a).*m)();
+        };
     }
 
-    if (expression_tree_.build(expression)) {
-        is_activated_ = true;
+    template <typename Ret, typename C>
+    any_mem_fn(Ret (C::*m)() const) {
+        fn_ = [m](std::any a) {
+            return (std::any_cast<C>(a).*m)();
+        };
     }
 
-    return is_activated_;
-}
+    any_mem_fn& operator=(any_mem_fn&& rhs) = default;
+    any_mem_fn& operator=(any_mem_fn const& rhs) = default;
 
-void evaluator::map(field_map const& fields) {
-    result_visitor_.fields(fields);
-}
+    ~any_mem_fn() = default;
+
+    template <typename T>
+    any_value invoke(T obj) {
+        return fn_(obj);
+    }
+
+private:
+    std::function<any_value(std::any)> fn_;
+};
+
+} // utils
 
 } // booleval
+
+#endif // BOOLEVAL_ANY_MEM_FN_H
