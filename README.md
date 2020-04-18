@@ -41,6 +41,12 @@ Since the reflection feature is missing in C++, `booleval` library is implemente
 
 Providing an end-user a functionality of specifying a logical expression is a common way of filtering out a large amounts of objects. E.g. [`tcpdump`](https://www.tcpdump.org/manpages/tcpdump.1.html) and [BPF](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (Berkeley Packet Filter), network tools available on most UNIX-like operating systems, have pretty much the same syntax for their filter expression.
 
+<br/>
+<p align="center">
+    <img src="docs/command-line.gif"/>
+</p>
+<br/>
+
 <a name="specification"></a>
 
 ## Specification
