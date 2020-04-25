@@ -234,15 +234,23 @@ template <typename InputIt>
 }
 
 /**
- * Converts from string view to integral value.
+ * Converts from string view to arithmetic value.
  * If value cannot be parsed, std::nullopt is returned.
  *
- * @param strv String view to convert to integral value
+ * NOTE: Floating point version of std::from_chars is
+ * implemented only on MSVC and not on GCC/CLANG.
+ *
+ * @param strv String view to convert to arithmetic value
  *
  * @return Optional value
  */
+#if defined(__GNUC__) || defined(__clang__)
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+#elif defined(_MSC_VER)
+template <typename T,
+          typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+#endif
 [[nodiscard]] std::optional<T> from_chars(std::string_view strv) {
     T value{};
 
@@ -260,13 +268,17 @@ template <typename T,
 }
 
 /**
- * Converts from string view to floating point value.
+ * Converts from string view to arithmetic value.
  * If value cannot be parsed, std::nullopt is returned.
  *
- * @param strv String view to convert to floating point value
+ * NOTE: Floating point version of std::from_chars is
+ * implemented only on MSVC and not on GCC/CLANG.
+ *
+ * @param strv String view to convert to arithmetic value
  *
  * @return Optional value
  */
+#if defined(__GNUC__) || defined(__clang__)
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 [[nodiscard]] std::optional<T> from_chars(std::string_view strv) {
@@ -282,16 +294,25 @@ template <typename T,
 
     return value;
 }
+#endif
 
 /**
- * Converts from integral value to string.
+ * Converts from arithmetic value to string.
  *
- * @param value Integral value to convert to string
+ * NOTE: Floating point version of std::to_chars is
+ * implemented only on MSVC and not on GCC/CLANG.
  *
- * @return String
+ * @param value Arithmetic value to convert to string
+ *
+ * @return String representation of arithmetic value
  */
+#if defined(__GNUC__) || defined(__clang__)
 template <typename T,
           typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+#elif defined(_MSC_VER)
+template <typename T,
+          typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+#endif
 [[nodiscard]] std::string to_chars(T const value) {
     constexpr std::size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
     std::array<char, buffer_size> buffer;
@@ -310,12 +331,16 @@ template <typename T,
 }
 
 /**
- * Converts from floating point value to string.
+ * Converts from arithmetic value to string.
  *
- * @param value Floating point value to convert to string
+ * NOTE: Floating point version of std::to_chars is
+ * implemented only on MSVC and not on GCC/CLANG.
  *
- * @return String
+ * @param value Arithmetic value to convert to string
+ *
+ * @return String representation of arithmetic value
  */
+#if defined(__GNUC__) || defined(__clang__)
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 [[nodiscard]] std::string to_chars(T const value) {
@@ -324,6 +349,7 @@ template <typename T,
     str = rtrim(strv, '0');
     return str;
 }
+#endif
 
 } // utils
 
