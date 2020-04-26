@@ -77,7 +77,7 @@ public:
      * @return ReturnType
      */
     template <typename T>
-    [[nodiscard]] bool visit(tree_node const& node, T const& obj);
+    [[nodiscard]] constexpr bool visit(tree_node const& node, T const& obj);
 
 private:
 
@@ -91,7 +91,7 @@ private:
      * @return Result of logical operation
      */
     template <typename T, typename F>
-    [[nodiscard]] bool visit_logical(tree_node const& node, T const& obj, F&& func) {
+    [[nodiscard]] constexpr bool visit_logical(tree_node const& node, T const& obj, F&& func) {
         return func(visit(*node.left, obj), visit(*node.right, obj));
     }
 
@@ -105,7 +105,7 @@ private:
      * @return Result of relational operation
      */
     template <typename T, typename F>
-    [[nodiscard]] bool visit_relational(tree_node const& node, T const& obj, F&& func) {
+    [[nodiscard]] constexpr bool visit_relational(tree_node const& node, T const& obj, F&& func) {
         auto key = node.left->token;
         auto value = node.right->token;
         return func(fields_[key.value()].invoke(obj), value.value());
@@ -116,7 +116,7 @@ private:
 };
 
 template <typename T>
-bool result_visitor::visit(tree_node const& node, T const& obj) {
+constexpr bool result_visitor::visit(tree_node const& node, T const& obj) {
     if (nullptr == node.left || nullptr == node.right) {
         return false;
     }
