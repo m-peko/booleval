@@ -66,21 +66,21 @@ TEST_F(EvaluatorTest, EmptyExpression) {
     booleval::evaluator evaluator;
     EXPECT_TRUE(evaluator.expression(""));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj<uint8_t>()));
+    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
 }
 
 TEST_F(EvaluatorTest, MissingClosingParenthesesExpression) {
     booleval::evaluator evaluator;
     EXPECT_FALSE(evaluator.expression("(field_a foo or field_b bar"));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj<uint8_t>()));
+    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
 }
 
 TEST_F(EvaluatorTest, MultipleFieldsExpression) {
     booleval::evaluator evaluator;
     EXPECT_FALSE(evaluator.expression("field_a foo field_b"));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj<uint8_t>()));
+    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
 }
 
 TEST_F(EvaluatorTest, EqualToOperator) {

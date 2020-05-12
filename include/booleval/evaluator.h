@@ -93,7 +93,7 @@ public:
         if (is_activated_) {
             return result_visitor_.visit(*expression_tree_.root(), obj);
         } else {
-            return true;
+            return false;
         }
     }
 
