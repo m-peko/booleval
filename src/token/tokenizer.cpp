@@ -74,13 +74,10 @@ void tokenizer::tokenize() {
         }
     }
 
-    auto raw_tokens = utils::split(
-        expression_,
-        utils::join(std::begin(single_char_symbols),
-                    std::end(single_char_symbols)),
+    auto raw_tokens = utils::split<
         utils::split_options::include_whitespace |
         utils::split_options::include_delimiters
-    );
+    >(expression_, utils::join(std::begin(single_char_symbols), std::end(single_char_symbols)));
 
     for (auto const& token : raw_tokens) {
         auto type = map_to_token_type(token);

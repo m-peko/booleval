@@ -52,6 +52,8 @@ public:
     evaluator(evaluator&& rhs) = default;
     evaluator(evaluator const& rhs) = default;
 
+    evaluator(field_map const& fields);
+
     evaluator& operator=(evaluator&& rhs) = default;
     evaluator& operator=(evaluator const& rhs) = default;
 
@@ -75,13 +77,6 @@ public:
     [[nodiscard]] bool expression(std::string_view expression);
 
     /**
-     * Sets the key - member function map used for evaluation of expression tree.
-     *
-     * @param fields Key - member function map
-     */
-    void map(field_map const& fields);
-
-    /**
      * Evaluates expression tree for the object passed in.
      *
      * @param obj Object to be evaluated
@@ -93,7 +88,7 @@ public:
         if (is_activated_) {
             return result_visitor_.visit(*expression_tree_.root(), obj);
         } else {
-            return true;
+            return false;
         }
     }
 

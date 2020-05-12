@@ -180,7 +180,10 @@ int main() {
     obj pass("foo", 123);
     obj fail("bar", 456);
 
-    booleval::evaluator evaluator;
+    booleval::evaluator evaluator({
+        { "field_a", &obj::field_a },
+        { "field_b", &obj::field_b }
+    });
 
     auto valid = evaluator.expression("field_a foo and field_b 123");
     if (!valid) {
@@ -188,11 +191,6 @@ int main() {
     }
 
     if (evaluator.is_activated()) {
-        evaluator.map({
-            { "field_a", &obj::field_a },
-            { "field_b", &obj::field_b }
-        });
-
         std::cout << std::boolalpha << evaluator.evaluate(pass) << std::endl;  // output: true
         std::cout << std::boolalpha << evaluator.evaluate(fail) << std::endl;  // output: false
     } else {

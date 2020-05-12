@@ -66,29 +66,28 @@ TEST_F(EvaluatorTest, EmptyExpression) {
     booleval::evaluator evaluator;
     EXPECT_TRUE(evaluator.expression(""));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj<uint8_t>()));
+    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
 }
 
 TEST_F(EvaluatorTest, MissingClosingParenthesesExpression) {
     booleval::evaluator evaluator;
     EXPECT_FALSE(evaluator.expression("(field_a foo or field_b bar"));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj<uint8_t>()));
+    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
 }
 
 TEST_F(EvaluatorTest, MultipleFieldsExpression) {
     booleval::evaluator evaluator;
     EXPECT_FALSE(evaluator.expression("field_a foo field_b"));
     EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(obj<uint8_t>()));
+    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
 }
 
 TEST_F(EvaluatorTest, EqualToOperator) {
     obj<std::string> foo{ "foo" };
     obj<std::string> bar{ "bar" };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &obj<std::string>::value_a }
     });
 
@@ -102,8 +101,7 @@ TEST_F(EvaluatorTest, NotEqualToOperator) {
     obj<std::string> foo{ "foo" };
     obj<std::string> bar{ "bar" };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &obj<std::string>::value_a }
     });
 
@@ -117,8 +115,7 @@ TEST_F(EvaluatorTest, GreaterThanOperator) {
     obj<float> foo{ 1.24F };
     obj<float> bar{ 1.22F };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &obj<float>::value_a }
     });
 
@@ -132,8 +129,7 @@ TEST_F(EvaluatorTest, LessThanOperator) {
     obj<uint8_t> foo{ 1 };
     obj<uint8_t> bar{ 3 };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &obj<uint8_t>::value_a }
     });
 
@@ -148,8 +144,7 @@ TEST_F(EvaluatorTest, GreaterThanOrEqualToOperator) {
     obj<double> bar{ 2.345678 };
     obj<double> baz{ 0.123456 };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &obj<double>::value_a }
     });
 
@@ -165,8 +160,7 @@ TEST_F(EvaluatorTest, LessThanOrEqualToOperator) {
     obj<double> bar{ 0.123456 };
     obj<double> baz{ 2.345678 };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &obj<double>::value_a }
     });
 
@@ -182,8 +176,7 @@ TEST_F(EvaluatorTest, AndOperator) {
     multi_obj<std::string, uint8_t> bar{ "two", 2 };
     multi_obj<std::string, uint8_t> baz{ "two", 1 };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &multi_obj<std::string, uint8_t>::value_a },
         { "field_b", &multi_obj<std::string, uint8_t>::value_b }
     });
@@ -201,8 +194,7 @@ TEST_F(EvaluatorTest, OrOperator) {
     multi_obj<std::string, uint8_t> baz{ "two", 1 };
     multi_obj<std::string, uint8_t> qux{ "two", 2 };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &multi_obj<std::string, uint8_t>::value_a },
         { "field_b", &multi_obj<std::string, uint8_t>::value_b }
     });
@@ -221,8 +213,7 @@ TEST_F(EvaluatorTest, MultipleOperators) {
     multi_obj<std::string, uint8_t> baz{ "two", 1 };
     multi_obj<std::string, uint8_t> qux{ "two", 2 };
 
-    booleval::evaluator evaluator;
-    evaluator.map({
+    booleval::evaluator evaluator({
         { "field_a", &multi_obj<std::string, uint8_t>::value_a },
         { "field_b", &multi_obj<std::string, uint8_t>::value_b }
     });

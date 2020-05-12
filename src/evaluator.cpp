@@ -35,6 +35,10 @@ evaluator::evaluator()
     : is_activated_(false)
 {}
 
+evaluator::evaluator(field_map const& fields) {
+    result_visitor_.fields(fields);
+}
+
 bool evaluator::is_activated() const noexcept {
     return is_activated_;
 }
@@ -51,10 +55,6 @@ bool evaluator::expression(std::string_view expression) {
     }
 
     return is_activated_;
-}
-
-void evaluator::map(field_map const& fields) {
-    result_visitor_.fields(fields);
 }
 
 } // booleval

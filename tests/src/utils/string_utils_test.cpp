@@ -165,7 +165,7 @@ TEST_F(StringUtilsTest, SplitByMultipleDelimiters) {
 TEST_F(StringUtilsTest, SplitIncludeDelimitersOption) {
     using namespace booleval::utils;
 
-    auto tokens = split("a,b.", ".,", split_options::include_delimiters);
+    auto tokens = split<split_options::include_delimiters>("a,b.", ".,");
 
     EXPECT_EQ(tokens.size(), 4U);
     EXPECT_EQ(tokens[0], "a");
@@ -177,9 +177,10 @@ TEST_F(StringUtilsTest, SplitIncludeDelimitersOption) {
 TEST_F(StringUtilsTest, SplitMultipleOptions) {
     using namespace booleval::utils;
 
-    auto options = split_options::include_whitespace |
-                   split_options::include_delimiters;
-    auto tokens = split("a , b .", ".,", options);
+    auto tokens = split<
+        split_options::include_whitespace |
+        split_options::include_delimiters
+    >("a , b .", ".,");
 
     EXPECT_EQ(tokens.size(), 4U);
     EXPECT_EQ(tokens[0], "a");
