@@ -34,64 +34,64 @@
 class AlgoUtilsTest : public testing::Test {};
 
 TEST_F(AlgoUtilsTest, Find) {
-    using namespace booleval::utils;
+    using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
 
-    auto it = find(std::begin(arr), std::end(arr), 1);
+    auto it = utils::find(std::begin(arr), std::end(arr), 1);
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 1);
 
-    it = find(std::begin(arr), std::end(arr), 3);
+    it = utils::find(std::begin(arr), std::end(arr), 3);
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 3);
 
-    it = find(std::begin(arr), std::end(arr), 5);
+    it = utils::find(std::begin(arr), std::end(arr), 5);
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 5);
 
-    it = find(std::begin(arr), std::end(arr), 9);
+    it = utils::find(std::begin(arr), std::end(arr), 9);
     EXPECT_EQ(it, std::end(arr));
 }
 
 TEST_F(AlgoUtilsTest, FindIf) {
-    using namespace booleval::utils;
+    using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
 
-    auto it = find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 1; });
+    auto it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 1; });
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 1);
 
-    it = find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 3; });
+    it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 3; });
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 3);
 
-    it = find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 5; });
+    it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 5; });
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 5);
 
-    it = find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 9; });
+    it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 9; });
     EXPECT_EQ(it, std::end(arr));
 }
 
 TEST_F(AlgoUtilsTest, FindIfNot) {
-    using namespace booleval::utils;
+    using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
 
-    auto it = find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i == 2; });
+    auto it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i == 2; });
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 1);
 
-    it = find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i < 3; });
+    it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i < 3; });
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 3);
 
-    it = find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i < 5; });
+    it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i < 5; });
     EXPECT_NE(it, std::end(arr));
     EXPECT_EQ(*it, 5);
 
-    it = find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i > 0 && i < 6; });
+    it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i > 0 && i < 6; });
     EXPECT_EQ(it, std::end(arr));
 }
