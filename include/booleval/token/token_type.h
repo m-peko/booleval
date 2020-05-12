@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <utility>
 #include <string_view>
+#include <booleval/utils/algo_utils.h>
 
 namespace booleval {
 
@@ -113,7 +114,33 @@ constexpr std::array<
  *
  * @return Token type
  */
-token_type map_to_token_type(std::string_view const value);
+constexpr token_type map_to_token_type(std::string_view const value) {
+    auto keyword_search = utils::find_if(
+        std::begin(keyword_expressions),
+        std::end(keyword_expressions),
+        [value](auto&& p) {
+            return p.first == value;
+        }
+    );
+
+    if (std::end(keyword_expressions) != keyword_search) {
+        return keyword_search->second;
+    }
+
+    auto symbol_search = utils::find_if(
+        std::begin(symbol_expressions),
+        std::end(symbol_expressions),
+        [value](auto&& p) {
+            return p.first == value;
+        }
+    );
+
+    if (std::end(symbol_expressions) != symbol_search) {
+        return symbol_search->second;
+    }
+
+    return token_type::field;
+}
 
 /**
  * Maps token type to token value.
@@ -122,7 +149,21 @@ token_type map_to_token_type(std::string_view const value);
  *
  * @return Token value
  */
-[[nodiscard]] std::string_view map_to_token_value(token_type const type);
+[[nodiscard]] constexpr std::string_view map_to_token_value(token_type const type) {
+    auto keyword_search = utils::find_if(
+        std::begin(keyword_expressions),
+        std::end(keyword_expressions),
+        [type](auto&& p) {
+            return p.second == type;
+        }
+    );
+
+    if (std::end(keyword_expressions) != keyword_search) {
+        return keyword_search->first;
+    }
+
+    return {};
+}
 
 } // token
 

@@ -54,12 +54,12 @@ public:
     constexpr token(token&& rhs) = default;
     constexpr token(token const& rhs) = default;
 
-    token(token_type const type) noexcept
+    constexpr token(token_type const type) noexcept
         : type_(type),
           value_(map_to_token_value(type))
     {}
 
-    token(std::string_view const value) noexcept
+    constexpr token(std::string_view const value) noexcept
         : type_(map_to_token_type(value)),
           value_(value)
     {}
@@ -84,7 +84,7 @@ public:
      *
      * @param type Token type
      */
-    void type(token_type const type) noexcept {
+    constexpr void type(token_type const type) noexcept {
         if (type != type_) {
             type_ = type;
             value_ = map_to_token_value(type);
@@ -105,7 +105,7 @@ public:
      *
      * @param value Token value
      */
-    void value(std::string_view const value) noexcept {
+    constexpr void value(std::string_view const value) noexcept {
         type_ = map_to_token_type(value);
         value_ = value;
     }
