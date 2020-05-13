@@ -119,7 +119,9 @@ public:
 
     ~any_value() = default;
 
-    [[nodiscard]] std::string const& str() const noexcept;
+    [[nodiscard]] std::string const& str() const noexcept {
+        return value_;
+    }
 
     friend bool operator==(any_value const& lhs, any_value const& rhs);
     friend bool operator!=(any_value const& lhs, any_value const& rhs);
@@ -268,6 +270,14 @@ bool any_value::operator<=(T const rhs) {
     }
 
     return false;
+}
+
+[[nodiscard]] inline bool operator==(any_value const& lhs, any_value const& rhs) {
+    return lhs.value_ == rhs.value_;
+}
+
+[[nodiscard]] inline bool operator!=(any_value const& lhs, any_value const& rhs) {
+    return lhs.value_ != rhs.value_;
 }
 
 } // utils
