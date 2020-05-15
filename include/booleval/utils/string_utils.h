@@ -48,13 +48,14 @@ namespace utils {
 /**
  * enum class split_options
  *
- * Represents an option used when splitting a string.
+ * Represents an options used when splitting a string.
  */
 enum class [[nodiscard]] split_options : uint8_t {
-    off                = 0x00,
-    include_whitespace = 0x01,
-    include_delimiters = 0x02,
-    exclude_delimiters = 0x04
+    off                  = 0x00,
+    include_delimiters   = 0x01,
+    exclude_delimiters   = 0x02,
+    split_by_whitespace  = 0x04,
+    allow_quoted_strings = 0x08
 };
 
 template <typename Enum>
@@ -200,28 +201,42 @@ template <typename Enum,
  *
  * @param strv    String view to split
  * @param delims  Delimiters to split the string view by
+ *                (by default, whitespace delimiter is used)
  * @param options Options used while splitting the string view
- *                (by default, whitespace delimiter is included and
- *                delimiters are excluded from the result)
+ *                (by default, delimiters are excluded from the result and
+ *                 quoted strings are allowed)
  *
  * @return Tokens computed by splitting the given string view
  */
-template <split_options options = split_options::exclude_delimiters>
+template <split_options options = split_options::exclude_delimiters |
+                                  split_options::allow_quoted_strings>
 [[nodiscard]] std::vector<std::string_view> split(std::string_view strv,
                                                   std::string_view delims = " ") {
+    static constexpr char QUOTE_CHAR{ '\"' };
+
     std::string delims_impl{ delims };
-    if constexpr (is_set(options, split_options::include_whitespace)) {
+
+    if constexpr (is_set(options, split_options::split_by_whitespace)) {
         delims_impl.append(1, ' ');
+    }
+
+    if constexpr (is_set(options, split_options::allow_quoted_strings)) {
+        delims_impl.append(1, QUOTE_CHAR);
     }
 
     std::vector<std::string_view> tokens;
 
     auto first = std::begin(strv);
     while (first != std::end(strv)) {
-        auto const second = std::find_first_of(
+        auto second = std::find_first_of(
             first, std::cend(strv),
             std::cbegin(delims_impl), std::cend(delims_impl)
         );
+
+        if (QUOTE_CHAR == *second) {
+            first = std::next(second);
+            second = std::find(first, std::cend(strv), QUOTE_CHAR);
+        }
 
         if (first != second) {
             tokens.emplace_back(
@@ -237,9 +252,11 @@ template <split_options options = split_options::exclude_delimiters>
         }
 
         if constexpr (is_set(options, split_options::include_delimiters)) {
-            std::string_view delim{ &*second, 1 };
-            if (!is_empty(delim)) {
-                tokens.emplace_back(delim);
+            if (QUOTE_CHAR != *second) {
+                std::string_view delim{ &*second, 1 };
+                if (!is_empty(delim)) {
+                    tokens.emplace_back(delim);
+                }
             }
         }
 

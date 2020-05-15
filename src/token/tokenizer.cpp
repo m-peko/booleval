@@ -75,8 +75,9 @@ void tokenizer::tokenize() {
     }
 
     auto raw_tokens = utils::split<
-        utils::split_options::include_whitespace |
-        utils::split_options::include_delimiters
+        utils::split_options::include_delimiters  |
+        utils::split_options::split_by_whitespace |
+        utils::split_options::allow_quoted_strings
     >(expression_, utils::join(std::begin(single_char_symbols), std::end(single_char_symbols)));
 
     for (auto const& token : raw_tokens) {

@@ -97,6 +97,20 @@ TEST_F(EvaluatorTest, EqualToOperator) {
     EXPECT_FALSE(evaluator.evaluate(bar));
 }
 
+TEST_F(EvaluatorTest, EqualToOperatorMultipleWords) {
+    obj<std::string> foo{ "foo foo" };
+    obj<std::string> bar{ "bar bar" };
+
+    booleval::evaluator evaluator({
+        { "field_a", &obj<std::string>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a \"foo foo\""));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+}
+
 TEST_F(EvaluatorTest, NotEqualToOperator) {
     obj<std::string> foo{ "foo" };
     obj<std::string> bar{ "bar" };
