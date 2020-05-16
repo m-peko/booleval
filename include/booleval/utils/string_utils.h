@@ -233,7 +233,7 @@ template <split_options options = split_options::exclude_delimiters |
             std::cbegin(delims_impl), std::cend(delims_impl)
         );
 
-        if (QUOTE_CHAR == *second) {
+        if (second != std::end(strv) && QUOTE_CHAR == *second) {
             first = std::next(second);
             second = std::find(first, std::cend(strv), QUOTE_CHAR);
         }
