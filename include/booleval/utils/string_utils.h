@@ -212,7 +212,7 @@ template <split_options options = split_options::exclude_delimiters |
                                   split_options::allow_quoted_strings>
 [[nodiscard]] std::vector<std::string_view> split(std::string_view strv,
                                                   std::string_view delims = " ") {
-    static constexpr char QUOTE_CHAR{ '\"' };
+    static constexpr char double_quote_char{ '\"' };
 
     std::string delims_impl{ delims };
 
@@ -221,7 +221,7 @@ template <split_options options = split_options::exclude_delimiters |
     }
 
     if constexpr (is_set(options, split_options::allow_quoted_strings)) {
-        delims_impl.append(1, QUOTE_CHAR);
+        delims_impl.append(1, double_quote_char);
     }
 
     std::vector<std::string_view> tokens;
@@ -233,9 +233,9 @@ template <split_options options = split_options::exclude_delimiters |
             std::cbegin(delims_impl), std::cend(delims_impl)
         );
 
-        if (second != std::end(strv) && QUOTE_CHAR == *second) {
+        if (std::end(strv) != second && double_quote_char == *second) {
             first = std::next(second);
-            second = std::find(first, std::cend(strv), QUOTE_CHAR);
+            second = std::find(first, std::cend(strv), double_quote_char);
         }
 
         if (first != second) {
@@ -252,7 +252,7 @@ template <split_options options = split_options::exclude_delimiters |
         }
 
         if constexpr (is_set(options, split_options::include_delimiters)) {
-            if (QUOTE_CHAR != *second) {
+            if (double_quote_char != *second) {
                 std::string_view delim{ &*second, 1 };
                 if (!is_empty(delim)) {
                     tokens.emplace_back(delim);
