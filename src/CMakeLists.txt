@@ -9,7 +9,6 @@ set (
     SOURCE_FILES
         token/tokenizer.cpp
         tree/expression_tree.cpp
-        utils/any_value.cpp
         evaluator.cpp
 )
 
@@ -36,7 +35,9 @@ add_library (
     ${INCLUDE_FILES}
 )
 
-target_link_libraries (booleval --coverage)
+if (NOT MSVC)
+    target_link_libraries (booleval --coverage)
+endif()
 
 set_target_properties (booleval PROPERTIES OUTPUT_NAME booleval)
 set_target_properties (booleval PROPERTIES VERSION ${LIBBOOLEVAL_VERSION} SOVERSION ${LIBBOOLEVAL_VERSION} )

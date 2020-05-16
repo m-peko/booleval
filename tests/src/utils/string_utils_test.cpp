@@ -35,23 +35,35 @@ class StringUtilsTest : public testing::Test {};
 TEST_F(StringUtilsTest, IsSetSplitOption) {
     using namespace booleval::utils;
 
-    auto options = split_options::include_whitespace;
-    EXPECT_TRUE(is_set(options, split_options::include_whitespace));
-    EXPECT_FALSE(is_set(options, split_options::include_delimiters));
-    EXPECT_FALSE(is_set(options, split_options::exclude_delimiters));
-
-    options = split_options::include_whitespace |
-              split_options::include_delimiters;
-    EXPECT_TRUE(is_set(options, split_options::include_whitespace));
+    auto options = split_options::include_delimiters;
     EXPECT_TRUE(is_set(options, split_options::include_delimiters));
     EXPECT_FALSE(is_set(options, split_options::exclude_delimiters));
+    EXPECT_FALSE(is_set(options, split_options::split_by_whitespace));
+    EXPECT_FALSE(is_set(options, split_options::allow_quoted_strings));
 
-    options = split_options::include_whitespace |
-              split_options::include_delimiters |
+    options = split_options::include_delimiters |
               split_options::exclude_delimiters;
-    EXPECT_TRUE(is_set(options, split_options::include_whitespace));
     EXPECT_TRUE(is_set(options, split_options::include_delimiters));
     EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
+    EXPECT_FALSE(is_set(options, split_options::split_by_whitespace));
+    EXPECT_FALSE(is_set(options, split_options::allow_quoted_strings));
+
+    options = split_options::include_delimiters |
+              split_options::exclude_delimiters |
+              split_options::split_by_whitespace;
+    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
+    EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
+    EXPECT_TRUE(is_set(options, split_options::split_by_whitespace));
+    EXPECT_FALSE(is_set(options, split_options::allow_quoted_strings));
+
+    options = split_options::include_delimiters  |
+              split_options::exclude_delimiters  |
+              split_options::split_by_whitespace |
+              split_options::allow_quoted_strings;
+    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
+    EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
+    EXPECT_TRUE(is_set(options, split_options::split_by_whitespace));
+    EXPECT_TRUE(is_set(options, split_options::allow_quoted_strings));
 }
 
 TEST_F(StringUtilsTest, LeftTrimWhitespaces) {
@@ -129,37 +141,40 @@ TEST_F(StringUtilsTest, IsEmpty) {
 TEST_F(StringUtilsTest, SplitByWhitespace) {
     using namespace booleval::utils;
 
-    auto tokens = split("a b c d");
+    auto tokens = split("a b c d \"a b c\"");
 
-    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens.size(), 5U);
     EXPECT_EQ(tokens[0], "a");
     EXPECT_EQ(tokens[1], "b");
     EXPECT_EQ(tokens[2], "c");
     EXPECT_EQ(tokens[3], "d");
+    EXPECT_EQ(tokens[4], "a b c");
 }
 
 TEST_F(StringUtilsTest, SplitByComma) {
     using namespace booleval::utils;
 
-    auto tokens = split("a,b,c,d", ",");
+    auto tokens = split("\"a,b,c\",a,b,c,d", ",");
 
-    EXPECT_EQ(tokens.size(), 4U);
-    EXPECT_EQ(tokens[0], "a");
-    EXPECT_EQ(tokens[1], "b");
-    EXPECT_EQ(tokens[2], "c");
-    EXPECT_EQ(tokens[3], "d");
+    EXPECT_EQ(tokens.size(), 5U);
+    EXPECT_EQ(tokens[0], "a,b,c");
+    EXPECT_EQ(tokens[1], "a");
+    EXPECT_EQ(tokens[2], "b");
+    EXPECT_EQ(tokens[3], "c");
+    EXPECT_EQ(tokens[4], "d");
 }
 
 TEST_F(StringUtilsTest, SplitByMultipleDelimiters) {
     using namespace booleval::utils;
 
-    auto tokens = split("a,b.c,d.", ".,");
+    auto tokens = split("a,b.\"a.b,c\"c,d.", ".,");
 
-    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens.size(), 5U);
     EXPECT_EQ(tokens[0], "a");
     EXPECT_EQ(tokens[1], "b");
-    EXPECT_EQ(tokens[2], "c");
-    EXPECT_EQ(tokens[3], "d");
+    EXPECT_EQ(tokens[2], "a.b,c");
+    EXPECT_EQ(tokens[3], "c");
+    EXPECT_EQ(tokens[4], "d");
 }
 
 TEST_F(StringUtilsTest, SplitIncludeDelimitersOption) {
@@ -178,15 +193,18 @@ TEST_F(StringUtilsTest, SplitMultipleOptions) {
     using namespace booleval::utils;
 
     auto tokens = split<
-        split_options::include_whitespace |
-        split_options::include_delimiters
-    >("a , b .", ".,");
+        split_options::include_delimiters  |
+        split_options::split_by_whitespace |
+        split_options::allow_quoted_strings
+    >("a , b .\"c , \" \"d . e\"", ".,");
 
-    EXPECT_EQ(tokens.size(), 4U);
+    EXPECT_EQ(tokens.size(), 6U);
     EXPECT_EQ(tokens[0], "a");
     EXPECT_EQ(tokens[1], ",");
     EXPECT_EQ(tokens[2], "b");
     EXPECT_EQ(tokens[3], ".");
+    EXPECT_EQ(tokens[4], "c , ");
+    EXPECT_EQ(tokens[5], "d . e");
 }
 
 TEST_F(StringUtilsTest, JoinWithoutSeparator) {

@@ -29,7 +29,11 @@ macro (create_test test_name)
     add_executable (${binary_name} EXCLUDE_FROM_ALL "${test_name}_test.cpp")
     add_test (${test_name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${binary_name})
     add_dependencies (tests ${binary_name})
-    target_link_libraries (${binary_name} gtest gtest_main --coverage)
+    if (MSVC)
+        target_link_libraries (${binary_name} gtest gtest_main)
+    else ()
+        target_link_libraries (${binary_name} gtest gtest_main --coverage)
+    endif ()
 endmacro ()
 
 # Tests
