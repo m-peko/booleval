@@ -29,6 +29,7 @@
 
 #include <booleval/token/tokenizer.h>
 #include <booleval/utils/string_utils.h>
+#include <booleval/utils/split_range.h>
 
 namespace booleval {
 
@@ -67,28 +68,30 @@ void tokenizer::tokenize() {
     tokens_.clear();
     reset();
 
-    std::vector<char> single_char_symbols;
-    for (auto const& p : symbol_expressions) {
-        if (1 == p.first.size()) {
-            single_char_symbols.push_back(p.first.front());
-        }
-    }
-
-    auto raw_tokens = utils::split<
+    constexpr auto single_char_symbols = single_char_symbol_expressions();
+    constexpr auto options =
         utils::split_options::include_delimiters  |
         utils::split_options::split_by_whitespace |
-        utils::split_options::allow_quoted_strings
-    >(expression_, utils::join(std::begin(single_char_symbols), std::end(single_char_symbols)));
+        utils::split_options::allow_quoted_strings;
 
-    for (auto const& token : raw_tokens) {
-        auto type = map_to_token_type(token);
+    auto tokens_range = utils::split_range<options>(
+        expression_,
+        utils::join(
+            std::begin(single_char_symbols),
+            std::end(single_char_symbols)
+        )
+    );
+
+    for (auto const& [quoted, index, value] : tokens_range) {
+        auto type = quoted ? token_type::field : map_to_token_type(value);
+
         if (token_type::field == type) {
             if (!tokens_.empty() && tokens_.back().is(token_type::field)) {
                 tokens_.emplace_back(token_type::eq, map_to_token_value(token_type::eq));
             }
         }
 
-        tokens_.emplace_back(type, token);
+        tokens_.emplace_back(type, value);
     }
 }
 

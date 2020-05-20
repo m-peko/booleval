@@ -65,6 +65,25 @@ TEST_F(TokenizerTest, TokenizeEmptyExpression) {
     EXPECT_FALSE(tokenizer.has_tokens());
 }
 
+TEST_F(TokenizerTest, TokenizeKeywordAsFieldExpression) {
+    using namespace booleval;
+
+    std::string_view expression{ "field_a \"and\"" };
+
+    token::tokenizer tokenizer;
+    tokenizer.expression(expression);
+    EXPECT_EQ(tokenizer.expression(), expression);
+
+    tokenizer.tokenize();
+    EXPECT_TRUE(tokenizer.has_tokens());
+
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::field));
+    EXPECT_TRUE(tokenizer.next_token().is(token::token_type::eq));
+
+    EXPECT_TRUE(tokenizer.weak_next_token().is(token::token_type::field));
+    EXPECT_EQ(tokenizer.next_token().value(), "and");
+}
+
 TEST_F(TokenizerTest, TokenizeLowercaseKeywordBasedExpression) {
     using namespace booleval;
 

@@ -24,6 +24,7 @@ set (
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_mem_fn.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_value.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/split_range.h
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.h
