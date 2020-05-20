@@ -108,6 +108,31 @@ constexpr std::array<
 }};
 
 /**
+ * Filters single character symbol expressions from all symbol expressions.
+ *
+ * @return Single character symbol expressions
+ */
+constexpr auto single_char_symbol_expressions() {
+    constexpr auto count = utils::count_if(
+        std::begin(symbol_expressions),
+        std::end(symbol_expressions),
+        [](auto&& p) {
+            return 1 == p.first.size();
+        }
+    );
+
+    std::size_t i{ 0 };
+    std::array<char, count> single_char_symbols{};
+    for (auto const& p : symbol_expressions) {
+        if (1 == p.first.size()) {
+            single_char_symbols[i++] = p.first.front();
+        }
+    }
+
+    return single_char_symbols;
+}
+
+/**
  * Maps token value to token type.
  *
  * @param value Token value
