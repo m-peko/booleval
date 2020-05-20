@@ -95,3 +95,36 @@ TEST_F(AlgoUtilsTest, FindIfNot) {
     it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i > 0 && i < 6; });
     EXPECT_EQ(it, std::end(arr));
 }
+
+TEST_F(AlgoUtilsTest, Count) {
+    using namespace booleval;
+
+    std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
+
+    auto count = utils::count(std::begin(arr), std::end(arr), 6);
+    EXPECT_EQ(count, 0);
+
+    arr = { 1, 2, 2, 2, 5 };
+    count = utils::count(std::begin(arr), std::end(arr), 2);
+    EXPECT_EQ(count, 3);
+
+    arr = { 2, 2, 2, 2, 2 };
+    count = utils::count(std::begin(arr), std::end(arr), 2);
+    EXPECT_EQ(count, 5);
+}
+
+TEST_F(AlgoUtilsTest, CountIf) {
+    using namespace booleval;
+
+    std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
+
+    auto count = utils::count_if(std::begin(arr), std::end(arr), [](auto&& i) { return i > 6; });
+    EXPECT_EQ(count, 0);
+
+    count = utils::count_if(std::begin(arr), std::end(arr), [](auto&& i) { return i < 6; });
+    EXPECT_EQ(count, 5);
+
+    arr = { 1, 2, 2, 2, 5 };
+    count = utils::count_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 2; });
+    EXPECT_EQ(count, 3);
+}

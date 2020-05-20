@@ -94,6 +94,50 @@ constexpr InputIt find_if_not(InputIt first, InputIt last, UnaryPredicate p) {
     return last;
 }
 
+/**
+ * Counts the elements in the range [first, last) that
+ * are equal to the value.
+ *
+ * @param first Beginning of the range
+ * @param last  End of the range
+ * @param value Value to compare the elements to
+ *
+ * @return Number of elements equal to the value.
+ */
+template <typename InputIt, typename T>
+constexpr typename std::iterator_traits<InputIt>::difference_type
+count(InputIt first, InputIt last, T const& value) {
+    typename std::iterator_traits<InputIt>::difference_type result{ 0 };
+    for (; first != last; ++first) {
+        if (*first == value) {
+            result++;
+        }
+    }
+    return result;
+}
+
+/**
+ * Counts the elements in the range [first, last) for
+ * which the predicate returns true.
+ *
+ * @param first Beginning of the range
+ * @param last  End of the range
+ * @param p     Unary predicate which returns true for the required elements
+ *
+ * @return Number of elements satisfying the condition.
+ */
+template <typename InputIt, typename UnaryPredicate>
+constexpr typename std::iterator_traits<InputIt>::difference_type
+count_if(InputIt first, InputIt last, UnaryPredicate p) {
+    typename std::iterator_traits<InputIt>::difference_type result{ 0 };
+    for (; first != last; ++first) {
+        if (p(*first)) {
+            result++;
+        }
+    }
+    return result;
+}
+
 } // utils
 
 } // booleval
