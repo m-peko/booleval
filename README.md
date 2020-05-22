@@ -1,10 +1,16 @@
-# booleval
+<div align="center">
+
+<img src="docs/booleval-title.png"/>
 
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/m-peko/booleval/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/m-peko/booleval.svg?branch=master)](https://travis-ci.org/m-peko/booleval)
 [![codecov](https://codecov.io/gh/m-peko/booleval/branch/master/graph/badge.svg)](https://codecov.io/gh/m-peko/booleval)
 
-Small C++17 library for evaluating logical expressions.
+Modern C++17 library for evaluating logical expressions.
+
+</div>
+
+<br/>
 
 The library is under development and subject to change. Contributions are welcome. You can also log an issue if you have a wish for enhancement or if you spot a bug.
 
@@ -26,7 +32,7 @@ The library is under development and subject to change. Contributions are welcom
 
 <br/>
 <p align="center">
-    <img src="docs/booleval.png"/>
+    <img src="docs/booleval-tree.png"/>
 </p>
 <br/>
 <br/>
