@@ -31,6 +31,7 @@
 #define BOOLEVAL_SPLIT_RANGE_H
 
 #include <string>
+#include <iterator>
 #include <algorithm>
 #include <string_view>
 #include <booleval/utils/string_utils.h>
@@ -75,7 +76,7 @@ public:
         explicit constexpr iterator(std::string_view strv, std::string const& delims) noexcept
             : strv_(strv),
               delims_(delims),
-              prev_(std::cbegin(strv_)) {
+              prev_(std::begin(strv_)) {
             apply_split_options();
             next();
         }
@@ -99,14 +100,22 @@ public:
 
             if (curr_elem_.quoted) {
                 curr_ = skip_char(curr_, whitespace_char);
-                curr_ = std::next(curr_);
-                prev_ = std::next(curr_);
+                if (std::end(strv_) != curr_ && curr_ != std::prev(std::end(strv_))) {
+                    curr_ = std::next(curr_);
+                }
+                if (std::end(strv_) != curr_) {
+                    prev_ = std::next(curr_);
+                }
             } else {
                 if constexpr (is_set(iter_options, split_options::include_delimiters)) {
                     curr_ = skip_char(curr_, whitespace_char);
                     prev_ = curr_;
                 } else {
-                    prev_ = std::next(curr_);
+                    if (std::end(strv_) != curr_) {
+                        prev_ = std::next(curr_);
+                    } else {
+                        prev_ = std::end(strv_);
+                    }
                 }
             }
 
@@ -133,7 +142,7 @@ public:
         ~iterator() = default;
 
     private:
-        explicit constexpr iterator(char const * const end) noexcept
+        explicit constexpr iterator(std::string_view::const_iterator end) noexcept
             : prev_(end)
         {}
 
@@ -154,7 +163,8 @@ public:
          *
          * @return Iterator to the beginning of the next token
          */
-        [[nodiscard]] constexpr char const* find_next(char const* first, char const* last) const noexcept {
+        [[nodiscard]] constexpr std::string_view::iterator find_next(std::string_view::iterator first,
+                                                                     std::string_view::iterator last) const noexcept {
             if constexpr (is_set(iter_options, split_options::allow_quoted_strings)) {
                 if (curr_elem_.quoted) {
                     return find_next_quote(first, last);
@@ -177,8 +187,9 @@ public:
          *
          * @return Iterator to the first delimiter
          */
-        [[nodiscard]] constexpr char const* find_next_delim(char const* first, char const* last) const noexcept {
-            return std::find_first_of(first, last, std::cbegin(delims_), std::cend(delims_));
+        [[nodiscard]] constexpr std::string_view::iterator find_next_delim(std::string_view::iterator first,
+                                                                           std::string_view::iterator last) const noexcept {
+            return std::find_first_of(first, last, std::begin(delims_), std::end(delims_));
         }
 
         /**
@@ -189,7 +200,8 @@ public:
          *
          * @return Iterator to the first quote character
          */
-        [[nodiscard]] constexpr char const* find_next_quote(char const* first, char const* last) const noexcept {
+        [[nodiscard]] constexpr std::string_view::iterator find_next_quote(std::string_view::iterator first,
+                                                                           std::string_view::iterator last) const noexcept {
             return std::find(first, last, iter_quote_char);
         }
 
@@ -200,8 +212,8 @@ public:
          *
          * @return Iterator to the first element which is not equal to the specified character
          */
-        [[nodiscard]] constexpr char const* skip_char(char const* first, char const c) const noexcept {
-            while (std::cend(strv_) != first && c == *first) {
+        [[nodiscard]] constexpr std::string_view::iterator skip_char(std::string_view::iterator first, char const c) const noexcept {
+            while (std::end(strv_) != first && c == *first) {
                 first = std::next(first);
             }
             return first;
@@ -211,19 +223,22 @@ public:
          * Finds the next token and sets the current element properties.
          */
         constexpr void next() noexcept {
-            if (std::cend(strv_) == prev_) {
+            if (std::end(strv_) == prev_) {
                 return;
             }
 
-            curr_ = find_next(prev_, std::cend(strv_));
-            if (iter_quote_char == *curr_) {
-                curr_elem_.quoted = true;
-                prev_ = skip_char(curr_, iter_quote_char);
-                curr_ = find_next(prev_, std::cend(strv_));
-            } else {
-                curr_elem_.quoted = false;
-                if (prev_ == curr_) {
-                    curr_ = std::next(curr_);
+            curr_elem_.quoted = false;
+            curr_ = find_next(prev_, std::end(strv_));
+
+            if (std::end(strv_) != curr_) {
+                if (iter_quote_char == *curr_) {
+                    curr_elem_.quoted = true;
+                    prev_ = skip_char(curr_, iter_quote_char);
+                    curr_ = find_next(prev_, std::end(strv_));
+                } else {
+                    if (prev_ == curr_) {
+                        curr_ = std::next(curr_);
+                    }
                 }
             }
 
@@ -243,8 +258,8 @@ public:
         std::string_view strv_;
         std::string delims_;
 
-        char const* prev_;
-        char const* curr_;
+        std::string_view::iterator prev_;
+        std::string_view::iterator curr_;
 
         element curr_elem_;
     };
@@ -280,7 +295,7 @@ public:
      * @return Iterator to the element following the last element
      */
     [[nodiscard]] constexpr auto end() const noexcept {
-        return iterator<options, quote_char>(strv_.data() + strv_.size());
+        return iterator<options, quote_char>(std::end(strv_));
     }
 
 private:
