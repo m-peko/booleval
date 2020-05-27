@@ -70,7 +70,11 @@ public:
 
     template <typename T>
     any_value invoke(T obj) {
-        return fn_(obj);
+        try {
+            return fn_(obj);
+        } catch (std::bad_any_cast const&) {
+            return {};
+        }
     }
 
 private:
