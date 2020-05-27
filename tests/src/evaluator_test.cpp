@@ -239,3 +239,18 @@ TEST_F(EvaluatorTest, MultipleOperators) {
     EXPECT_FALSE(evaluator.evaluate(baz));
     EXPECT_TRUE(evaluator.evaluate(qux));
 }
+
+TEST_F(EvaluatorTest, FieldsFromDifferentClasses) {
+    obj<std::string> foo{ "one" };
+    multi_obj<std::string, uint8_t> bar{ "two", 2 };
+
+    booleval::evaluator evaluator({
+        { "field_a", &obj<std::string>::value_a },
+        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a one and field_b 2"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_FALSE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+}
