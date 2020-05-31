@@ -28,7 +28,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/token/token.h>
+#include <booleval/token/token.hpp>
 
 class TokenTest : public testing::Test {};
 

@@ -28,7 +28,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/utils/string_utils.h>
+#include <booleval/utils/string_utils.hpp>
 
 class StringUtilsTest : public testing::Test {};
 

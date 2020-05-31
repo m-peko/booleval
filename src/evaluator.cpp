@@ -27,7 +27,7 @@
  *
  */
 
-#include <booleval/evaluator.h>
+#include <booleval/evaluator.hpp>
 
 namespace booleval {
 

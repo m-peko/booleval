@@ -32,7 +32,7 @@
 
 #include <vector>
 #include <string_view>
-#include <booleval/token/token.h>
+#include <booleval/token/token.hpp>
 
 namespace booleval {
 

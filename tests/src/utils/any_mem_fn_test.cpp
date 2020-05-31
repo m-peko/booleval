@@ -30,7 +30,7 @@
 #include <string>
 #include <string_view>
 #include <gtest/gtest.h>
-#include <booleval/utils/any_mem_fn.h>
+#include <booleval/utils/any_mem_fn.hpp>
 
 class AnyMemFnTest : public testing::Test {
 public:

@@ -27,9 +27,9 @@
  *
  */
 
-#include <booleval/token/tokenizer.h>
-#include <booleval/utils/string_utils.h>
-#include <booleval/utils/split_range.h>
+#include <booleval/token/tokenizer.hpp>
+#include <booleval/utils/string_utils.hpp>
+#include <booleval/utils/split_range.hpp>
 
 namespace booleval {
 

@@ -28,7 +28,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/tree/expression_tree.h>
+#include <booleval/tree/expression_tree.hpp>
 
 class ExpressionTreeTest : public testing::Test {};
 

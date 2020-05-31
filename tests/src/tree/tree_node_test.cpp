@@ -28,9 +28,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/token/token.h>
-#include <booleval/tree/tree_node.h>
-#include <booleval/token/token_type.h>
+#include <booleval/token/token.hpp>
+#include <booleval/tree/tree_node.hpp>
+#include <booleval/token/token_type.hpp>
 
 class TreeNodeTest : public testing::Test {};
 

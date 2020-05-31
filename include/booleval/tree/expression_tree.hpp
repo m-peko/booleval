@@ -32,8 +32,8 @@
 
 #include <memory>
 #include <string_view>
-#include <booleval/tree/tree_node.h>
-#include <booleval/token/tokenizer.h>
+#include <booleval/tree/tree_node.hpp>
+#include <booleval/token/tokenizer.hpp>
 
 namespace booleval {
 

@@ -27,8 +27,8 @@
  *
  */
 
-#include <booleval/token/token_type.h>
-#include <booleval/tree/expression_tree.h>
+#include <booleval/token/token_type.hpp>
+#include <booleval/tree/expression_tree.hpp>
 
 namespace booleval {
 

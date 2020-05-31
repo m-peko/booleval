@@ -29,7 +29,7 @@
 
 #include <array>
 #include <gtest/gtest.h>
-#include <booleval/utils/algo_utils.h>
+#include <booleval/utils/algo_utils.hpp>
 
 class AlgoUtilsTest : public testing::Test {};
 

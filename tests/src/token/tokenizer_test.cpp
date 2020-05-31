@@ -29,8 +29,8 @@
 
 #include <string_view>
 #include <gtest/gtest.h>
-#include <booleval/token/tokenizer.h>
-#include <booleval/token/token_type.h>
+#include <booleval/token/tokenizer.hpp>
+#include <booleval/token/token_type.hpp>
 
 class TokenizerTest : public testing::Test {};
 

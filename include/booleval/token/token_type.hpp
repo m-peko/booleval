@@ -34,7 +34,7 @@
 #include <cstdint>
 #include <utility>
 #include <string_view>
-#include <booleval/utils/algo_utils.h>
+#include <booleval/utils/algo_utils.hpp>
 
 namespace booleval {
 

@@ -28,7 +28,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/utils/split_range.h>
+#include <booleval/utils/split_range.hpp>
 
 class SplitRangeTest : public testing::Test {
 public:
