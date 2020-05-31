@@ -128,24 +128,28 @@ public:
 
 private:
     std::string value_;
+    bool use_string_comparison_{ false };
 };
 
 template <typename T,
           typename std::enable_if_t<std::is_arithmetic_v<T>>*>
 any_value::any_value(T const rhs)
-    : value_(utils::to_chars<T>(rhs))
+    : value_(utils::to_chars<T>(rhs)),
+      use_string_comparison_(false)
 {}
 
 template <typename T,
           typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
 any_value::any_value(T const rhs)
-    : value_(rhs)
+    : value_(rhs),
+      use_string_comparison_(true)
 {}
 
 template <typename T,
           typename std::enable_if_t<std::is_arithmetic_v<T>>*>
 any_value& any_value::operator=(T const rhs) {
     value_ = utils::to_chars<T>(rhs);
+    use_string_comparison_ = false;
     return *this;
 }
 
@@ -153,6 +157,7 @@ template <typename T,
           typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
 any_value& any_value::operator=(T const rhs) {
     value_ = rhs;
+    use_string_comparison_ = true;
     return *this;
 }
 
@@ -194,6 +199,10 @@ bool any_value::operator>(T const rhs) {
 template <typename T,
           typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
 bool any_value::operator>(T const rhs) {
+    if (use_string_comparison_) {
+        return value_ > rhs;
+    }
+
     auto arithmetic_lhs = utils::from_chars<double>(value_);
     auto arithmetic_rhs = utils::from_chars<double>(rhs);
     if (arithmetic_lhs && arithmetic_rhs) {
@@ -217,6 +226,10 @@ bool any_value::operator<(T const rhs) {
 template <typename T,
           typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
 bool any_value::operator<(T const rhs) {
+    if (use_string_comparison_) {
+        return value_ < rhs;
+    }
+
     auto arithmetic_lhs = utils::from_chars<double>(value_);
     auto arithmetic_rhs = utils::from_chars<double>(rhs);
     if (arithmetic_lhs && arithmetic_rhs) {
@@ -240,6 +253,10 @@ bool any_value::operator>=(T const rhs) {
 template <typename T,
           typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
 bool any_value::operator>=(T const rhs) {
+    if (use_string_comparison_) {
+        return value_ >= rhs;
+    }
+
     auto arithmetic_lhs = utils::from_chars<double>(value_);
     auto arithmetic_rhs = utils::from_chars<double>(rhs);
     if (arithmetic_lhs && arithmetic_rhs) {
@@ -263,6 +280,10 @@ bool any_value::operator<=(T const rhs) {
 template <typename T,
           typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
 bool any_value::operator<=(T const rhs) {
+    if (use_string_comparison_) {
+        return value_ <= rhs;
+    }
+
     auto arithmetic_lhs = utils::from_chars<double>(value_);
     auto arithmetic_rhs = utils::from_chars<double>(rhs);
     if (arithmetic_lhs && arithmetic_rhs) {
