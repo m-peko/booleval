@@ -14,20 +14,20 @@ set (
 
 set (
     INCLUDE_FILES
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/token/tokenizer.hpp
 
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/expression_tree.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/result_visitor.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/tree_node.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/expression_tree.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/result_visitor.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/tree/tree_node.hpp
 
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_mem_fn.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_value.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/split_range.h
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_mem_fn.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/any_value.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/split_range.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.hpp
 
-        ${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.h
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.hpp
 )
 
 add_library (

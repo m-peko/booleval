@@ -33,8 +33,8 @@
 #include <optional>
 #include <string_view>
 #include <type_traits>
-#include <booleval/token/token_type.h>
-#include <booleval/utils/string_utils.h>
+#include <booleval/token/token_type.hpp>
+#include <booleval/utils/string_utils.hpp>
 
 namespace booleval {
 

@@ -31,8 +31,8 @@
 #define BOOLEVAL_TREE_NODE_H
 
 #include <memory>
-#include <booleval/token/token.h>
-#include <booleval/token/token_type.h>
+#include <booleval/token/token.hpp>
+#include <booleval/token/token_type.hpp>
 
 namespace booleval {
 

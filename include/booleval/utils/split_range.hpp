@@ -34,7 +34,7 @@
 #include <iterator>
 #include <algorithm>
 #include <string_view>
-#include <booleval/utils/string_utils.h>
+#include <booleval/utils/string_utils.hpp>
 
 namespace booleval {
 

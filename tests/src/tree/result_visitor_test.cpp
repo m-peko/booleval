@@ -28,9 +28,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/tree/tree_node.h>
-#include <booleval/token/token_type.h>
-#include <booleval/tree/result_visitor.h>
+#include <booleval/tree/tree_node.hpp>
+#include <booleval/token/token_type.hpp>
+#include <booleval/tree/result_visitor.hpp>
 
 class ResultVisitorTest : public testing::Test {
 public:

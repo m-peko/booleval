@@ -30,7 +30,7 @@
 #include <string>
 #include <string_view>
 #include <gtest/gtest.h>
-#include <booleval/utils/any_value.h>
+#include <booleval/utils/any_value.hpp>
 
 class AnyValueTest : public testing::Test {};
 

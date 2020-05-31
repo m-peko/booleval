@@ -33,8 +33,8 @@
 #include <map>
 #include <functional>
 #include <string_view>
-#include <booleval/tree/tree_node.h>
-#include <booleval/utils/any_mem_fn.h>
+#include <booleval/tree/tree_node.hpp>
+#include <booleval/utils/any_mem_fn.hpp>
 
 namespace booleval {
 

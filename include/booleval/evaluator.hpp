@@ -32,9 +32,9 @@
 
 #include <map>
 #include <string_view>
-#include <booleval/utils/any_mem_fn.h>
-#include <booleval/tree/result_visitor.h>
-#include <booleval/tree/expression_tree.h>
+#include <booleval/utils/any_mem_fn.hpp>
+#include <booleval/tree/result_visitor.hpp>
+#include <booleval/tree/expression_tree.hpp>
 
 namespace booleval {
 

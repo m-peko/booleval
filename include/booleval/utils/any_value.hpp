@@ -32,7 +32,7 @@
 
 #include <string>
 #include <type_traits>
-#include <booleval/utils/string_utils.h>
+#include <booleval/utils/string_utils.hpp>
 
 namespace booleval {
 

@@ -29,7 +29,7 @@
 
 #include <string>
 #include <iostream>
-#include <booleval/evaluator.h>
+#include <booleval/evaluator.hpp>
 
 struct obj {
 public:
