@@ -139,6 +139,20 @@ TEST_F(EvaluatorTest, GreaterThanOperator) {
     EXPECT_FALSE(evaluator.evaluate(bar));
 }
 
+TEST_F(EvaluatorTest, GreaterThanOperatorStrings) {
+    obj<std::string> foo{ "30" };
+    obj<std::string> bar{ "1000" };
+
+    booleval::evaluator evaluator({
+        { "field_a", &obj<std::string>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a gt \"200\""));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+}
+
 TEST_F(EvaluatorTest, LessThanOperator) {
     obj<uint8_t> foo{ 1 };
     obj<uint8_t> bar{ 3 };
@@ -148,6 +162,20 @@ TEST_F(EvaluatorTest, LessThanOperator) {
     });
 
     EXPECT_TRUE(evaluator.expression("field_a lt 2"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+}
+
+TEST_F(EvaluatorTest, LessThanOperatorStrings) {
+    obj<std::string> foo{ "1000" };
+    obj<std::string> bar{ "30" };
+
+    booleval::evaluator evaluator({
+        { "field_a", &obj<std::string>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a lt \"200\""));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate(foo));
     EXPECT_FALSE(evaluator.evaluate(bar));
