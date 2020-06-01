@@ -30,7 +30,6 @@
 #ifndef BOOLEVAL_SPLIT_RANGE_H
 #define BOOLEVAL_SPLIT_RANGE_H
 
-#include <string>
 #include <iterator>
 #include <algorithm>
 #include <string_view>
@@ -73,11 +72,10 @@ public:
         using reference         = value_type&;
 
     public:
-        explicit constexpr iterator(std::string_view strv, std::string const& delims) noexcept
+        explicit constexpr iterator(std::string_view strv, std::string_view delims) noexcept
             : strv_(strv),
               delims_(delims),
               prev_(std::begin(strv_)) {
-            apply_split_options();
             next();
         }
 
@@ -88,17 +86,17 @@ public:
         iterator& operator=(iterator const& rhs) = default;
 
         [[nodiscard]] constexpr auto operator*() const noexcept {
-            return curr_elem_;
+            return curr_value_;
         }
 
         [[nodiscard]] constexpr auto operator->() const noexcept {
-            return &curr_elem_;
+            return &curr_value_;
         }
 
         constexpr iterator& operator++() noexcept {
-            ++curr_elem_.index;
+            ++curr_value_.index;
 
-            if (curr_elem_.quoted) {
+            if (curr_value_.quoted) {
                 curr_ = skip_char(curr_, whitespace_char);
                 if (std::end(strv_) != curr_ && curr_ != std::prev(std::end(strv_))) {
                     curr_ = std::next(curr_);
@@ -119,7 +117,7 @@ public:
                 }
             }
 
-            curr_elem_.quoted = false;
+            curr_value_.quoted = false;
 
             next();
             return *this;
@@ -147,15 +145,6 @@ public:
         {}
 
         /**
-         * Applies splitting options to the string containing delimiters.
-         */
-        constexpr void apply_split_options() noexcept {
-            if constexpr (is_set(iter_options, split_options::split_by_whitespace)) {
-                delims_.append(1, ' ');
-            }
-        }
-
-        /**
          * Finds the iterator pointing to the beginning of the next token in the specified range.
          *
          * @param first Iterator to the first element of the range to examine
@@ -166,7 +155,7 @@ public:
         [[nodiscard]] constexpr std::string_view::iterator find_next(std::string_view::iterator first,
                                                                      std::string_view::iterator last) const noexcept {
             if constexpr (is_set(iter_options, split_options::allow_quoted_strings)) {
-                if (curr_elem_.quoted) {
+                if (curr_value_.quoted) {
                     return find_next_quote(first, last);
                 } else {
                     return std::min(
@@ -189,7 +178,13 @@ public:
          */
         [[nodiscard]] constexpr std::string_view::iterator find_next_delim(std::string_view::iterator first,
                                                                            std::string_view::iterator last) const noexcept {
-            return std::find_first_of(first, last, std::begin(delims_), std::end(delims_));
+            if constexpr (is_set(iter_options, split_options::split_by_whitespace)) {
+                auto whitespace = std::find(first, last, whitespace_char);
+                auto other_delim = std::find_first_of(first, last, std::begin(delims_), std::end(delims_));
+                return std::min(whitespace, other_delim);
+            } else {
+                return std::find_first_of(first, last, std::begin(delims_), std::end(delims_));
+            }
         }
 
         /**
@@ -227,12 +222,12 @@ public:
                 return;
             }
 
-            curr_elem_.quoted = false;
+            curr_value_.quoted = false;
             curr_ = find_next(prev_, std::end(strv_));
 
             if (std::end(strv_) != curr_) {
                 if (iter_quote_char == *curr_) {
-                    curr_elem_.quoted = true;
+                    curr_value_.quoted = true;
                     prev_ = skip_char(curr_, iter_quote_char);
                     curr_ = find_next(prev_, std::end(strv_));
                 } else {
@@ -248,7 +243,7 @@ public:
                 return;
             }
 
-            curr_elem_.value = strv_.substr(
+            curr_value_.value = strv_.substr(
                 std::distance(std::begin(strv_), prev_),
                 std::distance(prev_, curr_)
             );
@@ -256,18 +251,18 @@ public:
 
     private:
         std::string_view strv_;
-        std::string delims_;
+        std::string_view delims_;
 
         std::string_view::iterator prev_;
         std::string_view::iterator curr_;
 
-        element curr_elem_;
+        value_type curr_value_;
     };
 
 public:
     constexpr split_range() = default;
 
-	constexpr split_range(std::string_view strv, std::string const& delims = " ")
+	constexpr split_range(std::string_view strv, std::string_view delims = " ")
         : strv_(strv),
           delims_(delims)
     {}
@@ -300,7 +295,7 @@ public:
 
 private:
     std::string_view strv_;
-    std::string delims_;
+    std::string_view delims_;
 };
 
 } // utils

@@ -74,13 +74,8 @@ void tokenizer::tokenize() {
         utils::split_options::split_by_whitespace |
         utils::split_options::allow_quoted_strings;
 
-    auto tokens_range = utils::split_range<options>(
-        expression_,
-        utils::join(
-            std::begin(single_char_symbols),
-            std::end(single_char_symbols)
-        )
-    );
+    auto delims = utils::join(std::begin(single_char_symbols), std::end(single_char_symbols));
+    auto tokens_range = utils::split_range<options>(expression_, delims);
 
     for (auto const& [quoted, index, value] : tokens_range) {
         auto type = quoted ? token_type::field : map_to_token_type(value);
