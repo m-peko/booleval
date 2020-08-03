@@ -180,7 +180,7 @@ In our application, we want to let end-users to specify some sort of a rule whic
 ```c++
 #include <string>
 #include <iostream>
-#include <booleval/evaluator.h>
+#include <booleval/evaluator.hpp>
 
 int main() {
     obj pass("foo", 123);
