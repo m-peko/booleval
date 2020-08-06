@@ -149,3 +149,24 @@ TEST_F(SplitRangeTest, SplitWithMultipleOptions) {
     test_split_range_iterator(it++, true,  5, "d . e");
     EXPECT_EQ(it, end);
 }
+
+TEST_F(SplitRangeTest, SplitWithMultipleOptionsAndParentheses) {
+    using namespace booleval::utils;
+
+    auto range = split_range<
+        split_options::include_delimiters  |
+        split_options::split_by_whitespace |
+        split_options::allow_quoted_strings
+    >("(a b c d \"a b c\")", "()");
+    auto it  = range.begin();
+    auto end = range.end();
+
+    test_split_range_iterator(it++, false, 0, "(");
+    test_split_range_iterator(it++, false, 1, "a");
+    test_split_range_iterator(it++, false, 2, "b");
+    test_split_range_iterator(it++, false, 3, "c");
+    test_split_range_iterator(it++, false, 4, "d");
+    test_split_range_iterator(it++, true,  5, "a b c");
+    test_split_range_iterator(it++, false, 6, ")");
+    EXPECT_EQ(it, end);
+}

@@ -103,6 +103,9 @@ public:
                 }
                 if (std::end(strv_) != curr_) {
                     prev_ = std::next(curr_);
+                    if constexpr (is_set(iter_options, split_options::include_delimiters)) {
+                        prev_ = skip_char(curr_, whitespace_char);
+                    }
                 }
             } else {
                 if constexpr (is_set(iter_options, split_options::include_delimiters)) {
