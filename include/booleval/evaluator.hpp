@@ -35,6 +35,7 @@
 #include <booleval/utils/any_mem_fn.hpp>
 #include <booleval/tree/result_visitor.hpp>
 #include <booleval/tree/expression_tree.hpp>
+#include <booleval/utils/split_range.hpp>
 
 namespace booleval {
 
@@ -60,7 +61,7 @@ public:
     ~evaluator() = default;
 
     /**
-     * Checks whether the evaulation is activated or not, i.e.
+     * Checks whether the evaluation is activated or not, i.e.
      * if the expression tree is successfully built.
      *
      * @return True if the evaluation is activated, otherwise false
@@ -74,7 +75,7 @@ public:
      *
      * @return True if the expression is valid, otherwise false
      */
-    [[nodiscard]] bool expression(std::string_view expression);
+    [[nodiscard]] bool expression(std::string_view expression, char quote_char = utils::double_quote_char);
 
     /**
      * Evaluates expression tree for the object passed in.

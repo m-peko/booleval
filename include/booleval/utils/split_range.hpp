@@ -50,11 +50,10 @@ constexpr auto double_quote_char{ '\"' };
  * string view by the specified delimiters.
  */
 template <split_options options = split_options::exclude_delimiters |
-                                  split_options::allow_quoted_strings,
-          char quote_char = double_quote_char>
+                                  split_options::allow_quoted_strings>
 class split_range {
 public:
-    template <split_options iter_options, char iter_quote_char>
+    template <split_options iter_options>
     class iterator {
         friend split_range;
 
@@ -72,9 +71,10 @@ public:
         using reference         = value_type&;
 
     public:
-        explicit constexpr iterator(std::string_view strv, std::string_view delims) noexcept
+        explicit constexpr iterator(std::string_view strv, std::string_view delims, char quote_char) noexcept
             : strv_(strv),
               delims_(delims),
+              quote_char_(quote_char),
               prev_(std::begin(strv_)) {
             next();
         }
@@ -143,8 +143,10 @@ public:
         ~iterator() = default;
 
     private:
-        explicit constexpr iterator(std::string_view::const_iterator end) noexcept
-            : prev_(end)
+        explicit constexpr iterator(std::string_view::const_iterator end, std::string_view delims, char quote_char) noexcept
+            : prev_(end),
+			  delims_(delims),
+			  quote_char_(quote_char)
         {}
 
         /**
@@ -200,7 +202,7 @@ public:
          */
         [[nodiscard]] constexpr std::string_view::iterator find_next_quote(std::string_view::iterator first,
                                                                            std::string_view::iterator last) const noexcept {
-            return std::find(first, last, iter_quote_char);
+            return std::find(first, last, quote_char_);
         }
 
         /**
@@ -229,9 +231,9 @@ public:
             curr_ = find_next(prev_, std::end(strv_));
 
             if (std::end(strv_) != curr_) {
-                if (iter_quote_char == *curr_) {
+                if (quote_char_ == *curr_) {
                     curr_value_.quoted = true;
-                    prev_ = skip_char(curr_, iter_quote_char);
+                    prev_ = skip_char(curr_, quote_char_);
                     curr_ = find_next(prev_, std::end(strv_));
                 } else {
                     if (prev_ == curr_) {
@@ -255,6 +257,7 @@ public:
     private:
         std::string_view strv_;
         std::string_view delims_;
+        char quote_char_;
 
         std::string_view::iterator prev_;
         std::string_view::iterator curr_;
@@ -265,9 +268,10 @@ public:
 public:
     constexpr split_range() = default;
 
-	constexpr split_range(std::string_view strv, std::string_view delims = " ")
+	constexpr split_range(std::string_view strv, std::string_view delims = " ", char quote_char = utils::double_quote_char)
         : strv_(strv),
-          delims_(delims)
+          delims_(delims),
+          quote_char_(quote_char)
     {}
 
     constexpr split_range(split_range&& rhs) = default;
@@ -284,7 +288,7 @@ public:
      * @return Iterator to the first element
      */
     [[nodiscard]] constexpr auto begin() const noexcept {
-        return iterator<options, quote_char>(strv_, delims_);
+        return iterator<options>(strv_, delims_, quote_char_);
     }
 
     /**
@@ -293,12 +297,13 @@ public:
      * @return Iterator to the element following the last element
      */
     [[nodiscard]] constexpr auto end() const noexcept {
-        return iterator<options, quote_char>(std::end(strv_));
+        return iterator<options>(std::end(strv_), delims_, quote_char_);
     }
 
 private:
     std::string_view strv_;
     std::string_view delims_;
+    char quote_char_;
 };
 
 } // utils

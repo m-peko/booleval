@@ -42,10 +42,10 @@ std::shared_ptr<tree::tree_node> expression_tree::root() noexcept {
     return root_;
 }
 
-bool expression_tree::build(std::string_view expression) {
+bool expression_tree::build(std::string_view expression, char quote_char) {
     tokenizer_.reset();
     tokenizer_.expression(expression);
-    tokenizer_.tokenize();
+    tokenizer_.tokenize(quote_char);
 
     root_ = parse_expression();
     if (nullptr == root_) {

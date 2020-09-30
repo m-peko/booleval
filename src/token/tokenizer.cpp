@@ -64,7 +64,7 @@ token const& tokenizer::weak_next_token() {
     return tokens_.at(current_token_index_);
 }
 
-void tokenizer::tokenize() {
+void tokenizer::tokenize(char quote_char) {
     tokens_.clear();
     reset();
 
@@ -75,7 +75,7 @@ void tokenizer::tokenize() {
         utils::split_options::allow_quoted_strings;
 
     auto delims = utils::join(std::begin(single_char_symbols), std::end(single_char_symbols));
-    auto tokens_range = utils::split_range<options>(expression_, delims);
+    auto tokens_range = utils::split_range<options>(expression_, delims, quote_char);
 
     for (auto const& [quoted, index, value] : tokens_range) {
         auto type = quoted ? token_type::field : map_to_token_type(value);

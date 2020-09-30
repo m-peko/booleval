@@ -99,7 +99,7 @@ public:
     /**
      * Tokenizes the expression and transforms it into the collection of tokens.
      */
-    void tokenize();
+    void tokenize(char quote_char);
 
     /**
      * Clears the collection of tokens and sets the current index to zero.

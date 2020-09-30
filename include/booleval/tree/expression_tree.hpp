@@ -70,7 +70,7 @@ public:
      *
      * @return True if the expression tree is built successfully, otherwise false
      */
-    [[nodiscard]] bool build(std::string_view expression);
+    [[nodiscard]] bool build(std::string_view expression, char quote_char);
 
 private:
     /**

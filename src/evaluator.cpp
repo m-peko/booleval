@@ -32,10 +32,13 @@
 namespace booleval {
 
 evaluator::evaluator()
-    : is_activated_(false)
+    : is_activated_(false),
+      result_visitor_(),
+      expression_tree_()
 {}
 
-evaluator::evaluator(field_map const& fields) {
+evaluator::evaluator(field_map const& fields)
+    : evaluator() {
     result_visitor_.fields(fields);
 }
 
@@ -43,14 +46,14 @@ bool evaluator::is_activated() const noexcept {
     return is_activated_;
 }
 
-bool evaluator::expression(std::string_view expression) {
+bool evaluator::expression(std::string_view expression, char quote_char) {
     is_activated_ = false;
 
     if (expression.empty()) {
         return true;
     }
 
-    if (expression_tree_.build(expression)) {
+    if (expression_tree_.build(expression, quote_char)) {
         is_activated_ = true;
     }
 
