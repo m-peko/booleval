@@ -35,7 +35,8 @@ evaluator::evaluator()
     : is_activated_(false)
 {}
 
-evaluator::evaluator(field_map const& fields) {
+evaluator::evaluator(field_map const& fields)
+    : is_activated_(false) {
     result_visitor_.fields(fields);
 }
 
