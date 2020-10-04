@@ -33,6 +33,7 @@
 #include <map>
 #include <functional>
 #include <string_view>
+#include <booleval/exceptions.hpp>
 #include <booleval/tree/tree_node.hpp>
 #include <booleval/utils/any_mem_fn.hpp>
 
@@ -108,6 +109,11 @@ private:
     [[nodiscard]] constexpr bool visit_relational(tree_node const& node, T const& obj, F&& func) {
         auto key = node.left->token;
         auto value = node.right->token;
+
+        if (fields_.find(key.value()) == std::end(fields_)) {
+            throw field_not_found(key.value());
+        }
+
         return func(fields_[key.value()].invoke(obj), value.value());
     }
 

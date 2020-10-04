@@ -28,6 +28,7 @@ set (
         ${BOOLEVAL_INCLUDE_DIR}/booleval/utils/string_utils.hpp
 
         ${BOOLEVAL_INCLUDE_DIR}/booleval/evaluator.hpp
+        ${BOOLEVAL_INCLUDE_DIR}/booleval/exceptions.hpp
 )
 
 add_library (
