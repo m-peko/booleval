@@ -33,6 +33,8 @@
 #include <string>
 #include <stdexcept>
 
+namespace booleval {
+
 /**
  * class base_exception
  *
@@ -74,5 +76,7 @@ struct field_not_found : base_exception {
         : base_exception("Field '" + std::string(field) + "' not found")
     {}
 };
+
+} // booleval
 
 #endif // BOOLEVAL_EXCEPTIONS_H
