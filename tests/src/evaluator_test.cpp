@@ -426,19 +426,52 @@ TEST_F(EvaluatorTest, NonExistantField) {
     }
 }
 
-TEST_F(EvaluatorTest, FieldNotValid) {
+TEST_F(EvaluatorTest, SingleQuotes) {
     obj<std::string> foo{ "foo" };
 
-    booleval::evaluator<booleval::utils::any_mem_fn_bool> evaluator({
-        { "field_a_valid", &obj<std::string>::value_a_valid },
-        { "field_a_not_valid",& obj<std::string>::value_a_notvalid }
+    booleval::evaluator<booleval::utils::single_quote_char> evaluator({
+        { "field_a", &obj<std::string>::value_a }
     });
 
-    EXPECT_TRUE(evaluator.expression("field_a_valid foo"));
+    EXPECT_TRUE(evaluator.expression("field_a == 'foo'"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate(foo));
 
-    EXPECT_TRUE(evaluator.expression("field_a_not_valid foo"));
+    EXPECT_TRUE(evaluator.expression("field_a == \"foo\""));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_FALSE(evaluator.evaluate(foo));
+}
+
+TEST_F(EvaluatorTest, FieldNotValidDoubleQuote) {
+    obj<std::string> foo{ "foo" };
+
+    booleval::evaluator<booleval::utils::double_quote_char, booleval::utils::any_mem_fn_bool> evaluator({
+        { "field_a_valid", &obj<std::string>::value_a_valid },
+        { "field_a_notvalid",& obj<std::string>::value_a_notvalid }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a_valid == \"foo\""));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+
+    EXPECT_TRUE(evaluator.expression("field_a_notvalid == \"foo\""));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_FALSE(evaluator.evaluate(foo));
+}
+
+TEST_F(EvaluatorTest, FieldNotValidSingleQuote) {
+    obj<std::string> foo{ "foo" };
+
+    booleval::evaluator<booleval::utils::single_quote_char, booleval::utils::any_mem_fn_bool> evaluator({
+        { "field_a_valid", &obj<std::string>::value_a_valid },
+        { "field_a_notvalid",& obj<std::string>::value_a_notvalid }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a_valid == 'foo'"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+
+    EXPECT_TRUE(evaluator.expression("field_a_notvalid == 'foo'"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_FALSE(evaluator.evaluate(foo));
 }

@@ -35,6 +35,7 @@
 #include <booleval/utils/any_mem_fn.hpp>
 #include <booleval/tree/result_visitor.hpp>
 #include <booleval/tree/expression_tree.hpp>
+#include <booleval/utils/split_range.hpp>
 
 namespace booleval {
 
@@ -44,7 +45,7 @@ namespace booleval {
  * Represents a class for evaluating logical expressions in a form of a string.
  * It builds an expression tree and traverses that tree in order to evaluate fields.
  */
-template <typename MemFn = utils::any_mem_fn>
+template <char quote_char = utils::double_quote_char, typename MemFn = utils::any_mem_fn>
 class evaluator {
     using field_map = std::map<std::string_view, MemFn>;
 
@@ -109,11 +110,11 @@ public:
 private:
     bool is_activated_{ false };
     tree::result_visitor<MemFn> result_visitor_;
-    tree::expression_tree expression_tree_;
+    tree::expression_tree<quote_char> expression_tree_;
 };
 
-template<typename MemFn>
-bool evaluator<MemFn>::expression(std::string_view expression) {
+template <char quote_char, typename MemFn>
+bool evaluator<quote_char, MemFn>::expression(std::string_view expression) {
     is_activated_ = false;
 
     if (expression.empty()) {
