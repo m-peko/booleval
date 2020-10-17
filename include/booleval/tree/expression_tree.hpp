@@ -47,7 +47,7 @@ namespace tree {
  */
 class expression_tree {
 public:
-    expression_tree();
+    expression_tree() = default;
     expression_tree(expression_tree&& rhs) = default;
     expression_tree(expression_tree const& rhs) = default;
 

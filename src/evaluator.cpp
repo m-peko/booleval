@@ -31,12 +31,7 @@
 
 namespace booleval {
 
-evaluator::evaluator()
-    : is_activated_(false)
-{}
-
-evaluator::evaluator(field_map const& fields)
-    : is_activated_(false) {
+evaluator::evaluator(field_map const& fields) {
     result_visitor_.fields(fields);
 }
 

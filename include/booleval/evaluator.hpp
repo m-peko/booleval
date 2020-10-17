@@ -48,7 +48,7 @@ class evaluator {
     using field_map = std::map<std::string_view, utils::any_mem_fn>;
 
 public:
-    evaluator();
+    evaluator() = default;
     evaluator(evaluator&& rhs) = default;
     evaluator(evaluator const& rhs) = default;
 
@@ -93,7 +93,7 @@ public:
     }
 
 private:
-    bool is_activated_;
+    bool is_activated_{ false };
     tree::result_visitor result_visitor_;
     tree::expression_tree expression_tree_;
 };

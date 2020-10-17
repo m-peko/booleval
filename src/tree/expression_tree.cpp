@@ -34,10 +34,6 @@ namespace booleval {
 
 namespace tree {
 
-expression_tree::expression_tree()
-    : root_(nullptr)
-{}
-
 std::shared_ptr<tree::tree_node> expression_tree::root() noexcept {
     return root_;
 }
