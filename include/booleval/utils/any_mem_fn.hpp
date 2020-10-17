@@ -81,6 +81,56 @@ private:
     std::function<any_value(std::any)> fn_;
 };
 
+/**
+ * class any_mem_fn_bool
+ *
+ * Represents class member function returning any signature taking a bool&
+ * is_valid parameter. If is_valid is set to false, the evaluation will fail.
+ */
+class any_mem_fn_bool
+{
+public:
+    any_mem_fn_bool() = default;
+    any_mem_fn_bool(any_mem_fn_bool&& rhs) = default;
+    any_mem_fn_bool(any_mem_fn_bool const& rhs) = default;
+
+    template <typename Ret, typename C>
+    any_mem_fn_bool(Ret(C::* m)(bool&)) {
+        fn_ = [m](std::any a, bool& is_valid) {
+            return (std::any_cast<C>(a).*m)(is_valid);
+        };
+    }
+
+    template <typename Ret, typename C>
+    any_mem_fn_bool(Ret(C::* m)(bool&) const) {
+        fn_ = [m](std::any a, bool& is_valid) {
+            return (std::any_cast<C>(a).*m)(is_valid);
+        };
+    }
+
+    any_mem_fn_bool& operator=(any_mem_fn_bool&& rhs) = default;
+    any_mem_fn_bool& operator=(any_mem_fn_bool const& rhs) = default;
+
+    ~any_mem_fn_bool() = default;
+
+    template <typename T>
+    any_value invoke(T obj) {
+        try {
+            bool is_valid = false;
+            auto ret = fn_(obj, is_valid);
+            if (is_valid) {
+                return ret;
+            }
+            return {};
+        } catch (std::bad_any_cast const&) {
+            return {};
+        }
+    }
+
+private:
+    std::function<any_value(std::any, bool&)> fn_;
+};
+
 } // utils
 
 } // booleval
