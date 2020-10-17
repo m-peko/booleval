@@ -38,6 +38,8 @@ public:
         obj() : value_a_{} {}
         obj(T value) : value_a_{ value } {}
         T value_a() const noexcept { return value_a_; }
+        T value_a_valid(bool& is_valid) const noexcept { is_valid = true; return value_a_; }
+        T value_a_notvalid(bool& is_valid) const noexcept { is_valid = false; return value_a_; }
 
     private:
         T value_a_;
@@ -281,4 +283,38 @@ TEST_F(EvaluatorTest, FieldsFromDifferentClasses) {
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_FALSE(evaluator.evaluate(foo));
     EXPECT_FALSE(evaluator.evaluate(bar));
+}
+
+TEST_F(EvaluatorTest, NonExistantField) {
+    obj<std::string> foo{ "one" };
+
+    booleval::evaluator evaluator({
+        { "field_a", &obj<std::string>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_notexist one"));
+    EXPECT_TRUE(evaluator.is_activated());
+    try {
+        auto ret = evaluator.evaluate(foo);
+        FAIL() << "Expected booleval::field_not_found";
+    } catch (booleval::field_not_found const& ex) {
+        EXPECT_EQ(ex.what(), std::string("Field 'field_notexist' not found"));
+    }
+}
+
+TEST_F(EvaluatorTest, FieldNotValid) {
+    obj<std::string> foo{ "foo" };
+
+    booleval::evaluator<booleval::utils::any_mem_fn_bool> evaluator({
+        { "field_a_valid", &obj<std::string>::value_a_valid },
+        { "field_a_notvalid",& obj<std::string>::value_a_notvalid }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a_valid foo"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+
+    EXPECT_TRUE(evaluator.expression("field_a_notvalid foo"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_FALSE(evaluator.evaluate(foo));
 }

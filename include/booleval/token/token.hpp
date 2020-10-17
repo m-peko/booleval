@@ -47,10 +47,7 @@ namespace token {
  */
 class token {
 public:
-    constexpr token() noexcept
-        : type_(token_type::unknown)
-    {}
-
+    constexpr token() = default;
     constexpr token(token&& rhs) = default;
     constexpr token(token const& rhs) = default;
 
@@ -171,7 +168,7 @@ public:
     }
 
 private:
-    token_type type_;
+    token_type type_{ token_type::unknown };
     std::string_view value_;
 };
 

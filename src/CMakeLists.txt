@@ -9,7 +9,6 @@ set (
     SOURCE_FILES
         token/tokenizer.cpp
         tree/expression_tree.cpp
-        evaluator.cpp
 )
 
 set (

@@ -47,8 +47,9 @@ namespace tree {
  * Represents a visitor for expression tree nodes in order to get the
  * final result of the expression based on the fields of an object being passed.
  */
+template <typename MemFn = utils::any_mem_fn>
 class result_visitor {
-    using field_map = std::map<std::string_view, utils::any_mem_fn>;
+    using field_map = std::map<std::string_view, MemFn>;
 
 public:
     result_visitor() = default;
@@ -121,8 +122,9 @@ private:
     field_map fields_;
 };
 
+template <typename MemFn>
 template <typename T>
-constexpr bool result_visitor::visit(tree_node const& node, T const& obj) {
+constexpr bool result_visitor<MemFn>::visit(tree_node const& node, T const& obj) {
     if (nullptr == node.left || nullptr == node.right) {
         return false;
     }

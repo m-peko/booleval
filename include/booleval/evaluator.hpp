@@ -44,15 +44,18 @@ namespace booleval {
  * Represents a class for evaluating logical expressions in a form of a string.
  * It builds an expression tree and traverses that tree in order to evaluate fields.
  */
+template <typename MemFn = utils::any_mem_fn>
 class evaluator {
-    using field_map = std::map<std::string_view, utils::any_mem_fn>;
+    using field_map = std::map<std::string_view, MemFn>;
 
 public:
-    evaluator();
+    evaluator() = default;
     evaluator(evaluator&& rhs) = default;
     evaluator(evaluator const& rhs) = default;
 
-    evaluator(field_map const& fields);
+    evaluator(field_map const& fields) {
+        result_visitor_.fields(fields);
+    }
 
     evaluator& operator=(evaluator&& rhs) = default;
     evaluator& operator=(evaluator const& rhs) = default;
@@ -60,12 +63,23 @@ public:
     ~evaluator() = default;
 
     /**
-     * Checks whether the evaulation is activated or not, i.e.
+     * Sets the key - member function map used for evaluation of expression tree.
+     *
+     * @param fields Key - member function map
+     */
+    void fields(field_map const& fields) noexcept {
+        result_visitor_.fields(fields);
+    }
+
+    /**
+     * Checks whether the evaluation is activated or not, i.e.
      * if the expression tree is successfully built.
      *
      * @return True if the evaluation is activated, otherwise false
      */
-    [[nodiscard]] bool is_activated() const noexcept;
+    [[nodiscard]] bool is_activated() const noexcept {
+        return is_activated_;
+    }
 
     /**
      * Sets the expression to be used for evaluation.
@@ -93,10 +107,25 @@ public:
     }
 
 private:
-    bool is_activated_;
-    tree::result_visitor result_visitor_;
+    bool is_activated_{ false };
+    tree::result_visitor<MemFn> result_visitor_;
     tree::expression_tree expression_tree_;
 };
+
+template<typename MemFn>
+bool evaluator<MemFn>::expression(std::string_view expression) {
+    is_activated_ = false;
+
+    if (expression.empty()) {
+        return true;
+    }
+
+    if (expression_tree_.build(expression)) {
+        is_activated_ = true;
+    }
+
+    return is_activated_;
+}
 
 } // booleval
 

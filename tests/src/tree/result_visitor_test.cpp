@@ -40,6 +40,8 @@ public:
         obj() : value_a_{} {}
         obj(T value) : value_a_{ value } {}
         T value_a() const noexcept { return value_a_; }
+        T value_a_valid(bool& is_valid) const noexcept { is_valid = true; return value_a_; }
+        T value_a_notvalid(bool& is_valid) const noexcept { is_valid = false; return value_a_; }
 
     private:
         T value_a_;
@@ -283,4 +285,55 @@ TEST_F(ResultVisitorTest, VisitLessThanOrEqualTreeNode) {
     EXPECT_TRUE(visitor.visit(*op, foo));
     EXPECT_TRUE(visitor.visit(*op, bar));
     EXPECT_FALSE(visitor.visit(*op, baz));
+}
+
+TEST_F(ResultVisitorTest, VisitInvalidTreeNode) {
+    using namespace booleval;
+
+    obj<uint8_t> foo{ 1 };
+
+    tree::result_visitor<utils::any_mem_fn_bool> visitor;
+    visitor.fields({
+        { "field_a_valid", &obj<uint8_t>::value_a_valid },
+        { "field_a_notvalid", &obj<uint8_t>::value_a_notvalid }
+    });
+
+    auto left = make_tree_node(token::token_type::field, "field_a_valid");
+    auto op = make_tree_node(token::token_type::eq);
+    auto right = make_tree_node(token::token_type::field, "1");
+
+    op->left = left;
+    op->right = right;
+
+    EXPECT_TRUE(visitor.visit(*op, foo));
+
+    left = make_tree_node(token::token_type::field, "field_a_notvalid");
+    op->left = left;
+
+    EXPECT_FALSE(visitor.visit(*op, foo));
+}
+
+TEST_F(ResultVisitorTest, VisitNonExistantTreeNode) {
+    using namespace booleval;
+
+    obj<uint8_t> foo{ 1 };
+
+    tree::result_visitor visitor;
+    visitor.fields({
+        { "field_a", &obj<uint8_t>::value_a }
+    });
+
+    auto left = make_tree_node(token::token_type::field, "field_notexist");
+    auto op = make_tree_node(token::token_type::eq);
+    auto right = make_tree_node(token::token_type::field, "1");
+
+    op->left = left;
+    op->right = right;
+
+    try {
+        auto ret = visitor.visit(*op, foo);
+        FAIL() << "Expected booleval::field_not_found";
+    } catch (field_not_found const& ex) {
+        EXPECT_EQ(ex.what(), std::string("Field 'field_notexist' not found"));
+    }
 }

@@ -36,9 +36,8 @@ namespace booleval {
 namespace token {
 
 tokenizer::tokenizer(std::string_view expression) noexcept
-    : expression_(expression),
-      current_token_index_(0)
-{}
+    : expression_(expression) {
+}
 
 void tokenizer::expression(std::string_view expression) noexcept {
     expression_ = expression;

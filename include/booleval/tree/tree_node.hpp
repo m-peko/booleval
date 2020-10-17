@@ -45,29 +45,21 @@ namespace tree {
  * as well as the token that the node represents in the actual expression tree.
  */
 struct tree_node {
-    token::token token;
+    token::token token{ token::token_type::unknown };
     std::shared_ptr<tree_node> left;
     std::shared_ptr<tree_node> right;
 
-    constexpr tree_node()
-        : token(token::token_type::unknown),
-          left(nullptr),
-          right(nullptr)
-    {}
+    constexpr tree_node() = default;
 
     tree_node(tree_node&& rhs) = default;
     tree_node(tree_node const& rhs) = default;
 
     constexpr tree_node(token::token_type const type)
-        : token(type),
-          left(nullptr),
-          right(nullptr)
+        : token(type)
     {}
 
     constexpr tree_node(token::token const& token)
-        : token(token),
-          left(nullptr),
-          right(nullptr)
+        : token(token)
     {}
 
     tree_node& operator=(tree_node&& rhs) = default;

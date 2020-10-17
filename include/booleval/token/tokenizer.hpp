@@ -108,7 +108,7 @@ public:
 
 private:
     std::string_view expression_;
-    std::size_t current_token_index_;
+    std::size_t current_token_index_{ 0 };
     std::vector<token> tokens_;
 };
 
