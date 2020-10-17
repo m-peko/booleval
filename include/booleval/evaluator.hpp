@@ -60,7 +60,16 @@ public:
     ~evaluator() = default;
 
     /**
-     * Checks whether the evaulation is activated or not, i.e.
+     * Sets the key - member function map used for evaluation of expression tree.
+     *
+     * @param fields Key - member function map
+     */
+    void fields(field_map const& fields) noexcept {
+        result_visitor_.fields(fields);
+    }
+
+    /**
+     * Checks whether the evaluation is activated or not, i.e.
      * if the expression tree is successfully built.
      *
      * @return True if the evaluation is activated, otherwise false
