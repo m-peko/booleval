@@ -109,13 +109,14 @@ private:
     template <typename T, typename F>
     [[nodiscard]] constexpr bool visit_relational(tree_node const& node, T const& obj, F&& func) {
         auto key = node.left->token;
-        auto value = node.right->token;
 
-        if (fields_.find(key.value()) == std::end(fields_)) {
+        auto iter = fields_.find(key.value());
+        if (iter == fields_.end()) {
             throw field_not_found(key.value());
         }
 
-        return func(fields_[key.value()].invoke(obj), value.value());
+        auto value = node.right->token;
+        return func(iter->second.invoke(obj), value.value());
     }
 
 private:
