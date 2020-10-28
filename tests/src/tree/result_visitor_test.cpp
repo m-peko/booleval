@@ -79,7 +79,7 @@ TEST_F(ResultVisitorTest, VisitAndTreeNode) {
     multi_obj<uint8_t, uint8_t> bar{ 2, 3 };
     multi_obj<uint8_t, uint8_t> baz{ 3, 4 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &multi_obj<uint8_t, uint8_t>::value_a },
         { "field_b", &multi_obj<uint8_t, uint8_t>::value_b }
@@ -117,7 +117,7 @@ TEST_F(ResultVisitorTest, VisitOrTreeNode) {
     obj<uint8_t> bar{ 2 };
     obj<uint8_t> baz{ 3 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
@@ -153,7 +153,7 @@ TEST_F(ResultVisitorTest, VisitEqualToTreeNode) {
     obj<uint8_t> foo{ 1 };
     obj<uint8_t> bar{ 2 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
@@ -175,7 +175,7 @@ TEST_F(ResultVisitorTest, VisitNotEqualToTreeNode) {
     obj<uint8_t> foo{ 1 };
     obj<uint8_t> bar{ 2 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
@@ -198,7 +198,7 @@ TEST_F(ResultVisitorTest, VisitGreaterThanTreeNode) {
     obj<uint8_t> bar{ 1 };
     obj<uint8_t> baz{ 2 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
@@ -222,7 +222,7 @@ TEST_F(ResultVisitorTest, VisitLessThanTreeNode) {
     obj<uint8_t> bar{ 1 };
     obj<uint8_t> baz{ 2 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
@@ -246,7 +246,7 @@ TEST_F(ResultVisitorTest, VisitGreaterThanOrEqualTreeNode) {
     obj<uint8_t> bar{ 1 };
     obj<uint8_t> baz{ 2 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
@@ -270,7 +270,7 @@ TEST_F(ResultVisitorTest, VisitLessThanOrEqualTreeNode) {
     obj<uint8_t> bar{ 1 };
     obj<uint8_t> baz{ 2 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
@@ -318,12 +318,12 @@ TEST_F(ResultVisitorTest, VisitNonExistantTreeNode) {
 
     obj<uint8_t> foo{ 1 };
 
-    tree::result_visitor visitor;
+    tree::result_visitor<> visitor;
     visitor.fields({
         { "field_a", &obj<uint8_t>::value_a }
     });
 
-    auto left = make_tree_node(token::token_type::field, "field_notexist");
+    auto left = make_tree_node(token::token_type::field, "field_not_exist");
     auto op = make_tree_node(token::token_type::eq);
     auto right = make_tree_node(token::token_type::field, "1");
 
@@ -331,9 +331,9 @@ TEST_F(ResultVisitorTest, VisitNonExistantTreeNode) {
     op->right = right;
 
     try {
-        auto ret = visitor.visit(*op, foo);
+        [[maybe_unused]] auto result = visitor.visit(*op, foo);
         FAIL() << "Expected booleval::field_not_found";
     } catch (field_not_found const& ex) {
-        EXPECT_EQ(ex.what(), std::string("Field 'field_notexist' not found"));
+        EXPECT_EQ(ex.what(), std::string("Field 'field_not_exist' not found"));
     }
 }

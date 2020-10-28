@@ -108,28 +108,28 @@ constexpr std::array<
 }};
 
 /**
- * Filters single character symbol expressions from all symbol expressions.
+ * Filters parenthesis symbol expressions from all symbol expressions.
  *
- * @return Single character symbol expressions
+ * @return Parenthesis symbol expressions
  */
-constexpr auto single_char_symbol_expressions() {
+constexpr auto parenthesis_symbol_expressions() {
     constexpr auto count = utils::count_if(
         std::begin(symbol_expressions),
         std::end(symbol_expressions),
         [](auto&& p) {
-            return 1 == p.first.size();
+            return token_type::lp == p.second || token_type::rp == p.second;
         }
     );
 
     std::size_t i{ 0 };
-    std::array<char, count> single_char_symbols{};
+    std::array<char, count> parenthesis_symbols{};
     for (auto const& p : symbol_expressions) {
-        if (1 == p.first.size()) {
-            single_char_symbols[i++] = p.first.front();
+        if (token_type::lp == p.second || token_type::rp == p.second) {
+            parenthesis_symbols[i++] = p.first.front();
         }
     }
 
-    return single_char_symbols;
+    return parenthesis_symbols;
 }
 
 /**
