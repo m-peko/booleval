@@ -99,6 +99,20 @@ TEST_F(EvaluatorTest, EqualToOperator) {
     EXPECT_FALSE(evaluator.evaluate(bar));
 }
 
+TEST_F(EvaluatorTest, SymbolEqualToOperator) {
+    obj<std::string> foo{ "foo" };
+    obj<std::string> bar{ "bar" };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &obj<std::string>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a == foo"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+}
+
 TEST_F(EvaluatorTest, EqualToOperatorMultipleWords) {
     obj<std::string> foo{ "foo foo" };
     obj<std::string> bar{ "bar bar" };
@@ -127,6 +141,20 @@ TEST_F(EvaluatorTest, NotEqualToOperator) {
     EXPECT_TRUE(evaluator.evaluate(bar));
 }
 
+TEST_F(EvaluatorTest, SymbolNotEqualToOperator) {
+    obj<std::string> foo{ "foo" };
+    obj<std::string> bar{ "bar" };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &obj<std::string>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a != foo"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_FALSE(evaluator.evaluate(foo));
+    EXPECT_TRUE(evaluator.evaluate(bar));
+}
+
 TEST_F(EvaluatorTest, GreaterThanOperator) {
     obj<float> foo{ 1.24F };
     obj<float> bar{ 1.22F };
@@ -136,6 +164,20 @@ TEST_F(EvaluatorTest, GreaterThanOperator) {
     });
 
     EXPECT_TRUE(evaluator.expression("field_a gt 1.23"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+}
+
+TEST_F(EvaluatorTest, SymbolGreaterThanOperator) {
+    obj<float> foo{ 1.24F };
+    obj<float> bar{ 1.22F };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &obj<float>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a > 1.23"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate(foo));
     EXPECT_FALSE(evaluator.evaluate(bar));
@@ -164,6 +206,20 @@ TEST_F(EvaluatorTest, LessThanOperator) {
     });
 
     EXPECT_TRUE(evaluator.expression("field_a lt 2"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+}
+
+TEST_F(EvaluatorTest, SymbolLessThanOperator) {
+    obj<uint8_t> foo{ 1 };
+    obj<uint8_t> bar{ 3 };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &obj<uint8_t>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a < 2"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate(foo));
     EXPECT_FALSE(evaluator.evaluate(bar));
@@ -199,6 +255,22 @@ TEST_F(EvaluatorTest, GreaterThanOrEqualToOperator) {
     EXPECT_FALSE(evaluator.evaluate(baz));
 }
 
+TEST_F(EvaluatorTest, SymbolGreaterThanOrEqualToOperator) {
+    obj<double> foo{ 1.234567 };
+    obj<double> bar{ 2.345678 };
+    obj<double> baz{ 0.123456 };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &obj<double>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a >= 1.234567"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_TRUE(evaluator.evaluate(bar));
+    EXPECT_FALSE(evaluator.evaluate(baz));
+}
+
 TEST_F(EvaluatorTest, LessThanOrEqualToOperator) {
     obj<double> foo{ 1.234567 };
     obj<double> bar{ 0.123456 };
@@ -209,6 +281,22 @@ TEST_F(EvaluatorTest, LessThanOrEqualToOperator) {
     });
 
     EXPECT_TRUE(evaluator.expression("field_a leq 1.234567"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_TRUE(evaluator.evaluate(bar));
+    EXPECT_FALSE(evaluator.evaluate(baz));
+}
+
+TEST_F(EvaluatorTest, SymbolLessThanOrEqualToOperator) {
+    obj<double> foo{ 1.234567 };
+    obj<double> bar{ 0.123456 };
+    obj<double> baz{ 2.345678 };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &obj<double>::value_a }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a <= 1.234567"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate(foo));
     EXPECT_TRUE(evaluator.evaluate(bar));
@@ -232,6 +320,23 @@ TEST_F(EvaluatorTest, AndOperator) {
     EXPECT_FALSE(evaluator.evaluate(baz));
 }
 
+TEST_F(EvaluatorTest, SymbolAndOperator) {
+    multi_obj<std::string, uint8_t> foo{ "one", 1 };
+    multi_obj<std::string, uint8_t> bar{ "two", 2 };
+    multi_obj<std::string, uint8_t> baz{ "two", 1 };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &multi_obj<std::string, uint8_t>::value_a },
+        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a one && field_b 1"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_FALSE(evaluator.evaluate(bar));
+    EXPECT_FALSE(evaluator.evaluate(baz));
+}
+
 TEST_F(EvaluatorTest, OrOperator) {
     multi_obj<std::string, uint8_t> foo{ "one", 1 };
     multi_obj<std::string, uint8_t> bar{ "one", 2 };
@@ -244,6 +349,25 @@ TEST_F(EvaluatorTest, OrOperator) {
     });
 
     EXPECT_TRUE(evaluator.expression("field_a one or field_b 1"));
+    EXPECT_TRUE(evaluator.is_activated());
+    EXPECT_TRUE(evaluator.evaluate(foo));
+    EXPECT_TRUE(evaluator.evaluate(bar));
+    EXPECT_TRUE(evaluator.evaluate(baz));
+    EXPECT_FALSE(evaluator.evaluate(qux));
+}
+
+TEST_F(EvaluatorTest, SymbolOrOperator) {
+    multi_obj<std::string, uint8_t> foo{ "one", 1 };
+    multi_obj<std::string, uint8_t> bar{ "one", 2 };
+    multi_obj<std::string, uint8_t> baz{ "two", 1 };
+    multi_obj<std::string, uint8_t> qux{ "two", 2 };
+
+    booleval::evaluator<> evaluator({
+        { "field_a", &multi_obj<std::string, uint8_t>::value_a },
+        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
+    });
+
+    EXPECT_TRUE(evaluator.expression("field_a one || field_b 1"));
     EXPECT_TRUE(evaluator.is_activated());
     EXPECT_TRUE(evaluator.evaluate(foo));
     EXPECT_TRUE(evaluator.evaluate(bar));

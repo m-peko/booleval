@@ -67,13 +67,13 @@ void tokenizer::tokenize() {
     tokens_.clear();
     reset();
 
-    constexpr auto single_char_symbols = single_char_symbol_expressions();
+    constexpr auto parenthesis_symbols = parenthesis_symbol_expressions();
     constexpr auto options =
         utils::split_options::include_delimiters  |
         utils::split_options::split_by_whitespace |
         utils::split_options::allow_quoted_strings;
 
-    auto delims = utils::join(std::begin(single_char_symbols), std::end(single_char_symbols));
+    auto delims = utils::join(std::begin(parenthesis_symbols), std::end(parenthesis_symbols));
     auto tokens_range = utils::split_range<options>(expression_, delims);
 
     for (auto const& [quoted, index, value] : tokens_range) {
