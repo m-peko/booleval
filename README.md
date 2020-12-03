@@ -23,6 +23,7 @@ The library is under development and subject to change. Contributions are welcom
 5. [Compilation](#compilation)
 6. [Tests](#tests)
 7. [Example](#example)
+8. [Support](#support)
 
 <a name="about"></a>
 
@@ -206,3 +207,9 @@ int main() {
     return 0;
 }
 ```
+
+## Support
+
+If you like the work `booleval` library is doing, please consider supporting it:
+
+<a href="https://www.buymeacoffee.com/mpeko" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
