@@ -31,25 +31,6 @@ else ()
     endif ()
 endif ()
 
-# Build output checks
-option (LIBBOOLEVAL_BUILD_SHARED "Build libbooleval as a shared library." ON)
-if (LIBBOOLEVAL_BUILD_SHARED)
-    message (
-        STATUS
-        "Build will generate a shared library. "
-        "Use LIBBOOLEVAL_BUILD_SHARED=0 to perform a static build"
-    )
-    set (LIBBOOLEVAL_TYPE SHARED)
-
-    # Automatically create a .def file with all symbols found
-    # in the input .obj files for a SHARED library on Windows.
-    set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-else (LIBBOOLEVAL_BUILD_SHARED)
-    message (STATUS "Build will generate a static library.")
-    set (LIBBOOLEVAL_TYPE STATIC)
-    add_definitions ("-DBOOLEVAL_STATIC=1")
-endif (LIBBOOLEVAL_BUILD_SHARED)
-
 # The version number
 set (BOOLEVAL_VERSION_MAJOR 1)
 set (BOOLEVAL_VERSION_MINOR 1)
@@ -66,8 +47,6 @@ endif ()
 ### Add subdirectories ###
 ##########################
 
-add_subdirectory (src)
-
 if (BOOLEVAL_BUILD_EXAMPLES)
     message (STATUS "Examples have been enabled")
     add_subdirectory (examples)
@@ -83,9 +62,7 @@ if (BOOLEVAL_BUILD_TESTS)
         set (GOOGLETEST_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/googletest)
         set (GOOGLETEST_LIBRARY ${GOOGLETEST_BINARY_DIR}/googletest)
 
-        if (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
-            set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-        endif (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
+        set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
         enable_testing ()
         add_subdirectory (googletest)

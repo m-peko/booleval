@@ -18,7 +18,6 @@ link_directories (
 link_libraries (
     gtest
     gtest_main
-    booleval
 )
 
 add_custom_target (tests)

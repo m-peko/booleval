@@ -6,12 +6,6 @@ include_directories (
 )
 
 set (
-    SOURCE_FILES
-        token/tokenizer.cpp
-        tree/expression_tree.cpp
-)
-
-set (
     INCLUDE_FILES
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token.hpp
         ${BOOLEVAL_INCLUDE_DIR}/booleval/token/token_type.hpp
@@ -31,8 +25,7 @@ set (
 )
 
 add_library (
-    booleval ${LIBBOOLEVAL_TYPE}
-    ${SOURCE_FILES}
+    booleval INTERFACE
     ${INCLUDE_FILES}
 )
 
