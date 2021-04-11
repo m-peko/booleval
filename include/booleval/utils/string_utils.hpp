@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef BOOLEVAL_STRING_UTILS_H
-#define BOOLEVAL_STRING_UTILS_H
+#ifndef BOOLEVAL_STRING_UTILS_HPP
+#define BOOLEVAL_STRING_UTILS_HPP
 
 #include <array>
 #include <limits>
@@ -40,9 +40,7 @@
 #include <algorithm>
 #include <string_view>
 
-namespace booleval {
-
-namespace utils {
+namespace booleval::utils {
 
 /**
  * enum class split_options
@@ -337,8 +335,6 @@ template <typename T,
 }
 #endif
 
-} // utils
+} // namespace booleval::utils
 
-} // booleval
-
-#endif // BOOLEVAL_STRING_UTILS_H
+#endif // BOOLEVAL_STRING_UTILS_HPP

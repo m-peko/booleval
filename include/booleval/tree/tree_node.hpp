@@ -27,16 +27,14 @@
  *
  */
 
-#ifndef BOOLEVAL_TREE_NODE_H
-#define BOOLEVAL_TREE_NODE_H
+#ifndef BOOLEVAL_TREE_NODE_HPP
+#define BOOLEVAL_TREE_NODE_HPP
 
 #include <memory>
 #include <booleval/token/token.hpp>
 #include <booleval/token/token_type.hpp>
 
-namespace booleval {
-
-namespace tree {
+namespace booleval::tree {
 
 /**
  * struct tree_node
@@ -68,8 +66,6 @@ struct tree_node {
     ~tree_node() = default;
 };
 
-} // tree
+} // namespace booleval::tree
 
-} // booleval
-
-#endif // BOOLEVAL_TREE_NODE_H
+#endif // BOOLEVAL_TREE_NODE_HPP

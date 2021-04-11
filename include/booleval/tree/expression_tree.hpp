@@ -27,20 +27,18 @@
  *
  */
 
-#ifndef BOOLEVAL_EXPRESSION_TREE_H
-#define BOOLEVAL_EXPRESSION_TREE_H
+#ifndef BOOLEVAL_EXPRESSION_TREE_HPP
+#define BOOLEVAL_EXPRESSION_TREE_HPP
 
 #include <memory>
 #include <string_view>
 #include <booleval/tree/tree_node.hpp>
 #include <booleval/token/tokenizer.hpp>
 
-namespace booleval {
-
-namespace tree {
+namespace booleval::tree {
 
 /**
- * class expression_tree
+ * @class expression_tree
  *
  * Represents a class for building an expression tree by using a recursive
  * descent parser method.
@@ -113,8 +111,6 @@ private:
     std::shared_ptr<tree::tree_node> root_;
 };
 
-} // tree
+} // namespace booleval::tree
 
-} // booleval
-
-#endif // BOOLEVAL_EXPRESSION_TREE_H
+#endif // BOOLEVAL_EXPRESSION_TREE_HPP

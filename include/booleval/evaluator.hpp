@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef BOOLEVAL_EVALUATOR_H
-#define BOOLEVAL_EVALUATOR_H
+#ifndef BOOLEVAL_EVALUATOR_HPP
+#define BOOLEVAL_EVALUATOR_HPP
 
 #include <map>
 #include <string_view>
@@ -39,7 +39,7 @@
 namespace booleval {
 
 /**
- * class evaluator
+ * @class evaluator
  *
  * Represents a class for evaluating logical expressions in a form of a string.
  * It builds an expression tree and traverses that tree in order to evaluate fields.
@@ -127,6 +127,6 @@ bool evaluator<MemFn>::expression(std::string_view expression) {
     return is_activated_;
 }
 
-} // booleval
+} // namespace booleval
 
-#endif // BOOLEVAL_EVALUATOR_H
+#endif // BOOLEVAL_EVALUATOR_HPP

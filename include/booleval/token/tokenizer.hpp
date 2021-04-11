@@ -27,19 +27,17 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKENIZER_H
-#define BOOLEVAL_TOKENIZER_H
+#ifndef BOOLEVAL_TOKENIZER_HPP
+#define BOOLEVAL_TOKENIZER_HPP
 
 #include <vector>
 #include <string_view>
 #include <booleval/token/token.hpp>
 
-namespace booleval {
-
-namespace token {
+namespace booleval::token {
 
 /**
- * class tokenizer
+ * @class tokenizer
  *
  * Represents the mechanism for tokenizing the expressions, i.e. transforming
  * the expressions from a form of a string to the collection of tokens.
@@ -112,8 +110,6 @@ private:
     std::vector<token> tokens_;
 };
 
-} // token
+} // namespace booleval::token
 
-} // booleval
-
-#endif // BOOLEVAL_TOKENIZER_H
+#endif // BOOLEVAL_TOKENIZER_HPP

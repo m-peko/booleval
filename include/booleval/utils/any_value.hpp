@@ -27,19 +27,17 @@
  *
  */
 
-#ifndef BOOLEVAL_ANY_VALUE_H
-#define BOOLEVAL_ANY_VALUE_H
+#ifndef BOOLEVAL_ANY_VALUE_HPP
+#define BOOLEVAL_ANY_VALUE_HPP
 
 #include <string>
 #include <type_traits>
 #include <booleval/utils/string_utils.hpp>
 
-namespace booleval {
-
-namespace utils {
+namespace booleval::utils {
 
 /**
- * class any_value
+ * @class any_value
  *
  * Represents the class that accepts any type of value through its constructor
  * or assignment operator and internally stores its string version.
@@ -301,8 +299,6 @@ bool any_value::operator<=(T const rhs) {
     return lhs.value_ != rhs.value_;
 }
 
-} // utils
+} // namespace booleval::utils
 
-} // booleval
-
-#endif // BOOLEVAL_ANY_VALUE_H
+#endif // BOOLEVAL_ANY_VALUE_HPP

@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKEN_TYPE_H
-#define BOOLEVAL_TOKEN_TYPE_H
+#ifndef BOOLEVAL_TOKEN_TYPE_HPP
+#define BOOLEVAL_TOKEN_TYPE_HPP
 
 #include <array>
 #include <cstdint>
@@ -36,9 +36,7 @@
 #include <string_view>
 #include <booleval/utils/algo_utils.hpp>
 
-namespace booleval {
-
-namespace token {
+namespace booleval::token {
 
 /**
  * enum class token_type
@@ -190,8 +188,6 @@ constexpr token_type map_to_token_type(std::string_view const value) {
     return {};
 }
 
-} // token
+} // namespace booleval::token
 
-} // booleval
-
-#endif // BOOLEVAL_TOKEN_TYPE_H
+#endif // BOOLEVAL_TOKEN_TYPE_HPP

@@ -27,19 +27,17 @@
  *
  */
 
-#ifndef BOOLEVAL_ANY_MEM_FN_H
-#define BOOLEVAL_ANY_MEM_FN_H
+#ifndef BOOLEVAL_ANY_MEM_FN_HPP
+#define BOOLEVAL_ANY_MEM_FN_HPP
 
 #include <any>
 #include <functional>
 #include <booleval/utils/any_value.hpp>
 
-namespace booleval {
-
-namespace utils {
+namespace booleval::utils {
 
 /**
- * class any_mem_fn
+ * @class any_mem_fn
  *
  * Represents class member function of any signature.
  */
@@ -69,9 +67,9 @@ public:
     ~any_mem_fn() = default;
 
     template <typename T>
-    any_value invoke(T obj) {
+    any_value invoke(T&& obj) {
         try {
-            return fn_(obj);
+            return fn_(std::forward<T>(obj));
         } catch (std::bad_any_cast const&) {
             return {};
         }
@@ -82,7 +80,7 @@ private:
 };
 
 /**
- * class any_mem_fn_bool
+ * @class any_mem_fn_bool
  *
  * Represents class member function returning any signature taking a bool&
  * is_valid parameter. If is_valid is set to false, the evaluation will fail.
@@ -114,10 +112,10 @@ public:
     ~any_mem_fn_bool() = default;
 
     template <typename T>
-    any_value invoke(T obj) {
+    any_value invoke(T&& obj) {
         try {
             bool is_valid = false;
-            auto ret = fn_(obj, is_valid);
+            auto ret = fn_(std::forward<T>(obj), is_valid);
             if (is_valid) {
                 return ret;
             }
@@ -131,8 +129,6 @@ private:
     std::function<any_value(std::any, bool&)> fn_;
 };
 
-} // utils
+} // namespace booleval::utils
 
-} // booleval
-
-#endif // BOOLEVAL_ANY_MEM_FN_H
+#endif // BOOLEVAL_ANY_MEM_FN_HPP
