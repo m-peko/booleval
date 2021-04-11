@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef BOOLEVAL_EXCEPTIONS_H
-#define BOOLEVAL_EXCEPTIONS_H
+#ifndef BOOLEVAL_EXCEPTIONS_HPP
+#define BOOLEVAL_EXCEPTIONS_HPP
 
 #include <string>
 #include <stdexcept>
@@ -36,7 +36,7 @@
 namespace booleval {
 
 /**
- * class base_exception
+ * @class base_exception
  *
  * Base class for all booleval exceptions.
  */
@@ -77,6 +77,6 @@ struct field_not_found : base_exception {
     {}
 };
 
-} // booleval
+} // namespace booleval
 
-#endif // BOOLEVAL_EXCEPTIONS_H
+#endif // BOOLEVAL_EXCEPTIONS_HPP

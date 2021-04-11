@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef BOOLEVAL_RESULT_VISITOR_H
-#define BOOLEVAL_RESULT_VISITOR_H
+#ifndef BOOLEVAL_RESULT_VISITOR_HPP
+#define BOOLEVAL_RESULT_VISITOR_HPP
 
 #include <map>
 #include <functional>
@@ -37,12 +37,10 @@
 #include <booleval/tree/tree_node.hpp>
 #include <booleval/utils/any_mem_fn.hpp>
 
-namespace booleval {
-
-namespace tree {
+namespace booleval::tree {
 
 /**
- * class result_visitor
+ * @class result_visitor
  *
  * Represents a visitor for expression tree nodes in order to get the
  * final result of the expression based on the fields of an object being passed.
@@ -160,8 +158,6 @@ constexpr bool result_visitor<MemFn>::visit(tree_node const& node, T const& obj)
     }
 }
 
-} // tree
+} // namespace booleval::tree
 
-} // booleval
-
-#endif // BOOLEVAL_RESULT_VISITOR_H
+#endif // BOOLEVAL_RESULT_VISITOR_HPP

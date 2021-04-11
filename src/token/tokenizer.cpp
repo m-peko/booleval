@@ -76,7 +76,7 @@ void tokenizer::tokenize() {
     auto delims = utils::join(std::begin(parenthesis_symbols), std::end(parenthesis_symbols));
     auto tokens_range = utils::split_range<options>(expression_, delims);
 
-    for (auto const& [quoted, index, value] : tokens_range) {
+    for (auto const [quoted, index, value] : tokens_range) {
         auto type = quoted ? token_type::field : map_to_token_type(value);
 
         if (token_type::field == type) {

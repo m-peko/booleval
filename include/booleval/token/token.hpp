@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef BOOLEVAL_TOKEN_H
-#define BOOLEVAL_TOKEN_H
+#ifndef BOOLEVAL_TOKEN_HPP
+#define BOOLEVAL_TOKEN_HPP
 
 #include <optional>
 #include <string_view>
@@ -36,12 +36,10 @@
 #include <booleval/token/token_type.hpp>
 #include <booleval/utils/string_utils.hpp>
 
-namespace booleval {
-
-namespace token {
+namespace booleval::token {
 
 /**
- * class token
+ * @class token
  *
  * Represents all tokens ('and', 'or', 'eq', ...).
  */
@@ -172,8 +170,6 @@ private:
     std::string_view value_;
 };
 
-} // token
+} // namespace booleval::token
 
-} // booleval
-
-#endif // BOOLEVAL_TOKEN_H
+#endif // BOOLEVAL_TOKEN_HPP

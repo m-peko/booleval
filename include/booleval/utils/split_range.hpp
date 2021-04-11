@@ -27,24 +27,22 @@
  *
  */
 
-#ifndef BOOLEVAL_SPLIT_RANGE_H
-#define BOOLEVAL_SPLIT_RANGE_H
+#ifndef BOOLEVAL_SPLIT_RANGE_HPP
+#define BOOLEVAL_SPLIT_RANGE_HPP
 
 #include <iterator>
 #include <algorithm>
 #include <string_view>
 #include <booleval/utils/string_utils.hpp>
 
-namespace booleval {
-
-namespace utils {
+namespace booleval::utils {
 
 constexpr auto whitespace_char{ ' ' };
 constexpr auto single_quote_char{ '\'' };
 constexpr auto double_quote_char{ '\"' };
 
 /**
- * class split_range
+ * @class split_range
  *
  * Represents the range of tokens computed by splitting the given
  * string view by the specified delimiters.
@@ -301,8 +299,6 @@ private:
     std::string_view delims_;
 };
 
-} // utils
+} // namespace booleval::utils
 
-} // booleval
-
-#endif // BOOLEVAL_SPLIT_RANGE_H
+#endif // BOOLEVAL_SPLIT_RANGE_HPP

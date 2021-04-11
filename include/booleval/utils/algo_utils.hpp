@@ -27,9 +27,10 @@
  *
  */
 
-namespace booleval {
+#ifndef ALGO_UTILS_HPP
+#define ALGO_UTILS_HPP
 
-namespace utils {
+namespace booleval::utils {
 
 /**
  * Finds the first element in the range [first, last) that
@@ -138,6 +139,6 @@ count_if(InputIt first, InputIt last, UnaryPredicate p) {
     return result;
 }
 
-} // utils
+} // namespace booleval::utils
 
-} // booleval
+#endif // ALGO_UTILS_HPP
