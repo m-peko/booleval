@@ -69,9 +69,9 @@ public:
     ~any_mem_fn() = default;
 
     template <typename T>
-    any_value invoke(T obj) {
+    any_value invoke(T&& obj) {
         try {
-            return fn_(obj);
+            return fn_(std::forward<T>(obj));
         } catch (std::bad_any_cast const&) {
             return {};
         }
@@ -114,10 +114,10 @@ public:
     ~any_mem_fn_bool() = default;
 
     template <typename T>
-    any_value invoke(T obj) {
+    any_value invoke(T&& obj) {
         try {
             bool is_valid = false;
-            auto ret = fn_(obj, is_valid);
+            auto ret = fn_(std::forward<T>(obj), is_valid);
             if (is_valid) {
                 return ret;
             }
