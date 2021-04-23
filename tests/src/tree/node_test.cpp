@@ -28,47 +28,42 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/token/token.hpp>
-#include <booleval/tree/tree_node.hpp>
+
 #include <booleval/token/token_type.hpp>
+#include <booleval/token/token.hpp>
+#include <booleval/tree/node.hpp>
 
-class TreeNodeTest : public testing::Test {};
-
-TEST_F(TreeNodeTest, DefaultConstructor) {
-    using namespace booleval;
-
-    tree::tree_node node;
-    EXPECT_EQ(node.token.type(), token::token_type::unknown);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
+TEST( NodeTest, DefaultConstructor )
+{
+    booleval::tree::node node{};
+    EXPECT_EQ( node.token.type(), booleval::token::token_type::unknown );
+    EXPECT_EQ( node.left , nullptr );
+    EXPECT_EQ( node.right, nullptr );
 }
 
-TEST_F(TreeNodeTest, ConstructorFromTokenType) {
-    using namespace booleval;
-
-    tree::tree_node node(token::token_type::logical_and);
-    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
+TEST( NodeTest, ConstructorFromTokenType )
+{
+    booleval::tree::node node{ booleval::token::token_type::logical_and };
+    EXPECT_EQ( node.token.type(), booleval::token::token_type::logical_and );
+    EXPECT_EQ( node.left , nullptr );
+    EXPECT_EQ( node.right, nullptr );
 }
 
-TEST_F(TreeNodeTest, ConstructorFromToken) {
-    using namespace booleval;
-
-    token::token and_token(token::token_type::logical_and);
-    tree::tree_node node(and_token);
-    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
-
-TEST_F(TreeNodeTest, ConstructorFromFieldToken) {
-    using namespace booleval;
-
-    token::token field_token("foo");
-    tree::tree_node node(field_token);
-    EXPECT_EQ(node.token.value(), "foo");
-    EXPECT_EQ(node.token.type(), token::token_type::field);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
+TEST( NodeTest, ConstructorFromToken )
+{
+    {
+        booleval::token::token and_token{ booleval::token::token_type::logical_and };
+        booleval::tree::node node{ and_token };
+        EXPECT_EQ( node.token.type(), booleval::token::token_type::logical_and );
+        EXPECT_EQ( node.left , nullptr );
+        EXPECT_EQ( node.right, nullptr );
+    }
+    {
+        booleval::token::token field_token{ "foo" };
+        booleval::tree::node node{ field_token };
+        EXPECT_EQ( node.token.value(), "foo" );
+        EXPECT_EQ( node.token.type(), booleval::token::token_type::field );
+        EXPECT_EQ( node.left , nullptr );
+        EXPECT_EQ( node.right, nullptr );
+    }
 }

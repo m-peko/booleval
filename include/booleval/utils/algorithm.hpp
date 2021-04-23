@@ -27,10 +27,11 @@
  *
  */
 
-#ifndef ALGO_UTILS_HPP
-#define ALGO_UTILS_HPP
+#ifndef BOOLEVAL_ALGORITHM_HPP
+#define BOOLEVAL_ALGORITHM_HPP
 
-namespace booleval::utils {
+namespace booleval::utils
+{
 
 /**
  * Finds the first element in the range [first, last) that
@@ -43,12 +44,12 @@ namespace booleval::utils {
  * @return Iterator to the first element satisfying the condition or
  *         last if no such element is found.
  */
-template <typename InputIt, typename T>
-constexpr InputIt find(InputIt first, InputIt last, T const& value) {
-    for (; first != last; ++first) {
-        if (*first == value) {
-            return first;
-        }
+template< typename InputIt, typename T >
+[[ nodiscard ]] constexpr InputIt find( InputIt first, InputIt last, T && value ) noexcept
+{
+    for ( ; first != last; ++first )
+    {
+        if ( *first == value ) { return first; }
     }
     return last;
 }
@@ -64,12 +65,12 @@ constexpr InputIt find(InputIt first, InputIt last, T const& value) {
  * @return Iterator to the first element satisfying the condition or
  *         last if no such element is found.
  */
-template <typename InputIt, typename UnaryPredicate>
-constexpr InputIt find_if(InputIt first, InputIt last, UnaryPredicate p) {
-    for (; first != last; ++first) {
-        if (p(*first)) {
-            return first;
-        }
+template< typename InputIt, typename UnaryPredicate >
+[[ nodiscard ]] constexpr InputIt find_if( InputIt first, InputIt last, UnaryPredicate p ) noexcept
+{
+    for ( ; first != last; ++first )
+    {
+        if ( p( *first ) ) { return first; }
     }
     return last;
 }
@@ -85,12 +86,12 @@ constexpr InputIt find_if(InputIt first, InputIt last, UnaryPredicate p) {
  * @return Iterator to the first element satisfying the condition or
  *         last if no such element is found.
  */
-template <typename InputIt, typename UnaryPredicate>
-constexpr InputIt find_if_not(InputIt first, InputIt last, UnaryPredicate p) {
-    for (; first != last; ++first) {
-        if (!p(*first)) {
-            return first;
-        }
+template< typename InputIt, typename UnaryPredicate >
+[[ nodiscard ]] constexpr InputIt find_if_not( InputIt first, InputIt last, UnaryPredicate p ) noexcept
+{
+    for ( ; first != last; ++first )
+    {
+        if ( !p( *first ) ) { return first; }
     }
     return last;
 }
@@ -105,14 +106,13 @@ constexpr InputIt find_if_not(InputIt first, InputIt last, UnaryPredicate p) {
  *
  * @return Number of elements equal to the value.
  */
-template <typename InputIt, typename T>
-constexpr typename std::iterator_traits<InputIt>::difference_type
-count(InputIt first, InputIt last, T const& value) {
-    typename std::iterator_traits<InputIt>::difference_type result{ 0 };
-    for (; first != last; ++first) {
-        if (*first == value) {
-            result++;
-        }
+template< typename InputIt, typename T >
+[[ nodiscard ]] constexpr auto count( InputIt first, InputIt last, T && value ) noexcept
+{
+    typename std::iterator_traits< InputIt >::difference_type result{ 0 };
+    for ( ; first != last; ++first )
+    {
+        if ( *first == value ) { result++; }
     }
     return result;
 }
@@ -127,18 +127,17 @@ count(InputIt first, InputIt last, T const& value) {
  *
  * @return Number of elements satisfying the condition.
  */
-template <typename InputIt, typename UnaryPredicate>
-constexpr typename std::iterator_traits<InputIt>::difference_type
-count_if(InputIt first, InputIt last, UnaryPredicate p) {
+template< typename InputIt, typename UnaryPredicate >
+[[ nodiscard ]] constexpr auto count_if( InputIt first, InputIt last, UnaryPredicate p ) noexcept
+{
     typename std::iterator_traits<InputIt>::difference_type result{ 0 };
-    for (; first != last; ++first) {
-        if (p(*first)) {
-            result++;
-        }
+    for ( ; first != last; ++first )
+    {
+        if ( p( *first ) ) { result++; }
     }
     return result;
 }
 
 } // namespace booleval::utils
 
-#endif // ALGO_UTILS_HPP
+#endif // BOOLEVAL_ALGORITHM_HPP

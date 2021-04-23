@@ -30,415 +30,520 @@
 #include <gtest/gtest.h>
 #include <booleval/evaluator.hpp>
 
-class EvaluatorTest : public testing::Test {
-public:
-    template <typename T>
-    class obj {
+namespace
+{
+
+    template< typename T >
+    class foo
+    {
     public:
-        obj() : value_a_{} {}
-        obj(T value) : value_a_{ value } {}
-        T value_a() const noexcept { return value_a_; }
-        T value_a_valid(bool& is_valid) const noexcept { is_valid = true; return value_a_; }
-        T value_a_notvalid(bool& is_valid) const noexcept { is_valid = false; return value_a_; }
+        foo()             : value_{}        {}
+        foo( T && value ) : value_{ value } {}
+
+        void value( T && value ) { value_ = value; }
+
+        T value() const noexcept { return value_; }
 
     private:
-        T value_a_;
+        T value_{};
     };
 
-    template <typename T, typename U>
-    class multi_obj {
+    template< typename T, typename U >
+    class bar
+    {
     public:
-        multi_obj() : value_a_{}, value_b_{} {}
-        multi_obj(T value_a, U value_b) : value_a_{ value_a }, value_b_{ value_b } {}
-        T value_a() const noexcept { return value_a_; }
-        U value_b() const noexcept { return value_b_; }
+        bar( T && value_1, U && value_2 )
+        : value_1_{ value_1 }
+        , value_2_{ value_2 }
+        {}
+
+        void value_1( T && value ) { value_1_ = value; }
+        void value_2( U && value ) { value_2_ = value; }
+
+        T value_1() const noexcept { return value_1_; }
+        U value_2() const noexcept { return value_2_; }
 
     private:
-        T value_a_;
-        U value_b_;
+        T value_1_{};
+        U value_2_{};
     };
-};
 
-TEST_F(EvaluatorTest, DefaultConstructor) {
+} // namespace
+
+TEST( EvaluatorTest, DefaultConstructor )
+{
     booleval::evaluator<> evaluator;
-    EXPECT_FALSE(evaluator.is_activated());
+
+    ASSERT_FALSE( evaluator.is_activated() );
 }
 
-TEST_F(EvaluatorTest, EmptyExpression) {
+TEST( EvaluatorTest, EmptyExpression )
+{
     booleval::evaluator<> evaluator;
-    EXPECT_TRUE(evaluator.expression(""));
-    EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
+
+    ASSERT_TRUE ( evaluator.expression("")                            );
+    ASSERT_FALSE( evaluator.is_activated()                            );
+    ASSERT_FALSE( evaluator.evaluate( foo< std::uint8_t >{} ).success );
 }
 
-TEST_F(EvaluatorTest, MissingClosingParenthesesExpression) {
+TEST( EvaluatorTest, MissingParenthesesExpression )
+{
     booleval::evaluator<> evaluator;
-    EXPECT_FALSE(evaluator.expression("(field_a foo or field_b bar"));
-    EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
+
+    ASSERT_FALSE( evaluator.expression( "(field_x foo or field_y bar" ) );
+    ASSERT_FALSE( evaluator.is_activated()                              );
+    ASSERT_FALSE( evaluator.evaluate( foo< std::uint8_t >{} ).success   );
 }
 
-TEST_F(EvaluatorTest, MultipleFieldsExpression) {
+TEST( EvaluatorTest, MultipleFieldsInRowExpression )
+{
     booleval::evaluator<> evaluator;
-    EXPECT_FALSE(evaluator.expression("field_a foo field_b"));
-    EXPECT_FALSE(evaluator.is_activated());
-    EXPECT_FALSE(evaluator.evaluate(obj<uint8_t>()));
+
+    ASSERT_FALSE( evaluator.expression( "field_x foo field_y" )       );
+    ASSERT_FALSE( evaluator.is_activated()                            );
+    ASSERT_FALSE( evaluator.evaluate( foo< std::uint8_t >{} ).success );
 }
 
-TEST_F(EvaluatorTest, EqualToOperator) {
-    obj<std::string> foo{ "foo" };
-    obj<std::string> bar{ "bar" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a foo"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, SymbolEqualToOperator) {
-    obj<std::string> foo{ "foo" };
-    obj<std::string> bar{ "bar" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a == foo"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, EqualToOperatorMultipleWords) {
-    obj<std::string> foo{ "foo foo" };
-    obj<std::string> bar{ "bar bar" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a \"foo foo\""));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, NotEqualToOperator) {
-    obj<std::string> foo{ "foo" };
-    obj<std::string> bar{ "bar" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a neq foo"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_FALSE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, SymbolNotEqualToOperator) {
-    obj<std::string> foo{ "foo" };
-    obj<std::string> bar{ "bar" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a != foo"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_FALSE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, GreaterThanOperator) {
-    obj<float> foo{ 1.24F };
-    obj<float> bar{ 1.22F };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<float>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a gt 1.23"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, SymbolGreaterThanOperator) {
-    obj<float> foo{ 1.24F };
-    obj<float> bar{ 1.22F };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<float>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a > 1.23"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, GreaterThanOperatorStrings) {
-    obj<std::string> foo{ "30" };
-    obj<std::string> bar{ "1000" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a gt \"200\""));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, LessThanOperator) {
-    obj<uint8_t> foo{ 1 };
-    obj<uint8_t> bar{ 3 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a lt 2"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, SymbolLessThanOperator) {
-    obj<uint8_t> foo{ 1 };
-    obj<uint8_t> bar{ 3 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a < 2"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, LessThanOperatorStrings) {
-    obj<std::string> foo{ "1000" };
-    obj<std::string> bar{ "30" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a lt \"200\""));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, GreaterThanOrEqualToOperator) {
-    obj<double> foo{ 1.234567 };
-    obj<double> bar{ 2.345678 };
-    obj<double> baz{ 0.123456 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<double>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a geq 1.234567"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-    EXPECT_FALSE(evaluator.evaluate(baz));
-}
-
-TEST_F(EvaluatorTest, SymbolGreaterThanOrEqualToOperator) {
-    obj<double> foo{ 1.234567 };
-    obj<double> bar{ 2.345678 };
-    obj<double> baz{ 0.123456 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<double>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a >= 1.234567"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-    EXPECT_FALSE(evaluator.evaluate(baz));
-}
-
-TEST_F(EvaluatorTest, LessThanOrEqualToOperator) {
-    obj<double> foo{ 1.234567 };
-    obj<double> bar{ 0.123456 };
-    obj<double> baz{ 2.345678 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<double>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a leq 1.234567"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-    EXPECT_FALSE(evaluator.evaluate(baz));
-}
-
-TEST_F(EvaluatorTest, SymbolLessThanOrEqualToOperator) {
-    obj<double> foo{ 1.234567 };
-    obj<double> bar{ 0.123456 };
-    obj<double> baz{ 2.345678 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<double>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a <= 1.234567"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-    EXPECT_FALSE(evaluator.evaluate(baz));
-}
-
-TEST_F(EvaluatorTest, AndOperator) {
-    multi_obj<std::string, uint8_t> foo{ "one", 1 };
-    multi_obj<std::string, uint8_t> bar{ "two", 2 };
-    multi_obj<std::string, uint8_t> baz{ "two", 1 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &multi_obj<std::string, uint8_t>::value_a },
-        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a one and field_b 1"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-    EXPECT_FALSE(evaluator.evaluate(baz));
-}
-
-TEST_F(EvaluatorTest, SymbolAndOperator) {
-    multi_obj<std::string, uint8_t> foo{ "one", 1 };
-    multi_obj<std::string, uint8_t> bar{ "two", 2 };
-    multi_obj<std::string, uint8_t> baz{ "two", 1 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &multi_obj<std::string, uint8_t>::value_a },
-        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a one && field_b 1"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-    EXPECT_FALSE(evaluator.evaluate(baz));
-}
-
-TEST_F(EvaluatorTest, OrOperator) {
-    multi_obj<std::string, uint8_t> foo{ "one", 1 };
-    multi_obj<std::string, uint8_t> bar{ "one", 2 };
-    multi_obj<std::string, uint8_t> baz{ "two", 1 };
-    multi_obj<std::string, uint8_t> qux{ "two", 2 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &multi_obj<std::string, uint8_t>::value_a },
-        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a one or field_b 1"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-    EXPECT_TRUE(evaluator.evaluate(baz));
-    EXPECT_FALSE(evaluator.evaluate(qux));
-}
-
-TEST_F(EvaluatorTest, SymbolOrOperator) {
-    multi_obj<std::string, uint8_t> foo{ "one", 1 };
-    multi_obj<std::string, uint8_t> bar{ "one", 2 };
-    multi_obj<std::string, uint8_t> baz{ "two", 1 };
-    multi_obj<std::string, uint8_t> qux{ "two", 2 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &multi_obj<std::string, uint8_t>::value_a },
-        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a one || field_b 1"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_TRUE(evaluator.evaluate(bar));
-    EXPECT_TRUE(evaluator.evaluate(baz));
-    EXPECT_FALSE(evaluator.evaluate(qux));
-}
-
-TEST_F(EvaluatorTest, MultipleOperators) {
-    multi_obj<std::string, uint8_t> foo{ "one", 1 };
-    multi_obj<std::string, uint8_t> bar{ "one", 2 };
-    multi_obj<std::string, uint8_t> baz{ "two", 1 };
-    multi_obj<std::string, uint8_t> qux{ "two", 2 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &multi_obj<std::string, uint8_t>::value_a },
-        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
-    });
-
-    EXPECT_TRUE(evaluator.expression("(field_a one and field_b 1) or (field_a two and field_b 2)"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-    EXPECT_FALSE(evaluator.evaluate(baz));
-    EXPECT_TRUE(evaluator.evaluate(qux));
-}
-
-TEST_F(EvaluatorTest, FieldsFromDifferentClasses) {
-    obj<std::string> foo{ "one" };
-    multi_obj<std::string, uint8_t> bar{ "two", 2 };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a },
-        { "field_b", &multi_obj<std::string, uint8_t>::value_b }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_a one and field_b 2"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_FALSE(evaluator.evaluate(foo));
-    EXPECT_FALSE(evaluator.evaluate(bar));
-}
-
-TEST_F(EvaluatorTest, NonExistantField) {
-    obj<std::string> foo{ "one" };
-
-    booleval::evaluator<> evaluator({
-        { "field_a", &obj<std::string>::value_a }
-    });
-
-    EXPECT_TRUE(evaluator.expression("field_not_exist one"));
-    EXPECT_TRUE(evaluator.is_activated());
-    try {
-        [[maybe_unused]] auto result = evaluator.evaluate(foo);
-        FAIL() << "Expected booleval::field_not_found";
-    } catch (booleval::field_not_found const& ex) {
-        EXPECT_EQ(ex.what(), std::string("Field 'field_not_exist' not found"));
+TEST( EvaluatorTest, EqualToOperator )
+{
+    foo< std::string > x{ "foo" };
+    foo< std::string > y{ "bar" };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field", &foo< std::string >::value }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "field foo" ) );
+        ASSERT_TRUE ( evaluator.is_activated()            );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success     );
+        ASSERT_FALSE( evaluator.evaluate( y ).success     );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field eq foo" ) );
+        ASSERT_TRUE ( evaluator.is_activated()               );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success        );
+        ASSERT_FALSE( evaluator.evaluate( y ).success        );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field == foo" ) );
+        ASSERT_TRUE ( evaluator.is_activated()               );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success        );
+        ASSERT_FALSE( evaluator.evaluate( y ).success        );
+    }
+    {
+        x.value( "foo foo" );
+
+        ASSERT_TRUE ( evaluator.expression( "field == \"foo foo\"" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                       );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                );
     }
 }
 
-TEST_F(EvaluatorTest, FieldNotValid) {
-    obj<std::string> foo{ "foo" };
+TEST( EvaluatorTest, NotEqualToOperator )
+{
+    foo< std::string > x{ "foo" };
+    foo< std::string > y{ "bar" };
 
-    booleval::evaluator<booleval::utils::any_mem_fn_bool> evaluator({
-        { "field_a_valid", &obj<std::string>::value_a_valid },
-        { "field_a_not_valid",& obj<std::string>::value_a_notvalid }
-    });
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field", &foo< std::string >::value }
+        }
+    };
 
-    EXPECT_TRUE(evaluator.expression("field_a_valid foo"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_TRUE(evaluator.evaluate(foo));
+    {
+        ASSERT_TRUE ( evaluator.expression( "field neq foo" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                );
+        ASSERT_FALSE( evaluator.evaluate( x ).success         );
+        ASSERT_TRUE ( evaluator.evaluate( y ).success         );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field != foo" ) );
+        ASSERT_TRUE ( evaluator.is_activated()               );
+        ASSERT_FALSE( evaluator.evaluate( x ).success        );
+        ASSERT_TRUE ( evaluator.evaluate( y ).success        );
+    }
+    {
+        x.value( "foo foo" );
 
-    EXPECT_TRUE(evaluator.expression("field_a_not_valid foo"));
-    EXPECT_TRUE(evaluator.is_activated());
-    EXPECT_FALSE(evaluator.evaluate(foo));
+        ASSERT_TRUE ( evaluator.expression( "field != \"foo foo\"" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                       );
+        ASSERT_FALSE( evaluator.evaluate( x ).success                );
+        ASSERT_TRUE ( evaluator.evaluate( y ).success                );
+    }
 }
+
+TEST( EvaluatorTest, GreaterThanOperator )
+{
+    foo< float > x{ 1.22 };
+    foo< float > y{ 1.24 };
+
+    foo< std::string > m{ "1000" };
+    foo< std::string > n{ "50"   };
+
+    booleval::evaluator<> evaluator_digits
+    {
+        {
+            { "field", &foo< float >::value }
+        }
+    };
+
+    booleval::evaluator<> evaluator_strings
+    {
+        {
+            { "field", &foo< std::string >::value }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator_digits.expression( "field gt 1.23" ) );
+        ASSERT_TRUE ( evaluator_digits.is_activated()                );
+        ASSERT_FALSE( evaluator_digits.evaluate( x ).success         );
+        ASSERT_TRUE ( evaluator_digits.evaluate( y ).success         );
+    }
+    {
+        ASSERT_TRUE ( evaluator_digits.expression( "field > 1.23" ) );
+        ASSERT_TRUE ( evaluator_digits.is_activated()               );
+        ASSERT_FALSE( evaluator_digits.evaluate( x ).success        );
+        ASSERT_TRUE ( evaluator_digits.evaluate( y ).success        );
+    }
+    {
+        ASSERT_TRUE ( evaluator_strings.expression( "field gt \"200\"" ) );
+        ASSERT_TRUE ( evaluator_strings.is_activated()                   );
+        ASSERT_FALSE( evaluator_strings.evaluate( m ).success            );
+        ASSERT_TRUE ( evaluator_strings.evaluate( n ).success            );
+    }
+    {
+        ASSERT_TRUE ( evaluator_strings.expression( "field > \"200\"" ) );
+        ASSERT_TRUE ( evaluator_strings.is_activated()                  );
+        ASSERT_FALSE( evaluator_strings.evaluate( m ).success           );
+        ASSERT_TRUE ( evaluator_strings.evaluate( n ).success           );
+    }
+}
+
+TEST( EvaluatorTest, GreaterThanOrEqualToOperator )
+{
+    foo< double > x{ 1.234567 };
+    foo< double > y{ 2.345678 };
+    foo< double > z{ 0.123456 };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field", &foo< double >::value }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "field geq 1.234567" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                     );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success              );
+        ASSERT_TRUE ( evaluator.evaluate( y ).success              );
+        ASSERT_FALSE( evaluator.evaluate( z ).success              );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field >= 1.234567" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                    );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success             );
+        ASSERT_TRUE ( evaluator.evaluate( y ).success             );
+        ASSERT_FALSE( evaluator.evaluate( z ).success             );
+    }
+}
+
+TEST( EvaluatorTest, LessThanOperator )
+{
+    foo< unsigned > x{ 1 };
+    foo< unsigned > y{ 3 };
+
+    foo< std::string > m{ "1000" };
+    foo< std::string > n{ "50"   };
+
+    booleval::evaluator<> evaluator_digits
+    {
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    };
+
+    booleval::evaluator<> evaluator_strings
+    {
+        {
+            { "field", &foo< std::string >::value }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator_digits.expression( "field lt 2" ) );
+        ASSERT_TRUE ( evaluator_digits.is_activated()             );
+        ASSERT_TRUE ( evaluator_digits.evaluate( x ).success      );
+        ASSERT_FALSE( evaluator_digits.evaluate( y ).success      );
+    }
+    {
+        ASSERT_TRUE ( evaluator_digits.expression( "field < 2" ) );
+        ASSERT_TRUE ( evaluator_digits.is_activated()            );
+        ASSERT_TRUE ( evaluator_digits.evaluate( x ).success     );
+        ASSERT_FALSE( evaluator_digits.evaluate( y ).success     );
+    }
+    {
+        ASSERT_TRUE ( evaluator_strings.expression( "field lt \"200\"" ) );
+        ASSERT_TRUE ( evaluator_strings.is_activated()                   );
+        ASSERT_TRUE ( evaluator_strings.evaluate( m ).success            );
+        ASSERT_FALSE( evaluator_strings.evaluate( n ).success            );
+    }
+    {
+        ASSERT_TRUE ( evaluator_strings.expression( "field < \"200\"" ) );
+        ASSERT_TRUE ( evaluator_strings.is_activated()                  );
+        ASSERT_TRUE ( evaluator_strings.evaluate( m ).success           );
+        ASSERT_FALSE( evaluator_strings.evaluate( n ).success           );
+    }
+}
+
+TEST( EvaluatorTest, LessThanOrEqualToOperator )
+{
+    foo< double > x{ 1.234567 };
+    foo< double > y{ 2.345678 };
+    foo< double > z{ 0.123456 };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field", &foo< double >::value }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "field leq 1.234567" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                     );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success              );
+        ASSERT_FALSE( evaluator.evaluate( y ).success              );
+        ASSERT_TRUE ( evaluator.evaluate( z ).success              );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field <= 1.234567" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                    );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success             );
+        ASSERT_FALSE( evaluator.evaluate( y ).success             );
+        ASSERT_TRUE ( evaluator.evaluate( z ).success             );
+    }
+}
+
+TEST( EvaluatorTest, AndOperator )
+{
+    bar< unsigned, std::string > x{ 1, "bar"     };
+    bar< unsigned, std::string > y{ 3, "bar bar" };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field_1", &bar< unsigned, std::string >::value_1 },
+            { "field_2", &bar< unsigned, std::string >::value_2 }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 1 and field_2 bar" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                            );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                     );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                     );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 eq 1 and field_2 eq bar" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                                  );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                           );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                           );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 == 1 and field_2 == bar" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                                  );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                           );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                           );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 == 1 && field_2 == bar" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                                 );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                          );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                          );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 == 3 && field_2 == bar" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                                 );
+        ASSERT_FALSE( evaluator.evaluate( x ).success                          );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                          );
+    }
+}
+
+TEST( EvaluatorTest, OrOperator )
+{
+    bar< unsigned, std::string > x{ 1, "bar"     };
+    bar< unsigned, std::string > y{ 3, "bar bar" };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field_1", &bar< unsigned, std::string >::value_1 },
+            { "field_2", &bar< unsigned, std::string >::value_2 }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 1 or field_1 2" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                         );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                  );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                  );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 eq 1 or field_1 eq 2" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                               );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                        );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                        );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 == 1 or field_1 == 2" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                               );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                        );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                        );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 1 || field_1 2" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                         );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                  );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                  );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 eq 1 || field_1 eq 2" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                               );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                        );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                        );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 == 1 || field_1 == 2" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                               );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success                        );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                        );
+    }
+    {
+        ASSERT_TRUE( evaluator.expression( "field_1 == 1 || field_2 == \"bar bar\"" ) );
+        ASSERT_TRUE( evaluator.is_activated()                                         );
+        ASSERT_TRUE( evaluator.evaluate( x ).success                                  );
+        ASSERT_TRUE( evaluator.evaluate( y ).success                                  );
+    }
+    {
+        ASSERT_TRUE( evaluator.expression( "field_1 == 3 || field_2 == bar" ) );
+        ASSERT_TRUE( evaluator.is_activated()                                 );
+        ASSERT_TRUE( evaluator.evaluate( x ).success                          );
+        ASSERT_TRUE( evaluator.evaluate( y ).success                          );
+    }
+}
+
+TEST( EvaluatorTest, MultipleOperators )
+{
+    bar< std::string, unsigned > x{ "foo", 1 };
+    bar< std::string, unsigned > y{ "bar", 2 };
+    bar< std::string, unsigned > m{ "baz", 1 };
+    bar< std::string, unsigned > n{ "qux", 2 };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field_1", &bar< std::string, unsigned >::value_1 },
+            { "field_2", &bar< std::string, unsigned >::value_2 }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "(field_1 foo and field_2 1)" ) );
+        ASSERT_TRUE ( evaluator.is_activated()        );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success );
+        ASSERT_FALSE( evaluator.evaluate( y ).success );
+        ASSERT_FALSE( evaluator.evaluate( m ).success );
+        ASSERT_FALSE( evaluator.evaluate( n ).success );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 foo and field_2 1 and field_1 bar" ) );
+        ASSERT_TRUE ( evaluator.is_activated()        );
+        ASSERT_FALSE( evaluator.evaluate( x ).success );
+        ASSERT_FALSE( evaluator.evaluate( y ).success );
+        ASSERT_FALSE( evaluator.evaluate( m ).success );
+        ASSERT_FALSE( evaluator.evaluate( n ).success );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "(field_1 foo or field_1 bar) and (field_2 2 or field_2 1)" ) );
+        ASSERT_TRUE ( evaluator.is_activated()        );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success );
+        ASSERT_TRUE ( evaluator.evaluate( y ).success );
+        ASSERT_FALSE( evaluator.evaluate( m ).success );
+        ASSERT_FALSE( evaluator.evaluate( n ).success );
+    }
+    {
+        ASSERT_TRUE ( evaluator.expression( "(field_1 foo and field_2 1) or (field_1 qux and field_2 2)" ) );
+        ASSERT_TRUE ( evaluator.is_activated()        );
+        ASSERT_TRUE ( evaluator.evaluate( x ).success );
+        ASSERT_FALSE( evaluator.evaluate( y ).success );
+        ASSERT_FALSE( evaluator.evaluate( m ).success );
+        ASSERT_TRUE ( evaluator.evaluate( n ).success );
+    }
+}
+
+TEST( EvaluatorTest, DifferentClasses )
+{
+    foo< unsigned              > x{ 1        };
+    bar< unsigned, std::string > y{ 2, "bar" };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field_1", &foo< unsigned              >::value   },
+            { "field_2", &bar< unsigned, std::string >::value_2 }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "field_1 one and field_2 2" ) );
+        ASSERT_TRUE ( evaluator.is_activated()                            );
+        ASSERT_FALSE( evaluator.evaluate( x ).success                     );
+        ASSERT_FALSE( evaluator.evaluate( y ).success                     );
+    }
+}
+
+TEST( EvaluatorTest, UnknownField )
+{
+    foo< unsigned > x{ 1 };
+
+    booleval::evaluator<> evaluator
+    {
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    };
+
+    {
+        ASSERT_TRUE ( evaluator.expression( "unknown_field 1" )        );
+        ASSERT_TRUE ( evaluator.is_activated()                         );
+
+        auto const result{ evaluator.evaluate( x ) };
+        ASSERT_FALSE( result.success                  );
+        ASSERT_EQ   ( result.message, "Unknown field" );
+    }
+}
+
+// TEST_F(EvaluatorTest, FieldNotValid) {
+//     obj<std::string> foo{ "foo" };
+
+//     booleval::evaluator<booleval::utils::any_mem_fn_bool> evaluator({
+//         { "field_a_valid", &obj<std::string>::value_a_valid },
+//         { "field_a_not_valid",& obj<std::string>::value_a_notvalid }
+//     });
+
+//     ASSERT_TRUE(evaluator.expression("field_a_valid foo"));
+//     ASSERT_TRUE(evaluator.is_activated());
+//     ASSERT_TRUE(evaluator.evaluate(foo));
+
+//     ASSERT_TRUE(evaluator.expression("field_a_not_valid foo"));
+//     ASSERT_TRUE(evaluator.is_activated());
+//     ASSERT_FALSE(evaluator.evaluate(foo));
+// }

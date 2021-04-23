@@ -18,7 +18,6 @@ link_directories (
 link_libraries (
     gtest
     gtest_main
-    booleval
 )
 
 add_custom_target (tests)
@@ -40,10 +39,10 @@ endmacro ()
 
 create_test (token/token)
 create_test (token/tokenizer)
-create_test (tree/expression_tree)
+create_test (tree/node)
 create_test (tree/result_visitor)
-create_test (tree/tree_node)
-create_test (utils/algo_utils)
+create_test (tree/tree)
+create_test (utils/algorithm)
 create_test (utils/any_mem_fn)
 create_test (utils/any_value)
 create_test (utils/split_range)

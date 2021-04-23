@@ -35,10 +35,8 @@ public:
     template <typename SplitRangeIt>
     void test_split_range_iterator(SplitRangeIt it,
                                    bool const quoted,
-                                   std::size_t const index,
                                    std::string_view const value) {
         EXPECT_EQ(it->quoted, quoted);
-        EXPECT_EQ(it->index, index);
         EXPECT_EQ(it->value, value);
     }
 };
@@ -57,11 +55,11 @@ TEST_F(SplitRangeTest, SplitByWhitespace) {
     auto it  = range.begin();
     auto end = range.end();
 
-    test_split_range_iterator(it++, false, 0, "a");
-    test_split_range_iterator(it++, false, 1, "b");
-    test_split_range_iterator(it++, false, 2, "c");
-    test_split_range_iterator(it++, false, 3, "d");
-    test_split_range_iterator(it++, true,  4, "a b c");
+    test_split_range_iterator(it++, false, "a");
+    test_split_range_iterator(it++, false, "b");
+    test_split_range_iterator(it++, false, "c");
+    test_split_range_iterator(it++, false, "d");
+    test_split_range_iterator(it++, true,  "a b c");
     EXPECT_EQ(it, end);
 }
 
@@ -76,11 +74,11 @@ TEST_F(SplitRangeTest, SplitByWhitespaceWithSingleQuoteChar) {
     auto it  = range.begin();
     auto end = range.end();
 
-    test_split_range_iterator(it++, false, 0, "a");
-    test_split_range_iterator(it++, false, 1, "b");
-    test_split_range_iterator(it++, false, 2, "c");
-    test_split_range_iterator(it++, false, 3, "d");
-    test_split_range_iterator(it++, true,  4, "a b c");
+    test_split_range_iterator(it++, false, "a");
+    test_split_range_iterator(it++, false, "b");
+    test_split_range_iterator(it++, false, "c");
+    test_split_range_iterator(it++, false, "d");
+    test_split_range_iterator(it++, true,  "a b c");
     EXPECT_EQ(it, end);
 }
 
@@ -91,11 +89,11 @@ TEST_F(SplitRangeTest, SplitByComma) {
     auto it  = range.begin();
     auto end = range.end();
 
-    test_split_range_iterator(it++, true,  0, "a,b,c");
-    test_split_range_iterator(it++, false, 1, "a");
-    test_split_range_iterator(it++, false, 2, "b");
-    test_split_range_iterator(it++, false, 3, "c");
-    test_split_range_iterator(it++, false, 4, "d");
+    test_split_range_iterator(it++, true,  "a,b,c");
+    test_split_range_iterator(it++, false, "a");
+    test_split_range_iterator(it++, false, "b");
+    test_split_range_iterator(it++, false, "c");
+    test_split_range_iterator(it++, false, "d");
     EXPECT_EQ(it, end);
 }
 
@@ -106,11 +104,11 @@ TEST_F(SplitRangeTest, SplitByMultipleDelimiters) {
     auto it  = range.begin();
     auto end = range.end();
 
-    test_split_range_iterator(it++, false, 0, "a");
-    test_split_range_iterator(it++, false, 1, "b");
-    test_split_range_iterator(it++, true,  2, "a.b,c");
-    test_split_range_iterator(it++, false, 3, "c");
-    test_split_range_iterator(it++, false, 4, "d");
+    test_split_range_iterator(it++, false, "a");
+    test_split_range_iterator(it++, false, "b");
+    test_split_range_iterator(it++, true,  "a.b,c");
+    test_split_range_iterator(it++, false, "c");
+    test_split_range_iterator(it++, false, "d");
     EXPECT_EQ(it, end);
 }
 
@@ -123,10 +121,10 @@ TEST_F(SplitRangeTest, SplitWithIncludeDelimitersOption) {
     auto it  = range.begin();
     auto end = range.end();
 
-    test_split_range_iterator(it++, false, 0, "a");
-    test_split_range_iterator(it++, false, 1, ",");
-    test_split_range_iterator(it++, false, 2, "b");
-    test_split_range_iterator(it++, false, 3, ".");
+    test_split_range_iterator(it++, false, "a");
+    test_split_range_iterator(it++, false, ",");
+    test_split_range_iterator(it++, false, "b");
+    test_split_range_iterator(it++, false, ".");
     EXPECT_EQ(it, end);
 }
 
@@ -141,12 +139,12 @@ TEST_F(SplitRangeTest, SplitWithMultipleOptions) {
     auto it  = range.begin();
     auto end = range.end();
 
-    test_split_range_iterator(it++, false, 0, "a");
-    test_split_range_iterator(it++, false, 1, ",");
-    test_split_range_iterator(it++, false, 2, "b");
-    test_split_range_iterator(it++, false, 3, ".");
-    test_split_range_iterator(it++, true,  4, "c , ");
-    test_split_range_iterator(it++, true,  5, "d . e");
+    test_split_range_iterator(it++, false, "a");
+    test_split_range_iterator(it++, false, ",");
+    test_split_range_iterator(it++, false, "b");
+    test_split_range_iterator(it++, false, ".");
+    test_split_range_iterator(it++, true,  "c , ");
+    test_split_range_iterator(it++, true,  "d . e");
     EXPECT_EQ(it, end);
 }
 
@@ -161,12 +159,12 @@ TEST_F(SplitRangeTest, SplitWithMultipleOptionsAndParentheses) {
     auto it  = range.begin();
     auto end = range.end();
 
-    test_split_range_iterator(it++, false, 0, "(");
-    test_split_range_iterator(it++, false, 1, "a");
-    test_split_range_iterator(it++, false, 2, "b");
-    test_split_range_iterator(it++, false, 3, "c");
-    test_split_range_iterator(it++, false, 4, "d");
-    test_split_range_iterator(it++, true,  5, "a b c");
-    test_split_range_iterator(it++, false, 6, ")");
+    test_split_range_iterator(it++, false, "(");
+    test_split_range_iterator(it++, false, "a");
+    test_split_range_iterator(it++, false, "b");
+    test_split_range_iterator(it++, false, "c");
+    test_split_range_iterator(it++, false, "d");
+    test_split_range_iterator(it++, true,  "a b c");
+    test_split_range_iterator(it++, false, ")");
     EXPECT_EQ(it, end);
 }

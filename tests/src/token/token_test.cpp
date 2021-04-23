@@ -28,121 +28,160 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <booleval/token/token.hpp>
 
-class TokenTest : public testing::Test {};
-
-TEST_F(TokenTest, DefaultConstructor) {
-    using namespace booleval;
-
-    token::token token;
-    EXPECT_EQ(token.type(), token::token_type::unknown);
-    EXPECT_EQ(token.value(), "");
+TEST( TokenTest, DefaultConstructor )
+{
+    booleval::token::token token{};
+    EXPECT_EQ( token.type(), booleval::token::token_type::unknown );
+    EXPECT_EQ( token.value(), "" );
 }
 
-TEST_F(TokenTest, ConstructorFromType) {
-    using namespace booleval;
-
-    token::token token(token::token_type::logical_and);
-    EXPECT_EQ(token.type(), token::token_type::logical_and);
-    EXPECT_TRUE(token.value() == "and" ||
-                token.value() == "AND");
+TEST( TokenTest, ConstructorFromType )
+{
+    booleval::token::token token{ booleval::token::token_type::logical_and };
+    EXPECT_EQ( token.type(), booleval::token::token_type::logical_and );
+    EXPECT_TRUE
+    (
+        token.value() == "and" ||
+        token.value() == "AND"
+    );
 }
 
-TEST_F(TokenTest, ConstructorFromValue) {
-    using namespace booleval;
-
-    token::token token("and");
-    EXPECT_EQ(token.type(), token::token_type::logical_and);
-    EXPECT_TRUE(token.value() == "and" ||
-                token.value() == "AND");
+TEST( TokenTest, ConstructorFromValue )
+{
+    booleval::token::token token("and");
+    EXPECT_EQ( token.type(), booleval::token::token_type::logical_and );
+    EXPECT_TRUE
+    (
+        token.value() == "and" ||
+        token.value() == "AND"
+    );
 }
 
-TEST_F(TokenTest, ConstructorFromTypeAndValue) {
+TEST( TokenTest, ConstructorFromTypeAndValue )
+{
     using namespace booleval;
 
-    token::token token(token::token_type::field, "field");
-    EXPECT_EQ(token.type(), token::token_type::field);
-    EXPECT_EQ(token.value(), "field");
+    booleval::token::token token{ booleval::token::token_type::field, "field" };
+    EXPECT_EQ( token.type(), booleval::token::token_type::field );
+    EXPECT_EQ( token.value(), "field" );
 }
 
-TEST_F(TokenTest, Type) {
+TEST( TokenTest, Type )
+{
     using namespace booleval;
 
-    token::token token;
-    token.type(token::token_type::logical_and);
-    EXPECT_EQ(token.type(), token::token_type::logical_and);
+    booleval::token::token token{};
+    token.type( booleval::token::token_type::logical_and );
+    EXPECT_EQ( token.type(), booleval::token::token_type::logical_and );
 }
 
-TEST_F(TokenTest, Value) {
-    using namespace booleval;
-
-    token::token token;
-    token.value("field");
-    EXPECT_EQ(token.value(), "field");
+TEST( TokenTest, Value )
+{
+    booleval::token::token token{};
+    token.value( "field" );
+    EXPECT_EQ( token.value(), "field" );
 }
 
-TEST_F(TokenTest, ValueAsInt) {
-    using namespace booleval;
-
-    token::token token;
-    token.value("1");
-    EXPECT_EQ(token.value<uint8_t>(), 1U);
-
-    token.value("a");
-    EXPECT_EQ(token.value<uint8_t>(), std::nullopt);
+TEST( TokenTest, ValueAsInt )
+{
+    {
+        booleval::token::token token{};
+        token.value( "1" );
+        EXPECT_EQ( token.value< std::uint8_t >(), 1U );
+    }
+    {
+        booleval::token::token token{};
+        token.value( "a" );
+        EXPECT_EQ( token.value< std::uint8_t >(), std::nullopt );
+    }
 }
 
-TEST_F(TokenTest, ValueAsDouble) {
-    using namespace booleval;
-
-    token::token token;
-    token.value("1.23456789");
-    EXPECT_DOUBLE_EQ(token.value<double>().value(), 1.23456789);
-
-    token.value("a");
-    EXPECT_EQ(token.value<double>(), std::nullopt);
+TEST( TokenTest, ValueAsDouble )
+{
+    {
+        booleval::token::token token{};
+        token.value( "1.23456789" );
+        EXPECT_DOUBLE_EQ( token.value< double >().value(), 1.23456789 );
+    }
+    {
+        booleval::token::token token{};
+        token.value( "1.2a" );
+        EXPECT_EQ( token.value< double >(), std::nullopt );
+    }
 }
 
-TEST_F(TokenTest, ValueAsFloat) {
-    using namespace booleval;
-
-    token::token token;
-    token.value("1.23456789");
-    EXPECT_FLOAT_EQ(token.value<float>().value(), 1.23456789F);
-
-    token.value("a");
-    EXPECT_EQ(token.value<float>(), std::nullopt);
+TEST( TokenTest, ValueAsFloat )
+{
+    {
+        booleval::token::token token{};
+        token.value( "1.23456789" );
+        EXPECT_FLOAT_EQ( token.value< float >().value(), 1.23456789F );
+    }
+    {
+        booleval::token::token token{};
+        token.value( "1.2a" );
+        EXPECT_EQ( token.value< float >(), std::nullopt );
+    }
 }
 
-TEST_F(TokenTest, IsType) {
-    using namespace booleval;
-
-    token::token token(token::token_type::logical_and);
-    EXPECT_TRUE(token.is(token::token_type::logical_and));
-    EXPECT_FALSE(token.is(token::token_type::logical_or));
+TEST( TokenTest, IsType )
+{
+    booleval::token::token token{ booleval::token::token_type::logical_and };
+    EXPECT_TRUE ( token.is( booleval::token::token_type::logical_and ) );
+    EXPECT_FALSE( token.is( booleval::token::token_type::logical_or  ) );
 }
 
-TEST_F(TokenTest, IsNotType) {
-    using namespace booleval;
-
-    token::token token(token::token_type::logical_and);
-    EXPECT_TRUE(token.is_not(token::token_type::logical_or));
-    EXPECT_FALSE(token.is_not(token::token_type::logical_and));
+TEST( TokenTest, IsNotType )
+{
+    booleval::token::token token{ booleval::token::token_type::logical_and };
+    EXPECT_TRUE ( token.is_not( booleval::token::token_type::logical_or  ) );
+    EXPECT_FALSE( token.is_not( booleval::token::token_type::logical_and ) );
 }
 
-TEST_F(TokenTest, IsOneOfTwoTypes) {
-    using namespace booleval;
-
-    token::token token(token::token_type::logical_and);
-    EXPECT_TRUE(token.is_one_of(token::token_type::logical_and, token::token_type::logical_or));
-    EXPECT_FALSE(token.is_one_of(token::token_type::lp, token::token_type::rp));
+TEST( TokenTest, IsOneOfTwoTypes )
+{
+    booleval::token::token token{ booleval::token::token_type::logical_and };
+    EXPECT_TRUE
+    (
+        token.is_one_of
+        (
+            booleval::token::token_type::logical_and,
+            booleval::token::token_type::logical_or
+        )
+    );
+    EXPECT_FALSE
+    (
+        token.is_one_of
+        (
+            booleval::token::token_type::lp,
+            booleval::token::token_type::rp
+        )
+    );
 }
 
-TEST_F(TokenTest, IsOneOfMoreThanTwoTypes) {
-    using namespace booleval;
+TEST( TokenTest, IsOneOfMoreTypes )
+{
+    booleval::token::token token{ booleval::token::token_type::logical_and };
+    EXPECT_TRUE
+    (
+        token.is_one_of
+        (
+            booleval::token::token_type::logical_and,
+            booleval::token::token_type::lp,
+            booleval::token::token_type::rp
+        )
+    );
 
-    token::token token(token::token_type::logical_and);
-    EXPECT_TRUE(token.is_one_of(token::token_type::logical_and, token::token_type::lp, token::token_type::rp));
-    EXPECT_FALSE(token.is_one_of(token::token_type::logical_or, token::token_type::lp, token::token_type::rp));
+    EXPECT_FALSE
+    (
+        token.is_one_of
+        (
+            booleval::token::token_type::logical_or,
+            booleval::token::token_type::lp,
+            booleval::token::token_type::rp
+        )
+    );
 }

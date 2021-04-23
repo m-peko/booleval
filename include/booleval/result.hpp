@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Marin Peko
+ * Copyright (c) 2019, Marin Peko
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,56 +27,32 @@
  *
  */
 
-#ifndef BOOLEVAL_EXCEPTIONS_HPP
-#define BOOLEVAL_EXCEPTIONS_HPP
+#ifndef BOOLEVAL_RESULT_HPP
+#define BOOLEVAL_RESULT_HPP
 
-#include <string>
-#include <stdexcept>
+#include <string_view>
 
-namespace booleval {
-
-/**
- * @class base_exception
- *
- * Base class for all booleval exceptions.
- */
-struct base_exception : std::runtime_error {
-    base_exception()
-        : std::runtime_error(std::string{})
-    {}
-
-    base_exception(std::string const& message)
-        : std::runtime_error(message)
-    {}
-
-    base_exception(char const* message)
-        : std::runtime_error(message)
-    {}
-};
+namespace booleval
+{
 
 /**
- * struct field_not_found
+ * @struct result
  *
- * Exception thrown when a field is not found.
+ * Represents a lightweight result of evaluation process.
  */
-struct field_not_found : base_exception {
-    field_not_found()
-        : base_exception("Field not found")
-    {}
+struct result
+{
+    /**
+     * True if evaluation process is successful. Otherwise, false.
+     */
+    bool success{ false };
 
-    field_not_found(std::string const& field)
-        : base_exception("Field '" + field + "' not found")
-    {}
-
-    field_not_found(std::string_view field)
-        : base_exception("Field '" + std::string(field) + "' not found")
-    {}
-
-    field_not_found(char const* field)
-        : base_exception("Field '" + std::string(field) + "' not found")
-    {}
+    /**
+     * Message in case of the fault.
+     */
+    std::string_view message;
 };
 
 } // namespace booleval
 
-#endif // BOOLEVAL_EXCEPTIONS_HPP
+#endif // BOOLEVAL_RESULT_HPP

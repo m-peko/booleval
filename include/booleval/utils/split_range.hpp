@@ -33,9 +33,12 @@
 #include <iterator>
 #include <algorithm>
 #include <string_view>
+
+#include <booleval/utils/split_options.hpp>
 #include <booleval/utils/string_utils.hpp>
 
-namespace booleval::utils {
+namespace booleval::utils
+{
 
 constexpr auto whitespace_char{ ' ' };
 constexpr auto single_quote_char{ '\'' };
@@ -59,7 +62,6 @@ public:
     public:
         struct element {
             bool quoted{ false };
-            std::size_t index{ 0 };
             std::string_view value{ "" };
         };
 
@@ -92,8 +94,6 @@ public:
         }
 
         constexpr iterator& operator++() noexcept {
-            ++curr_value_.index;
-
             if (curr_value_.quoted) {
                 curr_ = skip_char(curr_, whitespace_char);
                 if (std::end(strv_) != curr_ && curr_ != std::prev(std::end(strv_))) {

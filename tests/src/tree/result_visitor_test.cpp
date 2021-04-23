@@ -28,312 +28,331 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/tree/tree_node.hpp>
+#include <booleval/tree/node.hpp>
 #include <booleval/token/token_type.hpp>
 #include <booleval/tree/result_visitor.hpp>
 
-class ResultVisitorTest : public testing::Test {
-public:
-    template <typename T>
-    class obj {
+namespace
+{
+
+    template< typename T >
+    class foo
+    {
     public:
-        obj() : value_a_{} {}
-        obj(T value) : value_a_{ value } {}
-        T value_a() const noexcept { return value_a_; }
-        T value_a_valid(bool& is_valid) const noexcept { is_valid = true; return value_a_; }
-        T value_a_notvalid(bool& is_valid) const noexcept { is_valid = false; return value_a_; }
+        foo()             : value_{}        {}
+        foo( T && value ) : value_{ value } {}
+
+        void value( T && value ) { value_ = value; }
+
+        T value() const noexcept { return value_; }
 
     private:
-        T value_a_;
+        T value_{};
     };
 
-    template <typename T, typename U>
-    class multi_obj {
+    template< typename T, typename U >
+    class bar
+    {
     public:
-        multi_obj() : value_a_{}, value_b_{} {}
-        multi_obj(T value_a, U value_b) : value_a_{ value_a }, value_b_{ value_b } {}
-        T value_a() const noexcept { return value_a_; }
-        U value_b() const noexcept { return value_b_; }
+        bar( T && value_1, U && value_2 )
+        : value_1_{ value_1 }
+        , value_2_{ value_2 }
+        {}
+
+        void value_1( T && value ) { value_1_ = value; }
+        void value_2( U && value ) { value_2_ = value; }
+
+        T value_1() const noexcept { return value_1_; }
+        U value_2() const noexcept { return value_2_; }
 
     private:
-        T value_a_;
-        U value_b_;
+        T value_1_{};
+        U value_2_{};
     };
 
-    std::shared_ptr<booleval::tree::tree_node>
-    make_tree_node(booleval::token::token_type const type) {
-        return std::make_shared<booleval::tree::tree_node>(type);
+    std::shared_ptr< booleval::tree::node > make_tree_node( booleval::token::token_type const type ) noexcept
+    {
+        return std::make_shared< booleval::tree::node >( type );
     }
 
-    std::shared_ptr<booleval::tree::tree_node>
-    make_tree_node(booleval::token::token_type const type, std::string_view const value) {
-        booleval::token::token t(type, value);
-        return std::make_shared<booleval::tree::tree_node>(t);
+    std::shared_ptr< booleval::tree::node > make_tree_node( booleval::token::token_type const type, std::string_view const value ) noexcept
+    {
+        return std::make_shared< booleval::tree::node >( booleval::token::token{ type, value } );
     }
-};
 
-TEST_F(ResultVisitorTest, VisitAndTreeNode) {
+} // namespace
+
+TEST( ResultVisitorTest, AndTreeNode )
+{
     using namespace booleval;
 
-    multi_obj<uint8_t, uint8_t> foo{ 1, 2 };
-    multi_obj<uint8_t, uint8_t> bar{ 2, 3 };
-    multi_obj<uint8_t, uint8_t> baz{ 3, 4 };
+    bar< unsigned, unsigned > x{ 1, 2 };
+    bar< unsigned, unsigned > y{ 2, 3 };
+    bar< unsigned, unsigned > z{ 3, 4 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &multi_obj<uint8_t, uint8_t>::value_a },
-        { "field_b", &multi_obj<uint8_t, uint8_t>::value_b }
-    });
+    visitor.fields
+    (
+        {
+            { "field_1", &bar< unsigned, unsigned >::value_1 },
+            { "field_2", &bar< unsigned, unsigned >::value_2 }
+        }
+    );
 
-    auto and_op = make_tree_node(token::token_type::logical_and);
+    auto and_op{ make_tree_node( token::token_type::logical_and ) };
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::eq);
-    auto right = make_tree_node(token::token_type::field, "1");
+    and_op->left  = make_tree_node( token::token_type::eq );
+    and_op->right = make_tree_node( token::token_type::eq );
 
-    op->left  = left;
-    op->right = right;
+    and_op->left->left  = make_tree_node( token::token_type::field, "field_1" );
+    and_op->left->right = make_tree_node( token::token_type::field, "1"       );
 
-    and_op->left = op;
+    and_op->right->left  = make_tree_node( token::token_type::field, "field_2" );
+    and_op->right->right = make_tree_node( token::token_type::field, "2"       );
 
-    left  = make_tree_node(token::token_type::field, "field_b");
-    op    = make_tree_node(token::token_type::eq);
-    right = make_tree_node(token::token_type::field, "2");
-
-    op->left  = left;
-    op->right = right;
-
-    and_op->right = op;
-
-    EXPECT_TRUE(visitor.visit(*and_op, foo));
-    EXPECT_FALSE(visitor.visit(*and_op, bar));
-    EXPECT_FALSE(visitor.visit(*and_op, baz));
+    ASSERT_TRUE ( visitor.visit( *and_op, x ).success );
+    ASSERT_FALSE( visitor.visit( *and_op, y ).success );
+    ASSERT_FALSE( visitor.visit( *and_op, z ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitOrTreeNode) {
+TEST( ResultVisitorTest, OrTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 1 };
-    obj<uint8_t> bar{ 2 };
-    obj<uint8_t> baz{ 3 };
+    foo< unsigned > x{ 1 };
+    foo< unsigned > y{ 2 };
+    foo< unsigned > z{ 3 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto or_op = make_tree_node(token::token_type::logical_or);
+    auto or_op{ make_tree_node( token::token_type::logical_or ) };
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::eq);
-    auto right = make_tree_node(token::token_type::field, "1");
+    or_op->left  = make_tree_node( token::token_type::eq );
+    or_op->right = make_tree_node( token::token_type::eq );
 
-    op->left  = left;
-    op->right = right;
+    or_op->left->left  = make_tree_node( token::token_type::field, "field" );
+    or_op->left->right = make_tree_node( token::token_type::field, "1"     );
 
-    or_op->left = op;
+    or_op->right->left  = make_tree_node( token::token_type::field, "field" );
+    or_op->right->right = make_tree_node( token::token_type::field, "2"     );
 
-    left  = make_tree_node(token::token_type::field, "field_a");
-    op    = make_tree_node(token::token_type::eq);
-    right = make_tree_node(token::token_type::field, "2");
-
-    op->left  = left;
-    op->right = right;
-
-    or_op->right = op;
-
-    EXPECT_TRUE(visitor.visit(*or_op, foo));
-    EXPECT_TRUE(visitor.visit(*or_op, bar));
-    EXPECT_FALSE(visitor.visit(*or_op, baz));
+    ASSERT_TRUE ( visitor.visit( *or_op, x ).success );
+    ASSERT_TRUE ( visitor.visit( *or_op, y ).success );
+    ASSERT_FALSE( visitor.visit( *or_op, z ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitEqualToTreeNode) {
+TEST( ResultVisitorTest, EqualToTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 1 };
-    obj<uint8_t> bar{ 2 };
+    foo< unsigned > x{ 1 };
+    foo< unsigned > y{ 2 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::eq);
-    auto right = make_tree_node(token::token_type::field, "1");
+    auto eq_op{ make_tree_node( token::token_type::eq ) };
 
-    op->left  = left;
-    op->right = right;
+    eq_op->left  = make_tree_node( token::token_type::field, "field" );
+    eq_op->right = make_tree_node( token::token_type::field, "1"     );
 
-    EXPECT_TRUE(visitor.visit(*op, foo));
-    EXPECT_FALSE(visitor.visit(*op, bar));
+    ASSERT_TRUE ( visitor.visit( *eq_op, x ).success );
+    ASSERT_FALSE( visitor.visit( *eq_op, y ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitNotEqualToTreeNode) {
+TEST( ResultVisitorTest, NotEqualToTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 1 };
-    obj<uint8_t> bar{ 2 };
+    foo< unsigned > x{ 1 };
+    foo< unsigned > y{ 2 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::neq);
-    auto right = make_tree_node(token::token_type::field, "1");
+    auto neq_op{ make_tree_node( token::token_type::neq ) };
 
-    op->left  = left;
-    op->right = right;
+    neq_op->left  = make_tree_node( token::token_type::field, "field" );
+    neq_op->right = make_tree_node( token::token_type::field, "1"     );
 
-    EXPECT_FALSE(visitor.visit(*op, foo));
-    EXPECT_TRUE(visitor.visit(*op, bar));
+    ASSERT_FALSE( visitor.visit( *neq_op, x ).success );
+    ASSERT_TRUE ( visitor.visit( *neq_op, y ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitGreaterThanTreeNode) {
+TEST( ResultVisitorTest, GreaterThanTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 0 };
-    obj<uint8_t> bar{ 1 };
-    obj<uint8_t> baz{ 2 };
+    foo< unsigned > x{ 0 };
+    foo< unsigned > y{ 1 };
+    foo< unsigned > z{ 2 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::gt);
-    auto right = make_tree_node(token::token_type::field, "1");
+    auto gt_op{ make_tree_node( token::token_type::gt ) };
 
-    op->left  = left;
-    op->right = right;
+    gt_op->left  = make_tree_node( token::token_type::field, "field" );
+    gt_op->right = make_tree_node( token::token_type::field, "1"     );
 
-    EXPECT_FALSE(visitor.visit(*op, foo));
-    EXPECT_FALSE(visitor.visit(*op, bar));
-    EXPECT_TRUE(visitor.visit(*op, baz));
+    ASSERT_FALSE( visitor.visit( *gt_op, x ).success );
+    ASSERT_FALSE( visitor.visit( *gt_op, y ).success );
+    ASSERT_TRUE ( visitor.visit( *gt_op, z ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitLessThanTreeNode) {
+TEST( ResultVisitorTest, LessThanTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 0 };
-    obj<uint8_t> bar{ 1 };
-    obj<uint8_t> baz{ 2 };
+    foo< unsigned > x{ 0 };
+    foo< unsigned > y{ 1 };
+    foo< unsigned > z{ 2 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::lt);
-    auto right = make_tree_node(token::token_type::field, "1");
+    auto lt_op{ make_tree_node( token::token_type::lt ) };
 
-    op->left  = left;
-    op->right = right;
+    lt_op->left  = make_tree_node( token::token_type::field, "field" );
+    lt_op->right = make_tree_node( token::token_type::field, "1"     );
 
-    EXPECT_TRUE(visitor.visit(*op, foo));
-    EXPECT_FALSE(visitor.visit(*op, bar));
-    EXPECT_FALSE(visitor.visit(*op, baz));
+    ASSERT_TRUE ( visitor.visit( *lt_op, x ).success );
+    ASSERT_FALSE( visitor.visit( *lt_op, y ).success );
+    ASSERT_FALSE( visitor.visit( *lt_op, z ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitGreaterThanOrEqualTreeNode) {
+TEST( ResultVisitorTest, GreaterThanOrEqualToTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 0 };
-    obj<uint8_t> bar{ 1 };
-    obj<uint8_t> baz{ 2 };
+    foo< unsigned > x{ 0 };
+    foo< unsigned > y{ 1 };
+    foo< unsigned > z{ 2 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::geq);
-    auto right = make_tree_node(token::token_type::field, "1");
+    auto geq_op{ make_tree_node( token::token_type::geq ) };
 
-    op->left  = left;
-    op->right = right;
+    geq_op->left  = make_tree_node( token::token_type::field, "field" );
+    geq_op->right = make_tree_node( token::token_type::field, "1"     );
 
-    EXPECT_FALSE(visitor.visit(*op, foo));
-    EXPECT_TRUE(visitor.visit(*op, bar));
-    EXPECT_TRUE(visitor.visit(*op, baz));
+    ASSERT_FALSE( visitor.visit( *geq_op, x ).success );
+    ASSERT_TRUE ( visitor.visit( *geq_op, y ).success );
+    ASSERT_TRUE ( visitor.visit( *geq_op, z ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitLessThanOrEqualTreeNode) {
+TEST( ResultVisitorTest, LessThanOrEqualToTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 0 };
-    obj<uint8_t> bar{ 1 };
-    obj<uint8_t> baz{ 2 };
+    foo< unsigned > x{ 0 };
+    foo< unsigned > y{ 1 };
+    foo< unsigned > z{ 2 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto left  = make_tree_node(token::token_type::field, "field_a");
-    auto op    = make_tree_node(token::token_type::leq);
-    auto right = make_tree_node(token::token_type::field, "1");
+    auto leq_op{ make_tree_node( token::token_type::leq ) };
 
-    op->left  = left;
-    op->right = right;
+    leq_op->left  = make_tree_node( token::token_type::field, "field" );
+    leq_op->right = make_tree_node( token::token_type::field, "1"     );
 
-    EXPECT_TRUE(visitor.visit(*op, foo));
-    EXPECT_TRUE(visitor.visit(*op, bar));
-    EXPECT_FALSE(visitor.visit(*op, baz));
+    ASSERT_TRUE ( visitor.visit( *leq_op, x ).success );
+    ASSERT_TRUE ( visitor.visit( *leq_op, y ).success );
+    ASSERT_FALSE( visitor.visit( *leq_op, z ).success );
 }
 
-TEST_F(ResultVisitorTest, VisitInvalidTreeNode) {
+TEST( ResultVisitorTest, UnknownTreeNode )
+{
     using namespace booleval;
 
-    obj<uint8_t> foo{ 1 };
-
-    tree::result_visitor<utils::any_mem_fn_bool> visitor;
-    visitor.fields({
-        { "field_a_valid", &obj<uint8_t>::value_a_valid },
-        { "field_a_notvalid", &obj<uint8_t>::value_a_notvalid }
-    });
-
-    auto left = make_tree_node(token::token_type::field, "field_a_valid");
-    auto op = make_tree_node(token::token_type::eq);
-    auto right = make_tree_node(token::token_type::field, "1");
-
-    op->left = left;
-    op->right = right;
-
-    EXPECT_TRUE(visitor.visit(*op, foo));
-
-    left = make_tree_node(token::token_type::field, "field_a_notvalid");
-    op->left = left;
-
-    EXPECT_FALSE(visitor.visit(*op, foo));
-}
-
-TEST_F(ResultVisitorTest, VisitNonExistantTreeNode) {
-    using namespace booleval;
-
-    obj<uint8_t> foo{ 1 };
+    foo< unsigned > x{ 1 };
+    foo< unsigned > y{ 2 };
 
     tree::result_visitor<> visitor;
-    visitor.fields({
-        { "field_a", &obj<uint8_t>::value_a }
-    });
+    visitor.fields
+    (
+        {
+            { "field", &foo< unsigned >::value }
+        }
+    );
 
-    auto left = make_tree_node(token::token_type::field, "field_not_exist");
-    auto op = make_tree_node(token::token_type::eq);
-    auto right = make_tree_node(token::token_type::field, "1");
+    auto eq_op{ make_tree_node( token::token_type::eq ) };
 
-    op->left = left;
-    op->right = right;
+    eq_op->left  = make_tree_node( token::token_type::field, "unknown_field" );
+    eq_op->right = make_tree_node( token::token_type::field, "1"             );
 
-    try {
-        [[maybe_unused]] auto result = visitor.visit(*op, foo);
-        FAIL() << "Expected booleval::field_not_found";
-    } catch (field_not_found const& ex) {
-        EXPECT_EQ(ex.what(), std::string("Field 'field_not_exist' not found"));
+    {
+        auto const result{ visitor.visit( *eq_op, x ) };
+        ASSERT_FALSE( result.success                  );
+        ASSERT_EQ   ( result.message, "Unknown field" );
+    }
+    {
+        auto const result{ visitor.visit( *eq_op, y ) };
+        ASSERT_FALSE( result.success                  );
+        ASSERT_EQ   ( result.message, "Unknown field" );
     }
 }
+
+// TEST( ResultVisitorTest, VisitInvalidTreeNode) {
+//     using namespace booleval;
+
+//     obj<uint8_t> foo{ 1 };
+
+//     tree::result_visitor<utils::any_mem_fn_bool> visitor;
+//     visitor.fields({
+//         { "field_a_valid", &obj<uint8_t>::value_a_valid },
+//         { "field_a_notvalid", &obj<uint8_t>::value_a_notvalid }
+//     });
+
+//     auto left = make_tree_node(token::token_type::field, "field_a_valid");
+//     auto op = make_tree_node(token::token_type::eq);
+//     auto right = make_tree_node(token::token_type::field, "1");
+
+//     op->left = left;
+//     op->right = right;
+
+//     ASSERT_TRUE(visitor.visit(*op, foo));
+
+//     left = make_tree_node(token::token_type::field, "field_a_notvalid");
+//     op->left = left;
+
+//     ASSERT_FALSE(visitor.visit(*op, foo));
+// }

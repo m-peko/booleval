@@ -27,45 +27,44 @@
  *
  */
 
-#ifndef BOOLEVAL_TREE_NODE_HPP
-#define BOOLEVAL_TREE_NODE_HPP
+#ifndef BOOLEVAL_NODE_HPP
+#define BOOLEVAL_NODE_HPP
 
 #include <memory>
+
 #include <booleval/token/token.hpp>
 #include <booleval/token/token_type.hpp>
 
-namespace booleval::tree {
+namespace booleval::tree
+{
 
 /**
- * struct tree_node
+ * struct node
  *
  * Represents the tree node containing references to left and right child nodes
  * as well as the token that the node represents in the actual expression tree.
  */
-struct tree_node {
+struct node
+{
     token::token token{ token::token_type::unknown };
-    std::shared_ptr<tree_node> left;
-    std::shared_ptr<tree_node> right;
 
-    constexpr tree_node() = default;
+    std::shared_ptr< node > left { nullptr };
+    std::shared_ptr< node > right{ nullptr };
 
-    tree_node(tree_node&& rhs) = default;
-    tree_node(tree_node const& rhs) = default;
+    constexpr node() = default;
 
-    constexpr tree_node(token::token_type const type)
-        : token(type)
-    {}
+    node( node       && rhs ) = default;
+    node( node const  & rhs ) = default;
 
-    constexpr tree_node(token::token const& token)
-        : token(token)
-    {}
+    constexpr node( token::token_type const   type  ) : token( type  ) {}
+    constexpr node( token::token      const & token ) : token( token ) {}
 
-    tree_node& operator=(tree_node&& rhs) = default;
-    tree_node& operator=(tree_node const& rhs) = default;
+    node & operator=( node       && rhs ) = default;
+    node & operator=( node const  & rhs ) = default;
 
-    ~tree_node() = default;
+    ~node() = default;
 };
 
 } // namespace booleval::tree
 
-#endif // BOOLEVAL_TREE_NODE_HPP
+#endif // BOOLEVAL_NODE_HPP

@@ -40,97 +40,19 @@
 #include <algorithm>
 #include <string_view>
 
-namespace booleval::utils {
+namespace booleval::utils
+{
 
 /**
- * enum class split_options
+ * Checks if string view contains only whitespaces.
  *
- * Represents an options used when splitting a string.
+ * @param strv String view to check
+ *
+ * @return True if string view contains only whitespaces, false otherwise
  */
-enum class [[nodiscard]] split_options : uint8_t {
-    off                  = 0x00,
-    include_delimiters   = 0x01,
-    exclude_delimiters   = 0x02,
-    split_by_whitespace  = 0x04,
-    allow_quoted_strings = 0x08
-};
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator|(Enum lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) |
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator&(Enum lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) &
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator^(Enum lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) ^
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator~(Enum rhs) {
-    return static_cast<Enum>(
-        ~static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
-operator|=(Enum& lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) |
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
-operator&=(Enum& lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) &
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
-operator^=(Enum& lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) ^
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-/**
- * Checks whether bits of the first set are present in
- * another the second set and vice versa.
- *
- * @param lhs The first set of bits to check
- * @param rhs The second set of bits to check
- *
- * @return True if the bits are present, false otherwise
- */
-template <typename Enum,
-          typename = std::enable_if_t<std::is_enum_v<Enum>>>
-[[nodiscard]] constexpr bool is_set(Enum lhs, Enum rhs) {
-    return (lhs & rhs) == lhs ||
-           (lhs & rhs) == rhs;
+[[ nodiscard ]] constexpr bool is_whitespace( std::string_view strv ) noexcept
+{
+    return strv.find_first_not_of( ' ' ) == std::string_view::npos;
 }
 
 /**
@@ -141,7 +63,7 @@ template <typename Enum,
  *
  * @return Modified string view
  */
-[[nodiscard]] constexpr std::string_view ltrim(std::string_view strv, char const c = ' ') {
+[[ nodiscard ]] constexpr std::string_view ltrim(std::string_view strv, char const c = ' ') {
     strv.remove_prefix(
         std::min(
             strv.find_first_not_of(c),
@@ -159,7 +81,7 @@ template <typename Enum,
  *
  * @return Modified string view
  */
-[[nodiscard]] constexpr std::string_view rtrim(std::string_view strv, char const c = ' ') {
+[[ nodiscard ]] constexpr std::string_view rtrim(std::string_view strv, char const c = ' ') {
     strv.remove_suffix(
         std::min(
             strv.size() - strv.find_last_not_of(c) - 1,
@@ -177,7 +99,7 @@ template <typename Enum,
  *
  * @return Modified string view
  */
-[[nodiscard]] constexpr std::string_view trim(std::string_view strv, char const c = ' ') {
+[[ nodiscard ]] constexpr std::string_view trim(std::string_view strv, char const c = ' ') {
     strv = ltrim(strv, c);
     return rtrim(strv, c);
 }
@@ -189,7 +111,7 @@ template <typename Enum,
  *
  * @return True if string view is empty, otherwise false
  */
-[[nodiscard]] constexpr bool is_empty(std::string_view strv) {
+[[ nodiscard ]] constexpr bool is_empty(std::string_view strv) {
     return strv.empty() || std::string_view::npos == strv.find_first_not_of(' ');
 }
 
@@ -203,7 +125,7 @@ template <typename Enum,
  * @return String computed by joining the elements from range
  */
 template <typename InputIt>
-[[nodiscard]] std::string join(InputIt const& first, InputIt const& last, std::string const& separator = "") {
+[[ nodiscard ]] std::string join(InputIt const& first, InputIt const& last, std::string const& separator = "") {
     if (first == last) {
         return {};
     }
@@ -235,7 +157,7 @@ template <typename T,
 template <typename T,
           typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
 #endif
-[[nodiscard]] std::optional<T> from_chars(std::string_view strv) {
+[[ nodiscard ]] std::optional<T> from_chars(std::string_view strv) {
     T value{};
 
     auto const result = std::from_chars(
@@ -265,7 +187,7 @@ template <typename T,
 #if defined(__GNUC__) || defined(__clang__)
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-[[nodiscard]] std::optional<T> from_chars(std::string_view strv) {
+[[ nodiscard ]] std::optional<T> from_chars(std::string_view strv) {
     T value{};
 
     std::stringstream ss;
@@ -297,7 +219,7 @@ template <typename T,
 template <typename T,
           typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
 #endif
-[[nodiscard]] std::string to_chars(T const value) {
+[[ nodiscard ]] std::string to_chars(T const value) {
     constexpr std::size_t buffer_size = std::numeric_limits<T>::digits10 + 2;  // +1 for minus, +1 for digits10
     std::array<char, buffer_size> buffer;
 
@@ -327,7 +249,7 @@ template <typename T,
 #if defined(__GNUC__) || defined(__clang__)
 template <typename T,
           typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-[[nodiscard]] std::string to_chars(T const value) {
+[[ nodiscard ]] std::string to_chars(T const value) {
     auto str = std::to_string(value);
     std::string_view strv{ str.c_str(), str.size() };
     str = rtrim(strv, '0');
