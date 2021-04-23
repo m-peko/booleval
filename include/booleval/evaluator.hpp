@@ -34,7 +34,7 @@
 #include <string_view>
 #include <booleval/utils/any_mem_fn.hpp>
 #include <booleval/tree/result_visitor.hpp>
-#include <booleval/tree/expression_tree.hpp>
+#include <booleval/tree/tree.hpp>
 
 namespace booleval {
 
@@ -100,7 +100,7 @@ public:
     template <typename T>
     [[nodiscard]] bool evaluate(T const& obj) {
         if (is_activated_) {
-            return result_visitor_.visit(*expression_tree_.root(), obj);
+            return result_visitor_.visit( *root_, obj);
         } else {
             return false;
         }
@@ -108,8 +108,8 @@ public:
 
 private:
     bool is_activated_{ false };
+    std::shared_ptr< tree::node > root_{ nullptr };
     tree::result_visitor<MemFn> result_visitor_;
-    tree::expression_tree expression_tree_;
 };
 
 template<typename MemFn>
@@ -120,7 +120,9 @@ bool evaluator<MemFn>::expression(std::string_view expression) {
         return true;
     }
 
-    if (expression_tree_.build(expression)) {
+    root_ = tree::build( expression );
+    if ( root_ != nullptr )
+    {
         is_activated_ = true;
     }
 

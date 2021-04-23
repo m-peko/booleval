@@ -40,97 +40,19 @@
 #include <algorithm>
 #include <string_view>
 
-namespace booleval::utils {
+namespace booleval::utils
+{
 
 /**
- * enum class split_options
+ * Checks if string view contains only whitespaces.
  *
- * Represents an options used when splitting a string.
+ * @param strv String view to check
+ *
+ * @return True if string view contains only whitespaces, false otherwise
  */
-enum class [[nodiscard]] split_options : uint8_t {
-    off                  = 0x00,
-    include_delimiters   = 0x01,
-    exclude_delimiters   = 0x02,
-    split_by_whitespace  = 0x04,
-    allow_quoted_strings = 0x08
-};
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator|(Enum lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) |
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator&(Enum lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) &
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator^(Enum lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) ^
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>
-operator~(Enum rhs) {
-    return static_cast<Enum>(
-        ~static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
-operator|=(Enum& lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) |
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
-operator&=(Enum& lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) &
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-template <typename Enum>
-[[nodiscard]] constexpr std::enable_if_t<std::is_enum_v<Enum>, Enum>&
-operator^=(Enum& lhs, Enum rhs) {
-    return static_cast<Enum>(
-        static_cast<std::underlying_type_t<Enum>>(lhs) ^
-        static_cast<std::underlying_type_t<Enum>>(rhs)
-    );
-}
-
-/**
- * Checks whether bits of the first set are present in
- * another the second set and vice versa.
- *
- * @param lhs The first set of bits to check
- * @param rhs The second set of bits to check
- *
- * @return True if the bits are present, false otherwise
- */
-template <typename Enum,
-          typename = std::enable_if_t<std::is_enum_v<Enum>>>
-[[nodiscard]] constexpr bool is_set(Enum lhs, Enum rhs) {
-    return (lhs & rhs) == lhs ||
-           (lhs & rhs) == rhs;
+[[ nodiscard ]] constexpr bool is_whitespace( std::string_view strv ) noexcept
+{
+    return strv.find_first_not_of( ' ' ) == std::string_view::npos;
 }
 
 /**

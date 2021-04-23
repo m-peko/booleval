@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Marin Peko
+ * Copyright (c) 2019, Marin Peko
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,56 +27,35 @@
  *
  */
 
-#ifndef BOOLEVAL_EXCEPTIONS_HPP
-#define BOOLEVAL_EXCEPTIONS_HPP
+#ifndef BOOLEVAL_NODE_HPP
+#define BOOLEVAL_NODE_HPP
 
-#include <string>
-#include <stdexcept>
+#include <memory>
 
-namespace booleval {
+#include <booleval/token/token.hpp>
+#include <booleval/token/token_type.hpp>
 
-/**
- * @class base_exception
- *
- * Base class for all booleval exceptions.
- */
-struct base_exception : std::runtime_error {
-    base_exception()
-        : std::runtime_error(std::string{})
-    {}
-
-    base_exception(std::string const& message)
-        : std::runtime_error(message)
-    {}
-
-    base_exception(char const* message)
-        : std::runtime_error(message)
-    {}
-};
+namespace booleval::tree
+{
 
 /**
- * struct field_not_found
+ * struct node
  *
- * Exception thrown when a field is not found.
+ * Represents the tree node containing references to left and right child nodes
+ * as well as the token that the node represents in the actual expression tree.
  */
-struct field_not_found : base_exception {
-    field_not_found()
-        : base_exception("Field not found")
-    {}
+struct node
+{
+    token::token token{ token::token_type::unknown };
 
-    field_not_found(std::string const& field)
-        : base_exception("Field '" + field + "' not found")
-    {}
+    std::shared_ptr< node > left { nullptr };
+    std::shared_ptr< node > right{ nullptr };
 
-    field_not_found(std::string_view field)
-        : base_exception("Field '" + std::string(field) + "' not found")
-    {}
-
-    field_not_found(char const* field)
-        : base_exception("Field '" + std::string(field) + "' not found")
-    {}
+    constexpr node() = default;
+    constexpr node( token::token_type const   type  ) : token( type  ) {}
+    constexpr node( token::token      const & token ) : token( token ) {}
 };
 
-} // namespace booleval
+} // namespace booleval::tree
 
-#endif // BOOLEVAL_EXCEPTIONS_HPP
+#endif // BOOLEVAL_NODE_HPP

@@ -41,92 +41,107 @@ namespace booleval::utils {
  *
  * Represents class member function of any signature.
  */
-class any_mem_fn {
+class any_mem_fn
+{
 public:
     any_mem_fn() = default;
-    any_mem_fn(any_mem_fn&& rhs) = default;
-    any_mem_fn(any_mem_fn const& rhs) = default;
+    any_mem_fn( any_mem_fn       && rhs ) = default;
+    any_mem_fn( any_mem_fn const  & rhs ) = default;
 
-    template <typename Ret, typename C>
-    any_mem_fn(Ret (C::*m)()) {
-        fn_ = [m](std::any a) {
-            return (std::any_cast<C>(a).*m)();
+    template< typename Ret, typename C >
+    any_mem_fn( Ret ( C::*mem_fn )() )
+    {
+        fn_ = [ mem_fn ]( std::any obj )
+        {
+            return ( std::any_cast< C >( obj ).*mem_fn )();
         };
     }
 
-    template <typename Ret, typename C>
-    any_mem_fn(Ret (C::*m)() const) {
-        fn_ = [m](std::any a) {
-            return (std::any_cast<C>(a).*m)();
+    template< typename Ret, typename C >
+    any_mem_fn( Ret ( C::*mem_fn )() const )
+    {
+        fn_ = [ mem_fn ]( std::any obj )
+        {
+            return ( std::any_cast< C >( obj ).*mem_fn )();
         };
     }
 
-    any_mem_fn& operator=(any_mem_fn&& rhs) = default;
-    any_mem_fn& operator=(any_mem_fn const& rhs) = default;
+    any_mem_fn & operator=( any_mem_fn       && rhs ) = default;
+    any_mem_fn & operator=( any_mem_fn const  & rhs ) = default;
 
     ~any_mem_fn() = default;
 
-    template <typename T>
-    any_value invoke(T&& obj) {
-        try {
-            return fn_(std::forward<T>(obj));
-        } catch (std::bad_any_cast const&) {
+    template< typename T >
+    any_value invoke( T && obj )
+    {
+        try
+        {
+            return fn_( std::forward< T >( obj ) );
+        }
+        catch ( std::bad_any_cast const & )
+        {
             return {};
         }
     }
 
 private:
-    std::function<any_value(std::any)> fn_;
+    std::function< any_value( std::any ) > fn_;
 };
 
 /**
  * @class any_mem_fn_bool
  *
- * Represents class member function returning any signature taking a bool&
+ * Represents class member function returning any signature taking a
  * is_valid parameter. If is_valid is set to false, the evaluation will fail.
  */
 class any_mem_fn_bool
 {
 public:
     any_mem_fn_bool() = default;
-    any_mem_fn_bool(any_mem_fn_bool&& rhs) = default;
-    any_mem_fn_bool(any_mem_fn_bool const& rhs) = default;
+    any_mem_fn_bool( any_mem_fn_bool       && rhs ) = default;
+    any_mem_fn_bool( any_mem_fn_bool const  & rhs ) = default;
 
-    template <typename Ret, typename C>
-    any_mem_fn_bool(Ret(C::* m)(bool&)) {
-        fn_ = [m](std::any a, bool& is_valid) {
-            return (std::any_cast<C>(a).*m)(is_valid);
+    template< typename Ret, typename C >
+    any_mem_fn_bool( Ret ( C::* mem_fn )( bool & ) )
+    {
+        fn_ = [ mem_fn ]( std::any obj, bool & is_valid )
+        {
+            return ( std::any_cast< C >( obj ).*mem_fn )( is_valid );
         };
     }
 
-    template <typename Ret, typename C>
-    any_mem_fn_bool(Ret(C::* m)(bool&) const) {
-        fn_ = [m](std::any a, bool& is_valid) {
-            return (std::any_cast<C>(a).*m)(is_valid);
+    template< typename Ret, typename C >
+    any_mem_fn_bool( Ret ( C::* mem_fn )( bool & ) const )
+    {
+        fn_ = [ mem_fn ]( std::any obj, bool & is_valid )
+        {
+            return ( std::any_cast< C >( obj ).*mem_fn )( is_valid );
         };
     }
 
-    any_mem_fn_bool& operator=(any_mem_fn_bool&& rhs) = default;
-    any_mem_fn_bool& operator=(any_mem_fn_bool const& rhs) = default;
+    any_mem_fn_bool& operator=( any_mem_fn_bool       && rhs ) = default;
+    any_mem_fn_bool& operator=( any_mem_fn_bool const  & rhs ) = default;
 
     ~any_mem_fn_bool() = default;
 
-    template <typename T>
-    any_value invoke(T&& obj) {
-        try {
-            bool is_valid = false;
-            auto ret = fn_(std::forward<T>(obj), is_valid);
-            if (is_valid) {
-                return ret;
-            }
-            return {};
-        } catch (std::bad_any_cast const&) {
+    template< typename T >
+    any_value invoke( T && obj )
+    {
+        try
+        {
+            auto is_valid{ false };
+            auto result{ fn_( std::forward< T >( obj ), is_valid ) };
+            if ( is_valid ) { return result; }
+            else            { return {};     }
+        }
+        catch ( std::bad_any_cast const & )
+        {
             return {};
         }
     }
 
 private:
-    std::function<any_value(std::any, bool&)> fn_;
+    std::function< any_value( std::any, bool & )> fn_;
 };
 
 } // namespace booleval::utils

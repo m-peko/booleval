@@ -28,6 +28,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <booleval/utils/split_options.hpp>
 #include <booleval/utils/string_utils.hpp>
 
 class StringUtilsTest : public testing::Test {};

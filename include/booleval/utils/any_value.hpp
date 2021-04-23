@@ -34,7 +34,8 @@
 #include <type_traits>
 #include <booleval/utils/string_utils.hpp>
 
-namespace booleval::utils {
+namespace booleval::utils
+{
 
 /**
  * @class any_value

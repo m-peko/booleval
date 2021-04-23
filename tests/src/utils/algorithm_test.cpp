@@ -29,11 +29,11 @@
 
 #include <array>
 #include <gtest/gtest.h>
-#include <booleval/utils/algo_utils.hpp>
+#include <booleval/utils/algorithm.hpp>
 
-class AlgoUtilsTest : public testing::Test {};
+class AlgorithmTest : public testing::Test {};
 
-TEST_F(AlgoUtilsTest, Find) {
+TEST_F(AlgorithmTest, Find) {
     using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
@@ -54,7 +54,7 @@ TEST_F(AlgoUtilsTest, Find) {
     EXPECT_EQ(it, std::end(arr));
 }
 
-TEST_F(AlgoUtilsTest, FindIf) {
+TEST_F(AlgorithmTest, FindIf) {
     using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
@@ -75,7 +75,7 @@ TEST_F(AlgoUtilsTest, FindIf) {
     EXPECT_EQ(it, std::end(arr));
 }
 
-TEST_F(AlgoUtilsTest, FindIfNot) {
+TEST_F(AlgorithmTest, FindIfNot) {
     using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
@@ -96,7 +96,7 @@ TEST_F(AlgoUtilsTest, FindIfNot) {
     EXPECT_EQ(it, std::end(arr));
 }
 
-TEST_F(AlgoUtilsTest, Count) {
+TEST_F(AlgorithmTest, Count) {
     using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
@@ -113,7 +113,7 @@ TEST_F(AlgoUtilsTest, Count) {
     EXPECT_EQ(count, 5);
 }
 
-TEST_F(AlgoUtilsTest, CountIf) {
+TEST_F(AlgorithmTest, CountIf) {
     using namespace booleval;
 
     std::array<int, 5> arr{ 1, 2, 3, 4, 5 };

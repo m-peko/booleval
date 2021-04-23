@@ -62,12 +62,6 @@ if (NOT CMAKE_INSTALL_LIBDIR)
     set (CMAKE_INSTALL_LIBDIR lib)
 endif ()
 
-##########################
-### Add subdirectories ###
-##########################
-
-add_subdirectory (src)
-
 if (BOOLEVAL_BUILD_EXAMPLES)
     message (STATUS "Examples have been enabled")
     add_subdirectory (examples)

@@ -420,8 +420,8 @@ TEST_F(EvaluatorTest, NonExistantField) {
     EXPECT_TRUE(evaluator.is_activated());
     try {
         [[maybe_unused]] auto result = evaluator.evaluate(foo);
-        FAIL() << "Expected booleval::field_not_found";
-    } catch (booleval::field_not_found const& ex) {
+        FAIL() << "Expected std::runtime_error";
+    } catch (std::runtime_error const& ex) {
         EXPECT_EQ(ex.what(), std::string("Field 'field_not_exist' not found"));
     }
 }

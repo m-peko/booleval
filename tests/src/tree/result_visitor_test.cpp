@@ -28,7 +28,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <booleval/tree/tree_node.hpp>
+#include <booleval/tree/node.hpp>
 #include <booleval/token/token_type.hpp>
 #include <booleval/tree/result_visitor.hpp>
 
@@ -60,15 +60,15 @@ public:
         U value_b_;
     };
 
-    std::shared_ptr<booleval::tree::tree_node>
+    std::shared_ptr<booleval::tree::node>
     make_tree_node(booleval::token::token_type const type) {
-        return std::make_shared<booleval::tree::tree_node>(type);
+        return std::make_shared<booleval::tree::node>(type);
     }
 
-    std::shared_ptr<booleval::tree::tree_node>
+    std::shared_ptr<booleval::tree::node>
     make_tree_node(booleval::token::token_type const type, std::string_view const value) {
         booleval::token::token t(type, value);
-        return std::make_shared<booleval::tree::tree_node>(t);
+        return std::make_shared<booleval::tree::node>(t);
     }
 };
 
@@ -332,8 +332,8 @@ TEST_F(ResultVisitorTest, VisitNonExistantTreeNode) {
 
     try {
         [[maybe_unused]] auto result = visitor.visit(*op, foo);
-        FAIL() << "Expected booleval::field_not_found";
-    } catch (field_not_found const& ex) {
+        FAIL() << "Expected std::runtime_error";
+    } catch (std::runtime_error const& ex) {
         EXPECT_EQ(ex.what(), std::string("Field 'field_not_exist' not found"));
     }
 }
