@@ -46,7 +46,7 @@ namespace booleval::token
  * Tokenizes given expression, i.e. transforms given expression
  * from string to the collection of token objects.
  */
-inline std::vector< token > tokenize( std::string_view expression ) noexcept
+inline std::vector< token > tokenize( std::string_view const expression ) noexcept
 {
     std::vector< token > result;
 

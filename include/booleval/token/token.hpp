@@ -50,9 +50,10 @@ namespace booleval::token
 class token
 {
 public:
-    constexpr token() = default;
-    constexpr token( token       && rhs ) = default;
-    constexpr token( token const  & rhs ) = default;
+    constexpr token() noexcept = default;
+
+    constexpr token( token       && rhs ) noexcept = default;
+    constexpr token( token const  & rhs ) noexcept = default;
 
     constexpr token( token_type const type ) noexcept
         : type_ ( type )
@@ -69,8 +70,8 @@ public:
         , value_( value )
     {}
 
-    token & operator=( token       && rhs ) = default;
-    token & operator=( token const  & rhs ) = default;
+    token & operator=( token       && rhs ) noexcept = default;
+    token & operator=( token const  & rhs ) noexcept = default;
 
     [[ nodiscard ]] constexpr bool operator==( token const & rhs ) const noexcept
     {
@@ -78,7 +79,7 @@ public:
                value_ == rhs.value_;
     }
 
-    ~token() = default;
+    ~token() noexcept = default;
 
     /**
      * Sets the token type.
@@ -192,8 +193,8 @@ public:
     }
 
 private:
-    token_type       type_{ token_type::unknown };
-    std::string_view value_;
+    token_type       type_ { token_type::unknown };
+    std::string_view value_{};
 };
 
 } // namespace booleval::token

@@ -51,18 +51,18 @@ struct node
     std::shared_ptr< node > left { nullptr };
     std::shared_ptr< node > right{ nullptr };
 
-    constexpr node() = default;
+    constexpr node() noexcept = default;
 
-    node( node       && rhs ) = default;
-    node( node const  & rhs ) = default;
+    node( node       && rhs ) noexcept = default;
+    node( node const  & rhs ) noexcept = default;
 
-    constexpr node( token::token_type const   type  ) : token( type  ) {}
-    constexpr node( token::token      const & token ) : token( token ) {}
+    constexpr node( token::token_type const   type  ) noexcept : token( type  ) {}
+    constexpr node( token::token      const & token ) noexcept : token( token ) {}
 
-    node & operator=( node       && rhs ) = default;
-    node & operator=( node const  & rhs ) = default;
+    node & operator=( node       && rhs ) noexcept = default;
+    node & operator=( node const  & rhs ) noexcept = default;
 
-    ~node() = default;
+    ~node() noexcept = default;
 };
 
 } // namespace booleval::tree
