@@ -72,14 +72,14 @@ namespace
 
 TEST( EvaluatorTest, DefaultConstructor )
 {
-    booleval::evaluator<> evaluator;
+    booleval::evaluator evaluator;
 
     ASSERT_FALSE( evaluator.is_activated() );
 }
 
 TEST( EvaluatorTest, EmptyExpression )
 {
-    booleval::evaluator<> evaluator;
+    booleval::evaluator evaluator;
 
     ASSERT_TRUE ( evaluator.expression("")                            );
     ASSERT_FALSE( evaluator.is_activated()                            );
@@ -88,7 +88,7 @@ TEST( EvaluatorTest, EmptyExpression )
 
 TEST( EvaluatorTest, MissingParenthesesExpression )
 {
-    booleval::evaluator<> evaluator;
+    booleval::evaluator evaluator;
 
     ASSERT_FALSE( evaluator.expression( "(field_x foo or field_y bar" ) );
     ASSERT_FALSE( evaluator.is_activated()                              );
@@ -97,7 +97,7 @@ TEST( EvaluatorTest, MissingParenthesesExpression )
 
 TEST( EvaluatorTest, MultipleFieldsInRowExpression )
 {
-    booleval::evaluator<> evaluator;
+    booleval::evaluator evaluator;
 
     ASSERT_FALSE( evaluator.expression( "field_x foo field_y" )       );
     ASSERT_FALSE( evaluator.is_activated()                            );
@@ -109,11 +109,9 @@ TEST( EvaluatorTest, EqualToOperator )
     foo< std::string > x{ "foo" };
     foo< std::string > y{ "bar" };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
-        {
-            { "field", &foo< std::string >::value }
-        }
+        booleval::make_field( "field", &foo< std::string >::value )
     };
 
     {
@@ -149,11 +147,9 @@ TEST( EvaluatorTest, NotEqualToOperator )
     foo< std::string > x{ "foo" };
     foo< std::string > y{ "bar" };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
-        {
-            { "field", &foo< std::string >::value }
-        }
+        booleval::make_field( "field", &foo< std::string >::value )
     };
 
     {
@@ -186,18 +182,14 @@ TEST( EvaluatorTest, GreaterThanOperator )
     foo< std::string > m{ "1000" };
     foo< std::string > n{ "50"   };
 
-    booleval::evaluator<> evaluator_digits
+    booleval::evaluator evaluator_digits
     {
-        {
-            { "field", &foo< float >::value }
-        }
+        booleval::make_field( "field", &foo< float>::value )
     };
 
-    booleval::evaluator<> evaluator_strings
+    booleval::evaluator evaluator_strings
     {
-        {
-            { "field", &foo< std::string >::value }
-        }
+        booleval::make_field( "field", &foo< std::string >::value )
     };
 
     {
@@ -232,11 +224,9 @@ TEST( EvaluatorTest, GreaterThanOrEqualToOperator )
     foo< double > y{ 2.345678 };
     foo< double > z{ 0.123456 };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
-        {
-            { "field", &foo< double >::value }
-        }
+        booleval::make_field( "field", &foo< double>::value )
     };
 
     {
@@ -263,18 +253,14 @@ TEST( EvaluatorTest, LessThanOperator )
     foo< std::string > m{ "1000" };
     foo< std::string > n{ "50"   };
 
-    booleval::evaluator<> evaluator_digits
+    booleval::evaluator evaluator_digits
     {
-        {
-            { "field", &foo< unsigned >::value }
-        }
+        booleval::make_field( "field", &foo< unsigned>::value )
     };
 
-    booleval::evaluator<> evaluator_strings
+    booleval::evaluator evaluator_strings
     {
-        {
-            { "field", &foo< std::string >::value }
-        }
+        booleval::make_field( "field", &foo< std::string >::value )
     };
 
     {
@@ -309,11 +295,9 @@ TEST( EvaluatorTest, LessThanOrEqualToOperator )
     foo< double > y{ 2.345678 };
     foo< double > z{ 0.123456 };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
-        {
-            { "field", &foo< double >::value }
-        }
+        booleval::make_field( "field", &foo< double>::value )
     };
 
     {
@@ -337,11 +321,11 @@ TEST( EvaluatorTest, AndOperator )
     bar< unsigned, std::string > x{ 1, "bar"     };
     bar< unsigned, std::string > y{ 3, "bar bar" };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
         {
-            { "field_1", &bar< unsigned, std::string >::value_1 },
-            { "field_2", &bar< unsigned, std::string >::value_2 }
+            booleval::make_field( "field_1", &bar< unsigned, std::string >::value_1 ),
+            booleval::make_field( "field_2", &bar< unsigned, std::string >::value_2 )
         }
     };
 
@@ -382,11 +366,11 @@ TEST( EvaluatorTest, OrOperator )
     bar< unsigned, std::string > x{ 1, "bar"     };
     bar< unsigned, std::string > y{ 3, "bar bar" };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
         {
-            { "field_1", &bar< unsigned, std::string >::value_1 },
-            { "field_2", &bar< unsigned, std::string >::value_2 }
+            booleval::make_field( "field_1", &bar< unsigned, std::string >::value_1 ),
+            booleval::make_field( "field_2", &bar< unsigned, std::string >::value_2 )
         }
     };
 
@@ -447,11 +431,11 @@ TEST( EvaluatorTest, MultipleOperators )
     bar< std::string, unsigned > m{ "baz", 1 };
     bar< std::string, unsigned > n{ "qux", 2 };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
         {
-            { "field_1", &bar< std::string, unsigned >::value_1 },
-            { "field_2", &bar< std::string, unsigned >::value_2 }
+            booleval::make_field( "field_1", &bar< std::string, unsigned >::value_1 ),
+            booleval::make_field( "field_2", &bar< std::string, unsigned >::value_2 )
         }
     };
 
@@ -494,11 +478,11 @@ TEST( EvaluatorTest, DifferentClasses )
     foo< unsigned              > x{ 1        };
     bar< unsigned, std::string > y{ 2, "bar" };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
         {
-            { "field_1", &foo< unsigned              >::value   },
-            { "field_2", &bar< unsigned, std::string >::value_2 }
+            booleval::make_field( "field_1", &foo< unsigned              >::value   ),
+            booleval::make_field( "field_2", &bar< unsigned, std::string >::value_2 )
         }
     };
 
@@ -514,11 +498,9 @@ TEST( EvaluatorTest, UnknownField )
 {
     foo< unsigned > x{ 1 };
 
-    booleval::evaluator<> evaluator
+    booleval::evaluator evaluator
     {
-        {
-            { "field", &foo< unsigned >::value }
-        }
+        booleval::make_field( "field", &foo< unsigned>::value )
     };
 
     {

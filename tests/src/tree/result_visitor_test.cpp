@@ -90,12 +90,13 @@ TEST( ResultVisitorTest, AndTreeNode )
     bar< unsigned, unsigned > y{ 2, 3 };
     bar< unsigned, unsigned > z{ 3, 4 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
+
     visitor.fields
     (
         {
-            { "field_1", &bar< unsigned, unsigned >::value_1 },
-            { "field_2", &bar< unsigned, unsigned >::value_2 }
+            make_field( "field_1", &bar< unsigned, unsigned >::value_1 ),
+            make_field( "field_2", &bar< unsigned, unsigned >::value_2 )
         }
     );
 
@@ -123,11 +124,11 @@ TEST( ResultVisitorTest, OrTreeNode )
     foo< unsigned > y{ 2 };
     foo< unsigned > z{ 3 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 
@@ -154,11 +155,11 @@ TEST( ResultVisitorTest, EqualToTreeNode )
     foo< unsigned > x{ 1 };
     foo< unsigned > y{ 2 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 
@@ -178,11 +179,11 @@ TEST( ResultVisitorTest, NotEqualToTreeNode )
     foo< unsigned > x{ 1 };
     foo< unsigned > y{ 2 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 
@@ -203,11 +204,11 @@ TEST( ResultVisitorTest, GreaterThanTreeNode )
     foo< unsigned > y{ 1 };
     foo< unsigned > z{ 2 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 
@@ -229,11 +230,11 @@ TEST( ResultVisitorTest, LessThanTreeNode )
     foo< unsigned > y{ 1 };
     foo< unsigned > z{ 2 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 
@@ -255,11 +256,11 @@ TEST( ResultVisitorTest, GreaterThanOrEqualToTreeNode )
     foo< unsigned > y{ 1 };
     foo< unsigned > z{ 2 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 
@@ -281,11 +282,11 @@ TEST( ResultVisitorTest, LessThanOrEqualToTreeNode )
     foo< unsigned > y{ 1 };
     foo< unsigned > z{ 2 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 
@@ -306,11 +307,11 @@ TEST( ResultVisitorTest, UnknownTreeNode )
     foo< unsigned > x{ 1 };
     foo< unsigned > y{ 2 };
 
-    tree::result_visitor<> visitor;
+    tree::result_visitor visitor;
     visitor.fields
     (
         {
-            { "field", &foo< unsigned >::value }
+            make_field( "field", &foo< unsigned >::value )
         }
     );
 

@@ -30,11 +30,11 @@
 #ifndef BOOLEVAL_EVALUATOR_HPP
 #define BOOLEVAL_EVALUATOR_HPP
 
-#include <map>
 #include <string_view>
+#include <initializer_list>
 
+#include <booleval/field.hpp>
 #include <booleval/result.hpp>
-#include <booleval/utils/any_mem_fn.hpp>
 #include <booleval/tree/result_visitor.hpp>
 #include <booleval/tree/tree.hpp>
 
@@ -47,32 +47,30 @@ namespace booleval
  * Represents a class for evaluating logical expressions in a form of a string.
  * It builds an expression tree and traverses that tree in order to evaluate fields.
  */
-template< typename MemFn = utils::any_mem_fn >
 class evaluator
 {
-    using field_map = std::map< std::string_view, MemFn >;
-
 public:
-    evaluator() = default;
-    evaluator( evaluator       && rhs ) = default;
-    evaluator( evaluator const  & rhs ) = default;
+    evaluator() noexcept = default;
 
-    evaluator( field_map const & fields )
+    evaluator( evaluator       && rhs ) noexcept = default;
+    evaluator( evaluator const  & rhs ) noexcept = default;
+
+    evaluator( std::initializer_list< field_base * > fields ) noexcept
     {
         result_visitor_.fields( fields );
     }
 
-    evaluator& operator=( evaluator       && rhs ) = default;
-    evaluator& operator=( evaluator const  & rhs ) = default;
+    evaluator& operator=( evaluator       && rhs ) noexcept = default;
+    evaluator& operator=( evaluator const  & rhs ) noexcept = default;
 
-    ~evaluator() = default;
+    ~evaluator() noexcept = default;
 
     /**
-     * Sets the key - member function map used for evaluation of expression tree.
+     * Sets the fields used for evaluation of expression tree.
      *
-     * @param fields Key - member function map
+     * @param fields Fields to be used in evaluation process
      */
-    void fields( field_map const & fields ) noexcept
+    void fields( std::initializer_list< field_base * > fields ) noexcept
     {
         result_visitor_.fields( fields );
     }
@@ -95,7 +93,7 @@ public:
      *
      * @return True if the expression is valid, otherwise false
      */
-    [[ nodiscard ]] bool expression( std::string_view expression )
+    [[ nodiscard ]] bool expression( std::string_view expression ) noexcept
     {
         is_activated_ = false;
 
@@ -118,11 +116,11 @@ public:
      * @return True if the object's members satisfy the expression, otherwise false
      */
     template< typename T >
-    [[ nodiscard ]] result evaluate( T const & obj )
+    [[ nodiscard ]] result evaluate( T && obj ) noexcept
     {
         if ( is_activated_ )
         {
-            return result_visitor_.visit( *root_, obj );
+            return result_visitor_.visit( *root_, std::forward< T >( obj ) );
         }
         else
         {
@@ -135,9 +133,9 @@ public:
     }
 
 private:
-    bool                          is_activated_{ false   };
-    std::shared_ptr< tree::node > root_        { nullptr };
-    tree::result_visitor< MemFn > result_visitor_;
+    bool                          is_activated_  { false   };
+    std::shared_ptr< tree::node > root_          { nullptr };
+    tree::result_visitor          result_visitor_{};
 };
 
 } // namespace booleval

@@ -30,13 +30,14 @@
 #ifndef BOOLEVAL_RESULT_VISITOR_HPP
 #define BOOLEVAL_RESULT_VISITOR_HPP
 
-#include <map>
+#include <memory>
+#include <vector>
 #include <functional>
 #include <string_view>
 
+#include <booleval/field.hpp>
 #include <booleval/result.hpp>
 #include <booleval/tree/node.hpp>
-#include <booleval/utils/any_mem_fn.hpp>
 
 namespace booleval::tree
 {
@@ -49,21 +50,17 @@ using namespace std::string_literals;
  * Represents a visitor for expression tree nodes in order to get the
  * final result of the expression based on the fields of an object being passed.
  */
-template< typename MemFn = utils::any_mem_fn >
 class result_visitor
 {
-    using field_map = std::map< std::string_view, MemFn >;
-
 public:
-
     /**
-     * Sets the key - member function map used for evaluation of expression tree.
+     * Sets the fields used for evaluation of expression tree.
      *
-     * @param fields Key - member function map
+     * @param fields Fields to be used in evaluation process
      */
-    void fields( field_map const & fields ) noexcept
+    void fields( std::initializer_list< field_base * > fields ) noexcept
     {
-        fields_ = fields;
+        fields_ = std::vector< std::unique_ptr< field_base > >{ std::begin( fields ), std::end( fields ) };
     }
 
     /**
@@ -75,10 +72,9 @@ public:
      * @return Result
      */
     template< typename T >
-    [[ nodiscard ]] constexpr result visit( node const & node, T && obj );
+    [[ nodiscard ]] constexpr result visit( node const & node, T && obj ) const noexcept;
 
 private:
-
     /**
      * Visits tree node representing one of logical operations.
      *
@@ -89,7 +85,7 @@ private:
      * @return Result
      */
     template< typename T, typename F >
-    [[ nodiscard ]] constexpr result visit_logical( node const & node, T && obj, F && f )
+    [[ nodiscard ]] constexpr result visit_logical( node const & node, T && obj, F && f ) const noexcept
     {
         auto const left { visit( *node.left , std::forward< T >( obj ) ) };
         auto const right{ visit( *node.right, std::forward< T >( obj ) ) };
@@ -117,11 +113,23 @@ private:
      * @return Result
      */
     template< typename T, typename F >
-    [[ nodiscard ]] constexpr result visit_relational( node const & node, T && obj, F && f )
+    [[ nodiscard ]] constexpr result visit_relational( node const & node, T && obj, F && f ) const noexcept
     {
         auto const key{ node.left->token };
 
-        auto const it{ fields_.find( key.value() ) };
+        auto const it
+        {
+            std::find_if
+            (
+                std::cbegin( fields_ ),
+                std::cend  ( fields_ ),
+                [ key ]( auto && field ) noexcept
+                {
+                    return field->name == key.value();
+                }
+            )
+        };
+
         if ( it == std::end( fields_ ) )
         {
             return
@@ -135,7 +143,7 @@ private:
         {
             f
             (
-                it->second.invoke( std::forward< T >( obj ) ),
+                ( *it )->template invoke( std::forward< T >( obj ) ),
                 node.right->token.value()
             )
         };
@@ -147,12 +155,11 @@ private:
     }
 
 private:
-    field_map fields_;
+    std::vector< std::unique_ptr< field_base > > fields_;
 };
 
-template< typename MemFn >
 template< typename T >
-constexpr result result_visitor< MemFn >::visit( node const & node, T && obj )
+constexpr result result_visitor::visit( node const & node, T && obj ) const noexcept
 {
     if ( nullptr == node.left || nullptr == node.right )
     {
