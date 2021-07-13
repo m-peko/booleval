@@ -36,7 +36,7 @@ namespace booleval::utils
 {
 
 /**
- * enum class split_options
+ * @enum split_options
  *
  * Represents an options used when splitting a string.
  */
@@ -51,7 +51,7 @@ enum class [[ nodiscard ]] split_options : std::uint8_t
 
 template< typename EnumT >
 constexpr std::enable_if_t< std::is_enum_v< EnumT >, EnumT >
-operator|( EnumT lhs, EnumT rhs )
+operator|( EnumT const lhs, EnumT const rhs ) noexcept
 {
     return static_cast< EnumT >
     (
@@ -62,7 +62,7 @@ operator|( EnumT lhs, EnumT rhs )
 
 template< typename EnumT >
 constexpr std::enable_if_t< std::is_enum_v< EnumT >, EnumT >
-operator&( EnumT lhs, EnumT rhs )
+operator&( EnumT const lhs, EnumT const rhs ) noexcept
 {
     return static_cast< EnumT >
     (
@@ -73,7 +73,7 @@ operator&( EnumT lhs, EnumT rhs )
 
 template< typename EnumT >
 constexpr std::enable_if_t< std::is_enum_v< EnumT >, EnumT >
-operator^( EnumT lhs, EnumT rhs )
+operator^( EnumT const lhs, EnumT const rhs ) noexcept
 {
     return static_cast< EnumT >
     (
@@ -84,7 +84,7 @@ operator^( EnumT lhs, EnumT rhs )
 
 template< typename EnumT >
 constexpr std::enable_if_t< std::is_enum_v< EnumT >, EnumT >
-operator~( EnumT rhs )
+operator~( EnumT const rhs ) noexcept
 {
     return static_cast< EnumT >
     (
@@ -94,7 +94,7 @@ operator~( EnumT rhs )
 
 template< typename EnumT >
 [[ nodiscard ]] constexpr std::enable_if_t< std::is_enum_v< EnumT >, EnumT > &
-operator|=( EnumT & lhs, EnumT rhs )
+operator|=( EnumT & lhs, EnumT const rhs ) noexcept
 {
     return static_cast< EnumT >
     (
@@ -105,7 +105,7 @@ operator|=( EnumT & lhs, EnumT rhs )
 
 template< typename EnumT >
 [[ nodiscard ]] constexpr std::enable_if_t< std::is_enum_v< EnumT >, EnumT > &
-operator&=( EnumT & lhs, EnumT rhs )
+operator&=( EnumT & lhs, EnumT const rhs ) noexcept
 {
     return static_cast< EnumT >
     (
@@ -116,7 +116,7 @@ operator&=( EnumT & lhs, EnumT rhs )
 
 template< typename EnumT >
 [[ nodiscard ]] constexpr std::enable_if_t< std::is_enum_v< EnumT >, EnumT > &
-operator^=( EnumT & lhs, EnumT rhs )
+operator^=( EnumT & lhs, EnumT const rhs ) noexcept
 {
     return static_cast< EnumT >
     (
