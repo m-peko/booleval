@@ -36,7 +36,7 @@
 #include <string_view>
 
 #include <booleval/token/token_type.hpp>
-#include <booleval/utils/algorithm.hpp>
+#include <booleval/utils/algo_utils.hpp>
 
 namespace booleval::token
 {

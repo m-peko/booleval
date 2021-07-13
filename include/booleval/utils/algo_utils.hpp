@@ -34,27 +34,6 @@ namespace booleval::utils
 {
 
 /**
- * Finds the first element in the range [first, last) that
- * is equal to the specified value.
- *
- * @param first Beginning of the range
- * @param last  End of the range
- * @param value Value to compare the elements to
- *
- * @return Iterator to the first element satisfying the condition or
- *         last if no such element is found.
- */
-template< typename InputIt, typename T >
-[[ nodiscard ]] constexpr InputIt find( InputIt first, InputIt last, T && value ) noexcept
-{
-    for ( ; first != last; ++first )
-    {
-        if ( *first == value ) { return first; }
-    }
-    return last;
-}
-
-/**
  * Finds the first element in the range [first, last) for
  * which the predicate returns true.
  *
@@ -73,48 +52,6 @@ template< typename InputIt, typename UnaryPredicate >
         if ( p( *first ) ) { return first; }
     }
     return last;
-}
-
-/**
- * Finds the first element in the range [first, last) for
- * which the predicate returns false.
- *
- * @param first Beginning of the range
- * @param last  End of the range
- * @param p     Unary predicate which returns false for the required element
- *
- * @return Iterator to the first element satisfying the condition or
- *         last if no such element is found.
- */
-template< typename InputIt, typename UnaryPredicate >
-[[ nodiscard ]] constexpr InputIt find_if_not( InputIt first, InputIt last, UnaryPredicate p ) noexcept
-{
-    for ( ; first != last; ++first )
-    {
-        if ( !p( *first ) ) { return first; }
-    }
-    return last;
-}
-
-/**
- * Counts the elements in the range [first, last) that
- * are equal to the value.
- *
- * @param first Beginning of the range
- * @param last  End of the range
- * @param value Value to compare the elements to
- *
- * @return Number of elements equal to the value.
- */
-template< typename InputIt, typename T >
-[[ nodiscard ]] constexpr auto count( InputIt first, InputIt last, T && value ) noexcept
-{
-    typename std::iterator_traits< InputIt >::difference_type result{ 0 };
-    for ( ; first != last; ++first )
-    {
-        if ( *first == value ) { result++; }
-    }
-    return result;
 }
 
 /**

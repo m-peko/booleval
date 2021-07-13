@@ -29,102 +29,52 @@
 
 #include <array>
 #include <gtest/gtest.h>
-#include <booleval/utils/algorithm.hpp>
+#include <booleval/utils/algo_utils.hpp>
 
-class AlgorithmTest : public testing::Test {};
-
-TEST_F(AlgorithmTest, Find) {
+TEST( AlgoUtilsTest, FindIf )
+{
     using namespace booleval;
 
-    std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
+    std::array arr{ 1, 2, 3, 4, 5 };
 
-    auto it = utils::find(std::begin(arr), std::end(arr), 1);
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 1);
-
-    it = utils::find(std::begin(arr), std::end(arr), 3);
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 3);
-
-    it = utils::find(std::begin(arr), std::end(arr), 5);
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 5);
-
-    it = utils::find(std::begin(arr), std::end(arr), 9);
-    EXPECT_EQ(it, std::end(arr));
+    {
+        auto const it{ utils::find_if( std::begin( arr ), std::end( arr ), []( auto && i ) { return i == 1; } ) };
+        ASSERT_NE(  it, std::end( arr ) );
+        ASSERT_EQ( *it, 1               );
+    }
+    {
+        auto const it{ utils::find_if( std::begin( arr ), std::end( arr ), []( auto && i ) { return i == 3; } ) };
+        ASSERT_NE(  it, std::end( arr ) );
+        ASSERT_EQ( *it, 3               );
+    }
+    {
+        auto const it{ utils::find_if( std::begin( arr ), std::end( arr ), []( auto && i ) { return i == 5; } ) };
+        ASSERT_NE(  it, std::end( arr ) );
+        ASSERT_EQ( *it, 5               );
+    }
+    {
+        auto const it{ utils::find_if( std::begin( arr ), std::end( arr ), []( auto && i ) { return i == 9; } ) };
+        ASSERT_EQ(  it, std::end( arr ) );
+    }
 }
 
-TEST_F(AlgorithmTest, FindIf) {
+TEST( AlgoUtilsTest, CountIf )
+{
     using namespace booleval;
 
-    std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
+    std::array arr{ 1, 2, 3, 4, 5 };
 
-    auto it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 1; });
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 1);
-
-    it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 3; });
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 3);
-
-    it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 5; });
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 5);
-
-    it = utils::find_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 9; });
-    EXPECT_EQ(it, std::end(arr));
-}
-
-TEST_F(AlgorithmTest, FindIfNot) {
-    using namespace booleval;
-
-    std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
-
-    auto it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i == 2; });
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 1);
-
-    it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i < 3; });
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 3);
-
-    it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i < 5; });
-    EXPECT_NE(it, std::end(arr));
-    EXPECT_EQ(*it, 5);
-
-    it = utils::find_if_not(std::begin(arr), std::end(arr), [](auto&& i) { return i > 0 && i < 6; });
-    EXPECT_EQ(it, std::end(arr));
-}
-
-TEST_F(AlgorithmTest, Count) {
-    using namespace booleval;
-
-    std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
-
-    auto count = utils::count(std::begin(arr), std::end(arr), 6);
-    EXPECT_EQ(count, 0);
-
-    arr = { 1, 2, 2, 2, 5 };
-    count = utils::count(std::begin(arr), std::end(arr), 2);
-    EXPECT_EQ(count, 3);
-
-    arr = { 2, 2, 2, 2, 2 };
-    count = utils::count(std::begin(arr), std::end(arr), 2);
-    EXPECT_EQ(count, 5);
-}
-
-TEST_F(AlgorithmTest, CountIf) {
-    using namespace booleval;
-
-    std::array<int, 5> arr{ 1, 2, 3, 4, 5 };
-
-    auto count = utils::count_if(std::begin(arr), std::end(arr), [](auto&& i) { return i > 6; });
-    EXPECT_EQ(count, 0);
-
-    count = utils::count_if(std::begin(arr), std::end(arr), [](auto&& i) { return i < 6; });
-    EXPECT_EQ(count, 5);
-
-    arr = { 1, 2, 2, 2, 5 };
-    count = utils::count_if(std::begin(arr), std::end(arr), [](auto&& i) { return i == 2; });
-    EXPECT_EQ(count, 3);
+    {
+        auto const count{ utils::count_if( std::begin( arr ), std::end( arr ), []( auto && i ) { return i > 6; } ) };
+        ASSERT_EQ( count, 0 );
+    }
+    {
+        auto const count{ utils::count_if( std::begin( arr ), std::end( arr ), []( auto && i ) { return i < 6; } ) };
+        ASSERT_EQ( count, 5 );
+    }
+    {
+        arr = { 1, 2, 2, 2, 5 };
+        auto const count{ utils::count_if( std::begin( arr ), std::end( arr ), []( auto && i ) { return i == 2; } ) };
+        ASSERT_EQ( count, 3 );
+    }
 }
