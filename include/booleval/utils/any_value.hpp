@@ -43,146 +43,115 @@ namespace booleval::utils
  * Represents the class that accepts any type of value through its constructor
  * or assignment operator and internally stores its string version.
  */
-class any_value {
+class any_value
+{
 public:
-    any_value() = default;
-    any_value(any_value&& rhs) = default;
-    any_value(any_value const& rhs) = default;
+    any_value() noexcept = default;
 
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    any_value(T const rhs);
+    any_value( any_value       && rhs ) noexcept = default;
+    any_value( any_value const  & rhs ) noexcept = default;
 
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    any_value(T const rhs);
-
-    any_value& operator=(any_value&& rhs) = default;
-    any_value& operator=(any_value const& rhs) = default;
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    any_value& operator=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    any_value& operator=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[ nodiscard ]] bool operator==(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[ nodiscard ]] bool operator==(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[ nodiscard ]] bool operator!=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[ nodiscard ]] bool operator!=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[ nodiscard ]] bool operator>(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[ nodiscard ]] bool operator>(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[ nodiscard ]] bool operator<(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[ nodiscard ]] bool operator<(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[ nodiscard ]] bool operator>=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[ nodiscard ]] bool operator>=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[ nodiscard ]] bool operator<=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[ nodiscard ]] bool operator<=(T const rhs);
-
-    ~any_value() = default;
-
-    [[ nodiscard ]] std::string const& str() const noexcept {
-        return value_;
+    template< typename T >
+    any_value( T && rhs ) noexcept
+    {
+        if constexpr ( std::is_arithmetic_v< std::remove_reference_t< T > > )
+        {
+            value_ = utils::to_chars< std::remove_reference_t< T > >( std::forward< T >( rhs ) );
+            use_string_comparison_ = false;
+        }
+        else if constexpr ( std::is_constructible_v< std::string, std::remove_reference_t< T > > )
+        {
+            value_ = std::forward< T >( rhs );
+            use_string_comparison_ = true;
+        }
     }
 
-    friend bool operator==(any_value const& lhs, any_value const& rhs);
-    friend bool operator!=(any_value const& lhs, any_value const& rhs);
+    any_value& operator=( any_value       && rhs ) noexcept = default;
+    any_value& operator=( any_value const  & rhs ) noexcept = default;
+
+    template< typename T >
+    any_value& operator=( T && rhs ) noexcept
+    {
+        if constexpr ( std::is_arithmetic_v< std::remove_reference_t< T > > )
+        {
+            value_ = utils::to_chars< std::remove_reference_t< T > >( std::forward< T >( rhs ) );
+            use_string_comparison_ = false;
+        }
+        else if constexpr ( std::is_constructible_v< std::string, std::remove_reference_t< T > > )
+        {
+            value_ = std::forward< T >( rhs );
+            use_string_comparison_ = true;
+        }
+        return *this;
+    }
+
+    template< typename T >
+    [[ nodiscard ]] bool operator==( T && rhs ) noexcept
+    {
+        if constexpr ( std::is_arithmetic_v< std::remove_reference_t< T > > )
+        {
+            return value_ == utils::to_chars< std::remove_reference_t< T > >( std::forward< T >( rhs ) );
+        }
+        else if constexpr ( std::is_constructible_v< std::string, std::remove_reference_t< T > > )
+        {
+            return value_ == rhs;
+        }
+    }
+
+    template< typename T >
+    [[ nodiscard ]] bool operator!=( T && rhs ) noexcept
+    {
+        if constexpr ( std::is_arithmetic_v< std::remove_reference_t< T > > )
+        {
+            return value_ != utils::to_chars< std::remove_reference_t< T > >( std::forward< T >( rhs ) );
+        }
+        else if constexpr ( std::is_constructible_v< std::string, std::remove_reference_t< T > > )
+        {
+            return value_ != rhs;
+        }
+    }
+
+    template <typename T,
+              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+    [[ nodiscard ]] bool operator>(T const rhs);
+
+    template <typename T,
+              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
+    [[ nodiscard ]] bool operator>(T const rhs);
+
+    template <typename T,
+              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+    [[ nodiscard ]] bool operator<(T const rhs);
+
+    template <typename T,
+              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
+    [[ nodiscard ]] bool operator<(T const rhs);
+
+    template <typename T,
+              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+    [[ nodiscard ]] bool operator>=(T const rhs);
+
+    template <typename T,
+              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
+    [[ nodiscard ]] bool operator>=(T const rhs);
+
+    template <typename T,
+              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+    [[ nodiscard ]] bool operator<=(T const rhs);
+
+    template <typename T,
+              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
+    [[ nodiscard ]] bool operator<=(T const rhs);
+
+    ~any_value() noexcept = default;
+
+    friend bool operator==( any_value const & lhs, any_value const & rhs ) noexcept;
+    friend bool operator!=( any_value const & lhs, any_value const & rhs ) noexcept;
 
 private:
     std::string value_;
     bool use_string_comparison_{ false };
 };
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-any_value::any_value(T const rhs)
-    : value_(utils::to_chars<T>(rhs)),
-      use_string_comparison_(false)
-{}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-any_value::any_value(T const rhs)
-    : value_(rhs),
-      use_string_comparison_(true)
-{}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-any_value& any_value::operator=(T const rhs) {
-    value_ = utils::to_chars<T>(rhs);
-    use_string_comparison_ = false;
-    return *this;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-any_value& any_value::operator=(T const rhs) {
-    value_ = rhs;
-    use_string_comparison_ = true;
-    return *this;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator==(T const rhs) {
-    return value_ == utils::to_chars<T>(rhs);
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator==(T const rhs) {
-    return value_ == rhs;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator!=(T const rhs) {
-    return value_ != utils::to_chars<T>(rhs);
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator!=(T const rhs) {
-    return value_ != rhs;
-}
 
 template <typename T,
           typename std::enable_if_t<std::is_arithmetic_v<T>>*>
@@ -292,11 +261,13 @@ bool any_value::operator<=(T const rhs) {
     return false;
 }
 
-[[ nodiscard ]] inline bool operator==(any_value const& lhs, any_value const& rhs) {
+[[ nodiscard ]] inline bool operator==( any_value const & lhs, any_value const & rhs ) noexcept
+{
     return lhs.value_ == rhs.value_;
 }
 
-[[ nodiscard ]] inline bool operator!=(any_value const& lhs, any_value const& rhs) {
+[[ nodiscard ]] inline bool operator!=( any_value const & lhs, any_value const & rhs ) noexcept
+{
     return lhs.value_ != rhs.value_;
 }
 

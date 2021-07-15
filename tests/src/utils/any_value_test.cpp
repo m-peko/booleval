@@ -32,80 +32,66 @@
 #include <gtest/gtest.h>
 #include <booleval/utils/any_value.hpp>
 
-class AnyValueTest : public testing::Test {};
-
-TEST_F(AnyValueTest, IntValue) {
-    using namespace booleval::utils;
-
-    any_value value{ 1 };
-    EXPECT_EQ(value, "1");
-    EXPECT_EQ(value, 1U);
+TEST( AnyValueTest, ArithmeticValue )
+{
+    {
+        booleval::utils::any_value value{ 1 };
+        ASSERT_EQ( value, "1" );
+        ASSERT_EQ( value, 1u  );
+    }
+    {
+        booleval::utils::any_value value{ 1.234567f };
+        ASSERT_EQ( value, "1.234567" );
+        ASSERT_EQ( value, 1.234567f  );
+    }
 }
 
-TEST_F(AnyValueTest, FloatingPointValue) {
-    using namespace booleval::utils;
-
-    any_value value{ 1.234567 };
-    EXPECT_EQ(value, "1.234567");
-    EXPECT_EQ(value, 1.234567F);
+TEST( AnyValueTest, StringValue )
+{
+    {
+        booleval::utils::any_value value{ "abc" };
+        ASSERT_EQ( value, "abc" );
+    }
+    {
+        booleval::utils::any_value value{ std::string{ "abc" } };
+        ASSERT_EQ( value, "abc" );
+    }
+    {
+        booleval::utils::any_value value{ std::string_view{ "abc" } };
+        ASSERT_EQ( value, "abc" );
+    }
 }
 
-TEST_F(AnyValueTest, ConstCharPointerValue) {
-    using namespace booleval::utils;
+TEST( AnyValueTest, Comparisons )
+{
+    {
+        booleval::utils::any_value value{ 1 };
 
-    char const* ptr{ "abc" };
-    any_value value{ ptr };
-    EXPECT_EQ(value, ptr);
-}
+        ASSERT_TRUE( value == 1U );
+        ASSERT_TRUE( value != 2U );
 
-TEST_F(AnyValueTest, StringValue) {
-    using namespace booleval::utils;
+        ASSERT_TRUE( value > 0U );
+        ASSERT_TRUE( value < 2U );
 
-    std::string str{ "abc" };
-    any_value value{ str };
-    EXPECT_EQ(value, str);
-}
+        ASSERT_TRUE( value >= 0U );
+        ASSERT_TRUE( value >= 1U );
 
-TEST_F(AnyValueTest, StringViewValue) {
-    using namespace booleval::utils;
+        ASSERT_TRUE( value <= 1U );
+        ASSERT_TRUE( value <= 2U );
+    }
+    {
+        booleval::utils::any_value value{ 1.234567 };
 
-    std::string_view strv{ "abc" };
-    any_value value{ strv };
-    EXPECT_EQ(value, strv);
-}
+        ASSERT_TRUE( value == 1.234567F );
+        ASSERT_TRUE( value != 7.654321F );
 
-TEST_F(AnyValueTest, IntComparisons) {
-    using namespace booleval::utils;
+        ASSERT_TRUE( value > 0.123456F );
+        ASSERT_TRUE( value < 2.345678F );
 
-    any_value value{ 1 };
+        ASSERT_TRUE( value >= 0.123456F );
+        ASSERT_TRUE( value >= 1.234567F );
 
-    EXPECT_TRUE(value == 1U);
-    EXPECT_TRUE(value != 2U);
-
-    EXPECT_TRUE(value > 0U);
-    EXPECT_TRUE(value < 2U);
-
-    EXPECT_TRUE(value >= 0U);
-    EXPECT_TRUE(value >= 1U);
-
-    EXPECT_TRUE(value <= 1U);
-    EXPECT_TRUE(value <= 2U);
-}
-
-TEST_F(AnyValueTest, FloatingPointComparisons) {
-    using namespace booleval::utils;
-
-    any_value value{ 1.234567 };
-
-    EXPECT_TRUE(value == 1.234567F);
-    EXPECT_TRUE(value != 7.654321F);
-
-    EXPECT_TRUE(value > 0.123456F);
-    EXPECT_TRUE(value < 2.345678F);
-
-    EXPECT_TRUE(value >= 0.123456F);
-    EXPECT_TRUE(value >= 1.234567F);
-
-    EXPECT_TRUE(value <= 1.234567F);
-    EXPECT_TRUE(value <= 2.345678F);
+        ASSERT_TRUE( value <= 1.234567F );
+        ASSERT_TRUE( value <= 2.345678F );
+    }
 }
