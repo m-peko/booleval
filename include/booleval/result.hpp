@@ -50,7 +50,7 @@ struct result
     /**
      * Message in case of the fault.
      */
-    std::string_view message;
+    std::string_view message{};
 };
 
 } // namespace booleval

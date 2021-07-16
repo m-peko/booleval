@@ -37,12 +37,10 @@ TEST( AnyValueTest, ArithmeticValue )
     {
         booleval::utils::any_value value{ 1 };
         ASSERT_EQ( value, "1" );
-        ASSERT_EQ( value, 1u  );
     }
     {
         booleval::utils::any_value value{ 1.234567f };
         ASSERT_EQ( value, "1.234567" );
-        ASSERT_EQ( value, 1.234567f  );
     }
 }
 
@@ -67,31 +65,31 @@ TEST( AnyValueTest, Comparisons )
     {
         booleval::utils::any_value value{ 1 };
 
-        ASSERT_TRUE( value == 1U );
-        ASSERT_TRUE( value != 2U );
+        ASSERT_TRUE( value == "1U" );
+        ASSERT_TRUE( value != "2U" );
 
-        ASSERT_TRUE( value > 0U );
-        ASSERT_TRUE( value < 2U );
+        ASSERT_TRUE( value > "0U" );
+        ASSERT_TRUE( value < "2U" );
 
-        ASSERT_TRUE( value >= 0U );
-        ASSERT_TRUE( value >= 1U );
+        ASSERT_TRUE( value >= "0U" );
+        ASSERT_TRUE( value >= "1U" );
 
-        ASSERT_TRUE( value <= 1U );
-        ASSERT_TRUE( value <= 2U );
+        ASSERT_TRUE( value <= "1U" );
+        ASSERT_TRUE( value <= "2U" );
     }
     {
         booleval::utils::any_value value{ 1.234567 };
 
-        ASSERT_TRUE( value == 1.234567F );
-        ASSERT_TRUE( value != 7.654321F );
+        ASSERT_TRUE( value == "1.234567" );
+        ASSERT_TRUE( value != "7.654321" );
 
-        ASSERT_TRUE( value > 0.123456F );
-        ASSERT_TRUE( value < 2.345678F );
+        ASSERT_TRUE( value > "0.123456" );
+        ASSERT_TRUE( value < "2.345678" );
 
-        ASSERT_TRUE( value >= 0.123456F );
-        ASSERT_TRUE( value >= 1.234567F );
+        ASSERT_TRUE( value >= "0.123456" );
+        ASSERT_TRUE( value >= "1.234567" );
 
-        ASSERT_TRUE( value <= 1.234567F );
-        ASSERT_TRUE( value <= 2.345678F );
+        ASSERT_TRUE( value <= "1.234567" );
+        ASSERT_TRUE( value <= "2.345678" );
     }
 }
