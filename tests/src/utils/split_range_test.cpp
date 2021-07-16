@@ -30,141 +30,157 @@
 #include <gtest/gtest.h>
 #include <booleval/utils/split_range.hpp>
 
-class SplitRangeTest : public testing::Test {
-public:
-    template <typename SplitRangeIt>
-    void test_split_range_iterator(SplitRangeIt it,
-                                   bool const quoted,
-                                   std::string_view const value) {
-        EXPECT_EQ(it->quoted, quoted);
-        EXPECT_EQ(it->value, value);
+namespace
+{
+
+    template< typename It >
+    void test_split_range_iterator
+    (
+        It               const it,
+        bool             const expected_is_quoted,
+        std::string_view const expected_value
+    ) noexcept
+    {
+        ASSERT_EQ( it->is_quoted, expected_is_quoted );
+        ASSERT_EQ( it->value    , expected_value     );
     }
-};
 
-TEST_F(SplitRangeTest, SplitEmpty) {
-    using namespace booleval::utils;
+} // namespace
 
-    auto range = split_range("");
-    EXPECT_EQ(range.begin(), range.end());
+TEST( SplitRangeTest, SplitEmpty )
+{
+    auto const range{ booleval::utils::split_range( "" ) };
+    ASSERT_EQ( std::begin( range ), std::end( range ) );
 }
 
-TEST_F(SplitRangeTest, SplitByWhitespace) {
-    using namespace booleval::utils;
+TEST( SplitRangeTest, SplitByWhitespace )
+{
+    auto const range{ booleval::utils::split_range( "a b c d \"a b c\"" ) };
+    auto       it { range.begin() };
+    auto const end{ range.end()   };
 
-    auto range = split_range("a b c d \"a b c\"");
-    auto it  = range.begin();
-    auto end = range.end();
-
-    test_split_range_iterator(it++, false, "a");
-    test_split_range_iterator(it++, false, "b");
-    test_split_range_iterator(it++, false, "c");
-    test_split_range_iterator(it++, false, "d");
-    test_split_range_iterator(it++, true,  "a b c");
-    EXPECT_EQ(it, end);
+    test_split_range_iterator( it++, false, "a"      );
+    test_split_range_iterator( it++, false, "b"      );
+    test_split_range_iterator( it++, false, "c"      );
+    test_split_range_iterator( it++, false, "d"      );
+    test_split_range_iterator( it++, true ,  "a b c" );
+    ASSERT_EQ( it, end );
 }
 
-TEST_F(SplitRangeTest, SplitByWhitespaceWithSingleQuoteChar) {
-    using namespace booleval::utils;
+TEST( SplitRangeTest, SplitByWhitespaceWithSingleQuoteChar )
+{
+    auto const range
+    {
+        booleval::utils::split_range
+        <
+            booleval::utils::split_options::exclude_delimiters |
+            booleval::utils::split_options::allow_quoted_strings,
+            booleval::utils::single_quote_char
+        >( "a b c d \'a b c\'" )
+    };
+    auto       it { range.begin() };
+    auto const end{ range.end()   };
 
-    auto range = split_range<
-        split_options::exclude_delimiters |
-        split_options::allow_quoted_strings,
-        single_quote_char
-    >("a b c d \'a b c\'");
-    auto it  = range.begin();
-    auto end = range.end();
-
-    test_split_range_iterator(it++, false, "a");
-    test_split_range_iterator(it++, false, "b");
-    test_split_range_iterator(it++, false, "c");
-    test_split_range_iterator(it++, false, "d");
-    test_split_range_iterator(it++, true,  "a b c");
-    EXPECT_EQ(it, end);
+    test_split_range_iterator( it++, false, "a"     );
+    test_split_range_iterator( it++, false, "b"     );
+    test_split_range_iterator( it++, false, "c"     );
+    test_split_range_iterator( it++, false, "d"     );
+    test_split_range_iterator( it++, true , "a b c" );
+    ASSERT_EQ( it, end );
 }
 
-TEST_F(SplitRangeTest, SplitByComma) {
-    using namespace booleval::utils;
+TEST( SplitRangeTest, SplitByComma )
+{
+    auto const range{ booleval::utils::split_range( "\"a,b,c\",a,b,c,d", "," ) };
+    auto       it { range.begin() };
+    auto const end{ range.end()   };
 
-    auto range = split_range("\"a,b,c\",a,b,c,d", ",");
-    auto it  = range.begin();
-    auto end = range.end();
-
-    test_split_range_iterator(it++, true,  "a,b,c");
-    test_split_range_iterator(it++, false, "a");
-    test_split_range_iterator(it++, false, "b");
-    test_split_range_iterator(it++, false, "c");
-    test_split_range_iterator(it++, false, "d");
-    EXPECT_EQ(it, end);
+    test_split_range_iterator( it++, true ,  "a,b,c" );
+    test_split_range_iterator( it++, false, "a"      );
+    test_split_range_iterator( it++, false, "b"      );
+    test_split_range_iterator( it++, false, "c"      );
+    test_split_range_iterator( it++, false, "d"      );
+    ASSERT_EQ( it, end );
 }
 
-TEST_F(SplitRangeTest, SplitByMultipleDelimiters) {
-    using namespace booleval::utils;
+TEST( SplitRangeTest, SplitByMultipleDelimiters )
+{
+    auto const range{ booleval::utils::split_range( "a,b.\"a.b,c\".c,d.", ".," ) };
+    auto       it { range.begin() };
+    auto const end{ range.end()   };
 
-    auto range = split_range("a,b.\"a.b,c\".c,d.", ".,");
-    auto it  = range.begin();
-    auto end = range.end();
-
-    test_split_range_iterator(it++, false, "a");
-    test_split_range_iterator(it++, false, "b");
-    test_split_range_iterator(it++, true,  "a.b,c");
-    test_split_range_iterator(it++, false, "c");
-    test_split_range_iterator(it++, false, "d");
-    EXPECT_EQ(it, end);
+    test_split_range_iterator( it++, false, "a"     );
+    test_split_range_iterator( it++, false, "b"     );
+    test_split_range_iterator( it++, true , "a.b,c" );
+    test_split_range_iterator( it++, false, "c"     );
+    test_split_range_iterator( it++, false, "d"     );
+    ASSERT_EQ( it, end );
 }
 
-TEST_F(SplitRangeTest, SplitWithIncludeDelimitersOption) {
+TEST( SplitRangeTest, SplitWithIncludeDelimitersOption )
+{
     using namespace booleval::utils;
 
-    auto range = split_range<
-        split_options::include_delimiters
-    >("a,b.", ".,");
-    auto it  = range.begin();
-    auto end = range.end();
+    auto const range
+    {
+        split_range
+        <
+            split_options::include_delimiters
+        >( "a,b.", ".," )
+    };
+    auto       it { range.begin() };
+    auto const end{ range.end()   };
 
-    test_split_range_iterator(it++, false, "a");
-    test_split_range_iterator(it++, false, ",");
-    test_split_range_iterator(it++, false, "b");
-    test_split_range_iterator(it++, false, ".");
-    EXPECT_EQ(it, end);
+    test_split_range_iterator( it++, false, "a" );
+    test_split_range_iterator( it++, false, "," );
+    test_split_range_iterator( it++, false, "b" );
+    test_split_range_iterator( it++, false, "." );
+    ASSERT_EQ( it, end );
 }
 
-TEST_F(SplitRangeTest, SplitWithMultipleOptions) {
-    using namespace booleval::utils;
+TEST( SplitRangeTest, SplitWithMultipleOptions )
+{
+    auto const range
+    {
+        booleval::utils::split_range
+        <
+            booleval::utils::split_options::include_delimiters  |
+            booleval::utils::split_options::split_by_whitespace |
+            booleval::utils::split_options::allow_quoted_strings
+        >( "a , b .\"c , \" \"d . e\"", ".," )
+    };
+    auto       it { range.begin() };
+    auto const end{ range.end()   };
 
-    auto range = split_range<
-        split_options::include_delimiters  |
-        split_options::split_by_whitespace |
-        split_options::allow_quoted_strings
-    >("a , b .\"c , \" \"d . e\"", ".,");
-    auto it  = range.begin();
-    auto end = range.end();
-
-    test_split_range_iterator(it++, false, "a");
-    test_split_range_iterator(it++, false, ",");
-    test_split_range_iterator(it++, false, "b");
-    test_split_range_iterator(it++, false, ".");
-    test_split_range_iterator(it++, true,  "c , ");
-    test_split_range_iterator(it++, true,  "d . e");
-    EXPECT_EQ(it, end);
+    test_split_range_iterator( it++, false, "a"     );
+    test_split_range_iterator( it++, false, ","     );
+    test_split_range_iterator( it++, false, "b"     );
+    test_split_range_iterator( it++, false, "."     );
+    test_split_range_iterator( it++, true , "c , "  );
+    test_split_range_iterator( it++, true , "d . e" );
+    ASSERT_EQ( it, end );
 }
 
-TEST_F(SplitRangeTest, SplitWithMultipleOptionsAndParentheses) {
-    using namespace booleval::utils;
+TEST( SplitRangeTest, SplitWithMultipleOptionsAndParentheses )
+{
+    auto const range
+    {
+        booleval::utils::split_range
+        <
+            booleval::utils::split_options::include_delimiters  |
+            booleval::utils::split_options::split_by_whitespace |
+            booleval::utils::split_options::allow_quoted_strings
+        >( "(a b c d \"a b c\")", "()" )
+    };
+    auto       it { range.begin() };
+    auto const end{ range.end()   };
 
-    auto range = split_range<
-        split_options::include_delimiters  |
-        split_options::split_by_whitespace |
-        split_options::allow_quoted_strings
-    >("(a b c d \"a b c\")", "()");
-    auto it  = range.begin();
-    auto end = range.end();
-
-    test_split_range_iterator(it++, false, "(");
-    test_split_range_iterator(it++, false, "a");
-    test_split_range_iterator(it++, false, "b");
-    test_split_range_iterator(it++, false, "c");
-    test_split_range_iterator(it++, false, "d");
-    test_split_range_iterator(it++, true,  "a b c");
-    test_split_range_iterator(it++, false, ")");
-    EXPECT_EQ(it, end);
+    test_split_range_iterator( it++, false, "("     );
+    test_split_range_iterator( it++, false, "a"     );
+    test_split_range_iterator( it++, false, "b"     );
+    test_split_range_iterator( it++, false, "c"     );
+    test_split_range_iterator( it++, false, "d"     );
+    test_split_range_iterator( it++, true , "a b c" );
+    test_split_range_iterator( it++, false, ")"     );
+    ASSERT_EQ( it, end );
 }
