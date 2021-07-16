@@ -36,17 +36,17 @@
 TEST( NodeTest, DefaultConstructor )
 {
     booleval::tree::node node{};
-    EXPECT_EQ( node.token.type(), booleval::token::token_type::unknown );
-    EXPECT_EQ( node.left , nullptr );
-    EXPECT_EQ( node.right, nullptr );
+    ASSERT_EQ( node.token.type(), booleval::token::token_type::unknown );
+    ASSERT_EQ( node.left , nullptr );
+    ASSERT_EQ( node.right, nullptr );
 }
 
 TEST( NodeTest, ConstructorFromTokenType )
 {
     booleval::tree::node node{ booleval::token::token_type::logical_and };
-    EXPECT_EQ( node.token.type(), booleval::token::token_type::logical_and );
-    EXPECT_EQ( node.left , nullptr );
-    EXPECT_EQ( node.right, nullptr );
+    ASSERT_EQ( node.token.type(), booleval::token::token_type::logical_and );
+    ASSERT_EQ( node.left , nullptr );
+    ASSERT_EQ( node.right, nullptr );
 }
 
 TEST( NodeTest, ConstructorFromToken )
@@ -54,16 +54,16 @@ TEST( NodeTest, ConstructorFromToken )
     {
         booleval::token::token and_token{ booleval::token::token_type::logical_and };
         booleval::tree::node node{ and_token };
-        EXPECT_EQ( node.token.type(), booleval::token::token_type::logical_and );
-        EXPECT_EQ( node.left , nullptr );
-        EXPECT_EQ( node.right, nullptr );
+        ASSERT_EQ( node.token.type(), booleval::token::token_type::logical_and );
+        ASSERT_EQ( node.left , nullptr );
+        ASSERT_EQ( node.right, nullptr );
     }
     {
         booleval::token::token field_token{ "foo" };
         booleval::tree::node node{ field_token };
-        EXPECT_EQ( node.token.value(), "foo" );
-        EXPECT_EQ( node.token.type(), booleval::token::token_type::field );
-        EXPECT_EQ( node.left , nullptr );
-        EXPECT_EQ( node.right, nullptr );
+        ASSERT_EQ( node.token.value(), "foo" );
+        ASSERT_EQ( node.token.type(), booleval::token::token_type::field );
+        ASSERT_EQ( node.left , nullptr );
+        ASSERT_EQ( node.right, nullptr );
     }
 }

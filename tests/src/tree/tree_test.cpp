@@ -33,37 +33,39 @@
 
 TEST( TreeTest, RelationalOperation )
 {
-    EXPECT_EQ( booleval::tree::build( "field_a" ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "field_a" ), nullptr );
 
-    EXPECT_NE( booleval::tree::build( "field_a foo" ), nullptr );
+    ASSERT_NE( booleval::tree::build( "field_a foo" ), nullptr );
 }
 
 TEST( TreeTest, AndOperation )
 {
-    EXPECT_EQ( booleval::tree::build( "and"             ), nullptr );
-    EXPECT_EQ( booleval::tree::build( " and "           ), nullptr );
-    EXPECT_EQ( booleval::tree::build( "field_a foo and" ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "and"             ), nullptr );
+    ASSERT_EQ( booleval::tree::build( " and "           ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "field_a foo and" ), nullptr );
 
-    EXPECT_NE( booleval::tree::build( "field_a foo and field_b bar" ), nullptr );
+    ASSERT_NE( booleval::tree::build( "field_a foo and field_b bar" ), nullptr );
 }
 
 TEST( TreeTest, OrOperation )
 {
-    EXPECT_EQ( booleval::tree::build( "or"             ), nullptr );
-    EXPECT_EQ( booleval::tree::build( " or "           ), nullptr );
-    EXPECT_EQ( booleval::tree::build( "field_a foo or" ), nullptr );
-    EXPECT_EQ( booleval::tree::build( "or field_b bar" ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "or"             ), nullptr );
+    ASSERT_EQ( booleval::tree::build( " or "           ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "field_a foo or" ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "or field_b bar" ), nullptr );
 
-    EXPECT_NE( booleval::tree::build( "field_a foo or field_b bar" ), nullptr );
+    ASSERT_NE( booleval::tree::build( "field_a foo or field_b bar" ), nullptr );
 }
 
 TEST( TreeTest, Parentheses )
 {
-    EXPECT_EQ( booleval::tree::build( "(field_a foo or field_b bar"  ), nullptr );
-    EXPECT_EQ( booleval::tree::build( "( field_a foo or field_b bar" ), nullptr );
-    // EXPECT_EQ( booleval::tree::build( "field_a foo or field_b bar)"  ), nullptr );
-    // EXPECT_EQ( booleval::tree::build( "field_a foo or field_b bar )" ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "(field_a foo or field_b bar"  ), nullptr );
+    ASSERT_EQ( booleval::tree::build( "( field_a foo or field_b bar" ), nullptr );
 
-    EXPECT_NE( booleval::tree::build( "(field_a foo or field_b bar)"   ), nullptr );
-    EXPECT_NE( booleval::tree::build( "( field_a foo or field_b bar )" ), nullptr );
+    // @todo: Fix following test cases
+    // ASSERT_EQ( booleval::tree::build( "field_a foo or field_b bar)"  ), nullptr );
+    // ASSERT_EQ( booleval::tree::build( "field_a foo or field_b bar )" ), nullptr );
+
+    ASSERT_NE( booleval::tree::build( "(field_a foo or field_b bar)"   ), nullptr );
+    ASSERT_NE( booleval::tree::build( "( field_a foo or field_b bar )" ), nullptr );
 }

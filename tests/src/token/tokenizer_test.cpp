@@ -35,102 +35,102 @@
 
 TEST( TokenizerTest, EmptyExpression )
 {
-    EXPECT_TRUE( booleval::token::tokenize( ""   ).empty() );
-    EXPECT_TRUE( booleval::token::tokenize( " "  ).empty() );
-    EXPECT_TRUE( booleval::token::tokenize( "  " ).empty() );
+    ASSERT_TRUE( booleval::token::tokenize( ""   ).empty() );
+    ASSERT_TRUE( booleval::token::tokenize( " "  ).empty() );
+    ASSERT_TRUE( booleval::token::tokenize( "  " ).empty() );
 }
 
 TEST( TokenizerTest, KeywordAsFieldExpression )
 {
     auto const tokens{ booleval::token::tokenize( "field_a \"and\"" ) };
-    EXPECT_FALSE( tokens.empty() );
+    ASSERT_FALSE( tokens.empty() );
 
-    EXPECT_TRUE( tokens[ 0 ].is( booleval::token::token_type::field ) );
-    EXPECT_TRUE( tokens[ 1 ].is( booleval::token::token_type::eq    ) );
-    EXPECT_TRUE( tokens[ 2 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 2 ].value(), "and" );
+    ASSERT_TRUE( tokens[ 0 ].is( booleval::token::token_type::field ) );
+    ASSERT_TRUE( tokens[ 1 ].is( booleval::token::token_type::eq    ) );
+    ASSERT_TRUE( tokens[ 2 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 2 ].value(), "and" );
 }
 
 TEST( TokenizerTest, LowercaseKeywordExpression )
 {
     auto const tokens{ booleval::token::tokenize( "(field_a foo and field_b neq bar) or field_c eq baz" ) };
-    EXPECT_FALSE( tokens.empty() );
+    ASSERT_FALSE( tokens.empty() );
 
-    EXPECT_TRUE( tokens[ 0 ].is( booleval::token::token_type::lp    ) );
-    EXPECT_TRUE( tokens[ 1 ].is( booleval::token::token_type::field ) );
-    EXPECT_TRUE( tokens[ 2 ].is( booleval::token::token_type::eq    ) );
+    ASSERT_TRUE( tokens[ 0 ].is( booleval::token::token_type::lp    ) );
+    ASSERT_TRUE( tokens[ 1 ].is( booleval::token::token_type::field ) );
+    ASSERT_TRUE( tokens[ 2 ].is( booleval::token::token_type::eq    ) );
 
-    EXPECT_TRUE( tokens[ 3 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 3 ].value(), "foo" );
+    ASSERT_TRUE( tokens[ 3 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 3 ].value(), "foo" );
 
-    EXPECT_TRUE( tokens[ 4 ].is( booleval::token::token_type::logical_and ) );
-    EXPECT_TRUE( tokens[ 5 ].is( booleval::token::token_type::field       ) );
-    EXPECT_TRUE( tokens[ 6 ].is( booleval::token::token_type::neq         ) );
+    ASSERT_TRUE( tokens[ 4 ].is( booleval::token::token_type::logical_and ) );
+    ASSERT_TRUE( tokens[ 5 ].is( booleval::token::token_type::field       ) );
+    ASSERT_TRUE( tokens[ 6 ].is( booleval::token::token_type::neq         ) );
 
-    EXPECT_TRUE( tokens[ 7 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 7 ].value(), "bar" );
+    ASSERT_TRUE( tokens[ 7 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 7 ].value(), "bar" );
 
-    EXPECT_TRUE( tokens[  8 ].is( booleval::token::token_type::rp         ) );
-    EXPECT_TRUE( tokens[  9 ].is( booleval::token::token_type::logical_or ) );
-    EXPECT_TRUE( tokens[ 10 ].is( booleval::token::token_type::field      ) );
-    EXPECT_TRUE( tokens[ 11 ].is( booleval::token::token_type::eq         ) );
+    ASSERT_TRUE( tokens[  8 ].is( booleval::token::token_type::rp         ) );
+    ASSERT_TRUE( tokens[  9 ].is( booleval::token::token_type::logical_or ) );
+    ASSERT_TRUE( tokens[ 10 ].is( booleval::token::token_type::field      ) );
+    ASSERT_TRUE( tokens[ 11 ].is( booleval::token::token_type::eq         ) );
 
-    EXPECT_TRUE( tokens[ 12 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 12 ].value(), "baz" );
+    ASSERT_TRUE( tokens[ 12 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 12 ].value(), "baz" );
 }
 
 TEST( TokenizerTest, UppercaseKeywordExpression )
 {
     auto const tokens{ booleval::token::tokenize( "(field_a foo AND field_b NEQ bar) OR field_c EQ baz" ) };
-    EXPECT_FALSE( tokens.empty() );
+    ASSERT_FALSE( tokens.empty() );
 
-    EXPECT_TRUE( tokens[ 0 ].is( booleval::token::token_type::lp    ) );
-    EXPECT_TRUE( tokens[ 1 ].is( booleval::token::token_type::field ) );
-    EXPECT_TRUE( tokens[ 2 ].is( booleval::token::token_type::eq    ) );
+    ASSERT_TRUE( tokens[ 0 ].is( booleval::token::token_type::lp    ) );
+    ASSERT_TRUE( tokens[ 1 ].is( booleval::token::token_type::field ) );
+    ASSERT_TRUE( tokens[ 2 ].is( booleval::token::token_type::eq    ) );
 
-    EXPECT_TRUE( tokens[ 3 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 3 ].value(), "foo" );
+    ASSERT_TRUE( tokens[ 3 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 3 ].value(), "foo" );
 
-    EXPECT_TRUE( tokens[ 4 ].is( booleval::token::token_type::logical_and ) );
-    EXPECT_TRUE( tokens[ 5 ].is( booleval::token::token_type::field       ) );
-    EXPECT_TRUE( tokens[ 6 ].is( booleval::token::token_type::neq         ) );
+    ASSERT_TRUE( tokens[ 4 ].is( booleval::token::token_type::logical_and ) );
+    ASSERT_TRUE( tokens[ 5 ].is( booleval::token::token_type::field       ) );
+    ASSERT_TRUE( tokens[ 6 ].is( booleval::token::token_type::neq         ) );
 
-    EXPECT_TRUE( tokens[ 7 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 7 ].value(), "bar" );
+    ASSERT_TRUE( tokens[ 7 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 7 ].value(), "bar" );
 
-    EXPECT_TRUE( tokens[  8 ].is( booleval::token::token_type::rp         ) );
-    EXPECT_TRUE( tokens[  9 ].is( booleval::token::token_type::logical_or ) );
-    EXPECT_TRUE( tokens[ 10 ].is( booleval::token::token_type::field      ) );
-    EXPECT_TRUE( tokens[ 11 ].is( booleval::token::token_type::eq         ) );
+    ASSERT_TRUE( tokens[  8 ].is( booleval::token::token_type::rp         ) );
+    ASSERT_TRUE( tokens[  9 ].is( booleval::token::token_type::logical_or ) );
+    ASSERT_TRUE( tokens[ 10 ].is( booleval::token::token_type::field      ) );
+    ASSERT_TRUE( tokens[ 11 ].is( booleval::token::token_type::eq         ) );
 
-    EXPECT_TRUE( tokens[ 12 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 12 ].value(), "baz" );
+    ASSERT_TRUE( tokens[ 12 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 12 ].value(), "baz" );
 }
 
 TEST( TokenizerTest, SymbolExpression )
 {
     auto const tokens{ booleval::token::tokenize( "(field_a foo && field_b != bar) || field_c > baz" ) };
-    EXPECT_FALSE( tokens.empty() );
+    ASSERT_FALSE( tokens.empty() );
 
-    EXPECT_TRUE( tokens[ 0 ].is( booleval::token::token_type::lp    ) );
-    EXPECT_TRUE( tokens[ 1 ].is( booleval::token::token_type::field ) );
-    EXPECT_TRUE( tokens[ 2 ].is( booleval::token::token_type::eq    ) );
+    ASSERT_TRUE( tokens[ 0 ].is( booleval::token::token_type::lp    ) );
+    ASSERT_TRUE( tokens[ 1 ].is( booleval::token::token_type::field ) );
+    ASSERT_TRUE( tokens[ 2 ].is( booleval::token::token_type::eq    ) );
 
-    EXPECT_TRUE( tokens[ 3 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 3 ].value(), "foo" );
+    ASSERT_TRUE( tokens[ 3 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 3 ].value(), "foo" );
 
-    EXPECT_TRUE( tokens[ 4 ].is( booleval::token::token_type::logical_and ) );
-    EXPECT_TRUE( tokens[ 5 ].is( booleval::token::token_type::field       ) );
-    EXPECT_TRUE( tokens[ 6 ].is( booleval::token::token_type::neq         ) );
+    ASSERT_TRUE( tokens[ 4 ].is( booleval::token::token_type::logical_and ) );
+    ASSERT_TRUE( tokens[ 5 ].is( booleval::token::token_type::field       ) );
+    ASSERT_TRUE( tokens[ 6 ].is( booleval::token::token_type::neq         ) );
 
-    EXPECT_TRUE( tokens[ 7 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 7 ].value(), "bar" );
+    ASSERT_TRUE( tokens[ 7 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 7 ].value(), "bar" );
 
-    EXPECT_TRUE( tokens[  8 ].is( booleval::token::token_type::rp         ) );
-    EXPECT_TRUE( tokens[  9 ].is( booleval::token::token_type::logical_or ) );
-    EXPECT_TRUE( tokens[ 10 ].is( booleval::token::token_type::field      ) );
-    EXPECT_TRUE( tokens[ 11 ].is( booleval::token::token_type::gt         ) );
+    ASSERT_TRUE( tokens[  8 ].is( booleval::token::token_type::rp         ) );
+    ASSERT_TRUE( tokens[  9 ].is( booleval::token::token_type::logical_or ) );
+    ASSERT_TRUE( tokens[ 10 ].is( booleval::token::token_type::field      ) );
+    ASSERT_TRUE( tokens[ 11 ].is( booleval::token::token_type::gt         ) );
 
-    EXPECT_TRUE( tokens[ 12 ].is( booleval::token::token_type::field ) );
-    EXPECT_EQ  ( tokens[ 12 ].value(), "baz" );
+    ASSERT_TRUE( tokens[ 12 ].is( booleval::token::token_type::field ) );
+    ASSERT_EQ  ( tokens[ 12 ].value(), "baz" );
 }

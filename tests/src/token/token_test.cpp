@@ -34,15 +34,15 @@
 TEST( TokenTest, DefaultConstructor )
 {
     booleval::token::token token{};
-    EXPECT_EQ( token.type(), booleval::token::token_type::unknown );
-    EXPECT_EQ( token.value(), "" );
+    ASSERT_EQ( token.type(), booleval::token::token_type::unknown );
+    ASSERT_EQ( token.value(), "" );
 }
 
 TEST( TokenTest, ConstructorFromType )
 {
     booleval::token::token token{ booleval::token::token_type::logical_and };
-    EXPECT_EQ( token.type(), booleval::token::token_type::logical_and );
-    EXPECT_TRUE
+    ASSERT_EQ( token.type(), booleval::token::token_type::logical_and );
+    ASSERT_TRUE
     (
         token.value() == "and" ||
         token.value() == "AND"
@@ -52,8 +52,8 @@ TEST( TokenTest, ConstructorFromType )
 TEST( TokenTest, ConstructorFromValue )
 {
     booleval::token::token token("and");
-    EXPECT_EQ( token.type(), booleval::token::token_type::logical_and );
-    EXPECT_TRUE
+    ASSERT_EQ( token.type(), booleval::token::token_type::logical_and );
+    ASSERT_TRUE
     (
         token.value() == "and" ||
         token.value() == "AND"
@@ -65,8 +65,8 @@ TEST( TokenTest, ConstructorFromTypeAndValue )
     using namespace booleval;
 
     booleval::token::token token{ booleval::token::token_type::field, "field" };
-    EXPECT_EQ( token.type(), booleval::token::token_type::field );
-    EXPECT_EQ( token.value(), "field" );
+    ASSERT_EQ( token.type(), booleval::token::token_type::field );
+    ASSERT_EQ( token.value(), "field" );
 }
 
 TEST( TokenTest, Type )
@@ -75,14 +75,14 @@ TEST( TokenTest, Type )
 
     booleval::token::token token{};
     token.type( booleval::token::token_type::logical_and );
-    EXPECT_EQ( token.type(), booleval::token::token_type::logical_and );
+    ASSERT_EQ( token.type(), booleval::token::token_type::logical_and );
 }
 
 TEST( TokenTest, Value )
 {
     booleval::token::token token{};
     token.value( "field" );
-    EXPECT_EQ( token.value(), "field" );
+    ASSERT_EQ( token.value(), "field" );
 }
 
 TEST( TokenTest, ValueAsInt )
@@ -90,12 +90,12 @@ TEST( TokenTest, ValueAsInt )
     {
         booleval::token::token token{};
         token.value( "1" );
-        EXPECT_EQ( token.value< std::uint8_t >(), 1U );
+        ASSERT_EQ( token.value< std::uint8_t >(), 1U );
     }
     {
         booleval::token::token token{};
         token.value( "a" );
-        EXPECT_EQ( token.value< std::uint8_t >(), std::nullopt );
+        ASSERT_EQ( token.value< std::uint8_t >(), std::nullopt );
     }
 }
 
@@ -104,12 +104,12 @@ TEST( TokenTest, ValueAsDouble )
     {
         booleval::token::token token{};
         token.value( "1.23456789" );
-        EXPECT_DOUBLE_EQ( token.value< double >().value(), 1.23456789 );
+        ASSERT_DOUBLE_EQ( token.value< double >().value(), 1.23456789 );
     }
     {
         booleval::token::token token{};
         token.value( "1.2a" );
-        EXPECT_EQ( token.value< double >(), std::nullopt );
+        ASSERT_EQ( token.value< double >(), std::nullopt );
     }
 }
 
@@ -118,33 +118,33 @@ TEST( TokenTest, ValueAsFloat )
     {
         booleval::token::token token{};
         token.value( "1.23456789" );
-        EXPECT_FLOAT_EQ( token.value< float >().value(), 1.23456789F );
+        ASSERT_FLOAT_EQ( token.value< float >().value(), 1.23456789F );
     }
     {
         booleval::token::token token{};
         token.value( "1.2a" );
-        EXPECT_EQ( token.value< float >(), std::nullopt );
+        ASSERT_EQ( token.value< float >(), std::nullopt );
     }
 }
 
 TEST( TokenTest, IsType )
 {
     booleval::token::token token{ booleval::token::token_type::logical_and };
-    EXPECT_TRUE ( token.is( booleval::token::token_type::logical_and ) );
-    EXPECT_FALSE( token.is( booleval::token::token_type::logical_or  ) );
+    ASSERT_TRUE ( token.is( booleval::token::token_type::logical_and ) );
+    ASSERT_FALSE( token.is( booleval::token::token_type::logical_or  ) );
 }
 
 TEST( TokenTest, IsNotType )
 {
     booleval::token::token token{ booleval::token::token_type::logical_and };
-    EXPECT_TRUE ( token.is_not( booleval::token::token_type::logical_or  ) );
-    EXPECT_FALSE( token.is_not( booleval::token::token_type::logical_and ) );
+    ASSERT_TRUE ( token.is_not( booleval::token::token_type::logical_or  ) );
+    ASSERT_FALSE( token.is_not( booleval::token::token_type::logical_and ) );
 }
 
 TEST( TokenTest, IsOneOfTwoTypes )
 {
     booleval::token::token token{ booleval::token::token_type::logical_and };
-    EXPECT_TRUE
+    ASSERT_TRUE
     (
         token.is_one_of
         (
@@ -152,7 +152,7 @@ TEST( TokenTest, IsOneOfTwoTypes )
             booleval::token::token_type::logical_or
         )
     );
-    EXPECT_FALSE
+    ASSERT_FALSE
     (
         token.is_one_of
         (
@@ -165,7 +165,7 @@ TEST( TokenTest, IsOneOfTwoTypes )
 TEST( TokenTest, IsOneOfMoreTypes )
 {
     booleval::token::token token{ booleval::token::token_type::logical_and };
-    EXPECT_TRUE
+    ASSERT_TRUE
     (
         token.is_one_of
         (
@@ -175,7 +175,7 @@ TEST( TokenTest, IsOneOfMoreTypes )
         )
     );
 
-    EXPECT_FALSE
+    ASSERT_FALSE
     (
         token.is_one_of
         (
