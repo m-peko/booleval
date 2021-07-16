@@ -30,6 +30,7 @@
 #ifndef BOOLEVAL_EVALUATOR_HPP
 #define BOOLEVAL_EVALUATOR_HPP
 
+#include <memory>
 #include <string_view>
 #include <initializer_list>
 
@@ -53,7 +54,7 @@ public:
     evaluator() noexcept = default;
 
     evaluator( evaluator       && rhs ) noexcept = default;
-    evaluator( evaluator const  & rhs ) noexcept = default;
+    evaluator( evaluator const  & rhs ) noexcept = delete;
 
     evaluator( std::initializer_list< field_base * > fields ) noexcept
     {
@@ -61,7 +62,7 @@ public:
     }
 
     evaluator& operator=( evaluator       && rhs ) noexcept = default;
-    evaluator& operator=( evaluator const  & rhs ) noexcept = default;
+    evaluator& operator=( evaluator const  & rhs ) noexcept = delete;
 
     ~evaluator() noexcept = default;
 
@@ -134,7 +135,7 @@ public:
 
 private:
     bool                          is_activated_  { false   };
-    std::shared_ptr< tree::node > root_          { nullptr };
+    std::unique_ptr< tree::node > root_          { nullptr };
     tree::result_visitor          result_visitor_{};
 };
 

@@ -48,19 +48,19 @@ struct node
 {
     token::token token{ token::token_type::unknown };
 
-    std::shared_ptr< node > left { nullptr };
-    std::shared_ptr< node > right{ nullptr };
+    std::unique_ptr< node > left { nullptr };
+    std::unique_ptr< node > right{ nullptr };
 
     constexpr node() noexcept = default;
 
     node( node       && rhs ) noexcept = default;
-    node( node const  & rhs ) noexcept = default;
+    node( node const  & rhs ) noexcept = delete;
 
     constexpr node( token::token_type const   type  ) noexcept : token( type  ) {}
     constexpr node( token::token      const & token ) noexcept : token( token ) {}
 
     node & operator=( node       && rhs ) noexcept = default;
-    node & operator=( node const  & rhs ) noexcept = default;
+    node & operator=( node const  & rhs ) noexcept = delete;
 
     ~node() noexcept = default;
 };

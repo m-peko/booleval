@@ -70,14 +70,14 @@ namespace
         U value_2_{};
     };
 
-    std::shared_ptr< booleval::tree::node > make_tree_node( booleval::token::token_type const type ) noexcept
+    std::unique_ptr< booleval::tree::node > make_tree_node( booleval::token::token_type const type ) noexcept
     {
-        return std::make_shared< booleval::tree::node >( type );
+        return std::make_unique< booleval::tree::node >( type );
     }
 
-    std::shared_ptr< booleval::tree::node > make_tree_node( booleval::token::token_type const type, std::string_view const value ) noexcept
+    std::unique_ptr< booleval::tree::node > make_tree_node( booleval::token::token_type const type, std::string_view const value ) noexcept
     {
-        return std::make_shared< booleval::tree::node >( booleval::token::token{ type, value } );
+        return std::make_unique< booleval::tree::node >( booleval::token::token{ type, value } );
     }
 
 } // namespace

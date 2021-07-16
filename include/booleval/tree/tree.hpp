@@ -47,11 +47,11 @@ namespace internal
 
     // Forward declarations
 
-    std::shared_ptr< node > parse_expression          ( tokens const & tokens, std::size_t & current );
-    std::shared_ptr< node > parse_and_operation       ( tokens const & tokens, std::size_t & current );
-    std::shared_ptr< node > parse_parentheses         ( tokens const & tokens, std::size_t & current );
-    std::shared_ptr< node > parse_relational_operation( tokens const & tokens, std::size_t & current );
-    std::shared_ptr< node > parse_terminal            ( tokens const & tokens, std::size_t & current );
+    std::unique_ptr< node > parse_expression          ( tokens const & tokens, std::size_t & current );
+    std::unique_ptr< node > parse_and_operation       ( tokens const & tokens, std::size_t & current );
+    std::unique_ptr< node > parse_parentheses         ( tokens const & tokens, std::size_t & current );
+    std::unique_ptr< node > parse_relational_operation( tokens const & tokens, std::size_t & current );
+    std::unique_ptr< node > parse_terminal            ( tokens const & tokens, std::size_t & current );
 
     // Definitions
 
@@ -60,7 +60,7 @@ namespace internal
         return current < std::size( tokens );
     }
 
-    inline std::shared_ptr< node > parse_expression( tokens const & tokens, std::size_t & current )
+    inline std::unique_ptr< node > parse_expression( tokens const & tokens, std::size_t & current )
     {
         auto left{ parse_and_operation( tokens, current ) };
 
@@ -91,7 +91,7 @@ namespace internal
         while ( has_unused( tokens, current ) && tokens[ current ].is( token::token_type::logical_or ) )
         {
             ++current;
-            auto logical_or{ std::make_shared< node >( token::token_type::logical_or ) };
+            auto logical_or{ std::make_unique< node >( token::token_type::logical_or ) };
 
             auto right{ parse_and_operation( tokens, current ) };
             if ( right == nullptr ) { return nullptr; }
@@ -104,7 +104,7 @@ namespace internal
         return left;
     }
 
-    inline std::shared_ptr< node > parse_and_operation( tokens const & tokens, std::size_t & current )
+    inline std::unique_ptr< node > parse_and_operation( tokens const & tokens, std::size_t & current )
     {
         auto left{ parse_parentheses( tokens, current ) };
         if ( left == nullptr )
@@ -118,7 +118,7 @@ namespace internal
         {
             ++current;
 
-            auto logical_and{ std::make_shared< node >( token::token_type::logical_and ) };
+            auto logical_and{ std::make_unique< node >( token::token_type::logical_and ) };
 
             auto right{ parse_parentheses( tokens, current ) };
             if ( right == nullptr )
@@ -136,14 +136,14 @@ namespace internal
         return left;
     }
 
-    inline std::shared_ptr< node > parse_parentheses( tokens const & tokens, std::size_t & current )
+    inline std::unique_ptr< node > parse_parentheses( tokens const & tokens, std::size_t & current )
     {
         if ( !has_unused( tokens, current ) ) { return nullptr; }
 
         if ( tokens[ current ].is( token::token_type::lp ) )
         {
             ++current;
-            auto const expression{ parse_expression( tokens, current ) };
+            auto expression{ parse_expression( tokens, current ) };
             if ( !has_unused( tokens, current ) ) { return nullptr; }
 
             if ( tokens[ current++ ].is( token::token_type::rp ) )
@@ -155,16 +155,16 @@ namespace internal
         return nullptr;
     }
 
-    inline std::shared_ptr< node > parse_relational_operation( tokens const & tokens, std::size_t & current )
+    inline std::unique_ptr< node > parse_relational_operation( tokens const & tokens, std::size_t & current )
     {
-        auto const left{ parse_terminal( tokens, current ) };
+        auto left{ parse_terminal( tokens, current ) };
         if ( left == nullptr ) { return nullptr; }
 
         if ( !has_unused( tokens, current ) ) { return nullptr; }
 
-        auto operation{ std::make_shared< node >( tokens[ current++ ] ) };
+        auto operation{ std::make_unique< node >( tokens[ current++ ] ) };
 
-        auto const right{ parse_terminal( tokens, current ) };
+        auto right{ parse_terminal( tokens, current ) };
         if ( right == nullptr ) { return nullptr; }
 
         operation->left  = std::move( left  );
@@ -173,14 +173,14 @@ namespace internal
         return operation;
     }
 
-    inline std::shared_ptr< node > parse_terminal( tokens const & tokens, std::size_t & current )
+    inline std::unique_ptr< node > parse_terminal( tokens const & tokens, std::size_t & current )
     {
         if ( !has_unused( tokens, current ) ) { return nullptr; }
 
         auto const & token{ tokens[ current++ ] };
         if ( token.is( token::token_type::field ) )
         {
-            return std::make_shared< node >( token );
+            return std::make_unique< node >( token );
         }
         else
         {
@@ -193,7 +193,7 @@ namespace internal
 /**
  * Builds an expression tree by using a recursive descent parser method.
  */
-std::shared_ptr< node > build( std::string_view expression )
+std::unique_ptr< node > build( std::string_view expression )
 {
     auto const tokens{ token::tokenize( expression ) };
     if ( tokens.empty() ) { return nullptr; }
