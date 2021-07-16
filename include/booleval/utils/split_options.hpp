@@ -139,7 +139,7 @@ template
     typename EnumT,
     typename = std::enable_if_t< std::is_enum_v< EnumT > >
 >
-[[ nodiscard ]] constexpr bool is_set( EnumT const lhs, EnumT const rhs )
+[[ nodiscard ]] constexpr bool is_set( EnumT const lhs, EnumT const rhs ) noexcept
 {
     return (lhs & rhs) == lhs ||
            (lhs & rhs) == rhs;

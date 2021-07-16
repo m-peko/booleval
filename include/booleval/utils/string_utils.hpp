@@ -288,7 +288,7 @@ template
     typename T,
     typename std::enable_if_t< std::is_floating_point_v< T > >* = nullptr
 >
-[[ nodiscard ]] std::string to_chars( T const value )
+[[ nodiscard ]] std::string to_chars( T const value ) noexcept
 {
     auto result{ std::to_string( value ) };
     result = rtrim( result, '0' );
