@@ -512,20 +512,3 @@ TEST( EvaluatorTest, UnknownField )
         ASSERT_EQ   ( result.message, "Unknown field" );
     }
 }
-
-// TEST_F(EvaluatorTest, FieldNotValid) {
-//     obj<std::string> foo{ "foo" };
-
-//     booleval::evaluator<booleval::utils::any_mem_fn_bool> evaluator({
-//         { "field_a_valid", &obj<std::string>::value_a_valid },
-//         { "field_a_not_valid",& obj<std::string>::value_a_notvalid }
-//     });
-
-//     ASSERT_TRUE(evaluator.expression("field_a_valid foo"));
-//     ASSERT_TRUE(evaluator.is_activated());
-//     ASSERT_TRUE(evaluator.evaluate(foo));
-
-//     ASSERT_TRUE(evaluator.expression("field_a_not_valid foo"));
-//     ASSERT_TRUE(evaluator.is_activated());
-//     ASSERT_FALSE(evaluator.evaluate(foo));
-// }

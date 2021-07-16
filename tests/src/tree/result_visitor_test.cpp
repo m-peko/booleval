@@ -331,29 +331,3 @@ TEST( ResultVisitorTest, UnknownTreeNode )
         ASSERT_EQ   ( result.message, "Unknown field" );
     }
 }
-
-// TEST( ResultVisitorTest, VisitInvalidTreeNode) {
-//     using namespace booleval;
-
-//     obj<uint8_t> foo{ 1 };
-
-//     tree::result_visitor<utils::any_mem_fn_bool> visitor;
-//     visitor.fields({
-//         { "field_a_valid", &obj<uint8_t>::value_a_valid },
-//         { "field_a_notvalid", &obj<uint8_t>::value_a_notvalid }
-//     });
-
-//     auto left = make_tree_node(token::token_type::field, "field_a_valid");
-//     auto op = make_tree_node(token::token_type::eq);
-//     auto right = make_tree_node(token::token_type::field, "1");
-
-//     op->left = left;
-//     op->right = right;
-
-//     ASSERT_TRUE(visitor.visit(*op, foo));
-
-//     left = make_tree_node(token::token_type::field, "field_a_notvalid");
-//     op->left = left;
-
-//     ASSERT_FALSE(visitor.visit(*op, foo));
-// }

@@ -94,7 +94,7 @@ public:
      *
      * @return True if the expression is valid, otherwise false
      */
-    [[ nodiscard ]] bool expression( std::string_view expression ) noexcept
+    [[ nodiscard ]] bool expression( std::string_view const expression ) noexcept
     {
         is_activated_ = false;
 
