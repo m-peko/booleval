@@ -34,8 +34,6 @@
 #include <string_view>
 #include <type_traits>
 
-#include <booleval/utils/string_utils.hpp>
-
 #include <booleval/token/token_type.hpp>
 #include <booleval/token/token_type_utils.hpp>
 
@@ -124,22 +122,6 @@ public:
     [[ nodiscard ]] constexpr std::string_view value() const noexcept
     {
         return value_;
-    }
-
-    /**
-     * Gets the token value as an arithmetic value.
-     * If value cannot be parsed, std::nullopt is returned.
-     *
-     * @return Optional token value
-     */
-    template
-    <
-        typename T,
-        typename = std::enable_if_t< std::is_arithmetic_v< T > >
-    >
-    [[ nodiscard ]] constexpr std::optional< T > value() const noexcept
-    {
-        return utils::from_chars< T >( value_ );
     }
 
     /**

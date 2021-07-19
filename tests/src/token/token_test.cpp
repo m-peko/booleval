@@ -85,48 +85,6 @@ TEST( TokenTest, Value )
     ASSERT_EQ( token.value(), "field" );
 }
 
-TEST( TokenTest, ValueAsInt )
-{
-    {
-        booleval::token::token token{};
-        token.value( "1" );
-        ASSERT_EQ( token.value< std::uint8_t >(), 1U );
-    }
-    {
-        booleval::token::token token{};
-        token.value( "a" );
-        ASSERT_EQ( token.value< std::uint8_t >(), std::nullopt );
-    }
-}
-
-TEST( TokenTest, ValueAsDouble )
-{
-    {
-        booleval::token::token token{};
-        token.value( "1.23456789" );
-        ASSERT_DOUBLE_EQ( token.value< double >().value(), 1.23456789 );
-    }
-    {
-        booleval::token::token token{};
-        token.value( "1.2a" );
-        ASSERT_EQ( token.value< double >(), std::nullopt );
-    }
-}
-
-TEST( TokenTest, ValueAsFloat )
-{
-    {
-        booleval::token::token token{};
-        token.value( "1.23456789" );
-        ASSERT_FLOAT_EQ( token.value< float >().value(), 1.23456789F );
-    }
-    {
-        booleval::token::token token{};
-        token.value( "1.2a" );
-        ASSERT_EQ( token.value< float >(), std::nullopt );
-    }
-}
-
 TEST( TokenTest, IsType )
 {
     booleval::token::token token{ booleval::token::token_type::logical_and };
