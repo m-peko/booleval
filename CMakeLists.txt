@@ -68,6 +68,28 @@ if (BOOLEVAL_BUILD_EXAMPLES)
     add_subdirectory (examples)
 endif ()
 
+if (BOOLEVAL_BUILD_TESTS)
+    # Only include googletest if the git submodule has been fetched
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
+        # Enable tests and add the test directory
+        message (STATUS "Tests have been enabled")
+        set (GOOGLETEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/googletest)
+        set (GOOGLETEST_INCLUDE ${GOOGLETEST_ROOT}/googletest/include)
+        set (GOOGLETEST_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/googletest)
+        set (GOOGLETEST_LIBRARY ${GOOGLETEST_BINARY_DIR}/googletest)
+
+        if (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
+            set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        endif (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
+
+        enable_testing ()
+        add_subdirectory (googletest)
+        add_subdirectory (tests)
+    else ()
+        message (STATUS "googletest git submodule is absent. Run `git submodule init && git submodule update` to get it")
+    endif ()
+endif ()
+
 if (BOOLEVAL_BUILD_BENCHMARK)
     # Only include googlebench if the git submodule has been fetched
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googlebench/CMakeLists.txt")
@@ -88,27 +110,5 @@ if (BOOLEVAL_BUILD_BENCHMARK)
         add_subdirectory (benchmark)
     else ()
         message (STATUS "googlebench git submodule is absent. Run `git submodule init && git submodule update` to get it")
-    endif ()
-endif ()
-
-if (BOOLEVAL_BUILD_TESTS)
-    # Only include googletest if the git submodule has been fetched
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
-        # Enable tests and add the test directory
-        message (STATUS "Tests have been enabled")
-        set (GOOGLETEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/googletest)
-        set (GOOGLETEST_INCLUDE ${GOOGLETEST_ROOT}/googletest/include)
-        set (GOOGLETEST_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/googletest)
-        set (GOOGLETEST_LIBRARY ${GOOGLETEST_BINARY_DIR}/googletest)
-
-        if (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
-            set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-        endif (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
-
-        enable_testing ()
-        add_subdirectory (googletest)
-        add_subdirectory (tests)
-    else ()
-        message (STATUS "googletest git submodule is absent. Run `git submodule init && git submodule update` to get it")
     endif ()
 endif ()
