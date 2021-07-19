@@ -4,7 +4,7 @@ project (booleval)
 
 option (BOOLEVAL_BUILD_TESTS "Build tests" ON)
 option (BOOLEVAL_BUILD_EXAMPLES "Build examples" ON)
-option (BOOLEVAL_BUILD_BENCHMARK "Build benchmark" ON)
+option (BOOLEVAL_BUILD_BENCHMARK "Build benchmark" OFF)
 
 # Compile in release mode by default
 if (NOT CMAKE_BUILD_TYPE)
