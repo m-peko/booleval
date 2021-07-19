@@ -96,11 +96,7 @@ private:
             left.message.empty() ? right.message : left.message
         };
 
-        return
-        {
-            .success = f( left.success, right.success ),
-            .message = message
-        };
+        return { f( left.success, right.success ), message };
     }
 
     /**
@@ -132,11 +128,7 @@ private:
 
         if ( it == std::end( fields_ ) )
         {
-            return
-            {
-                .success = false,
-                .message = "Unknown field"
-            };
+            return { false, "Unknown field" };
         }
 
         auto const success
@@ -148,10 +140,7 @@ private:
             )
         };
 
-        return
-        {
-            .success = success
-        };
+        return { success };
     }
 
 private:
@@ -163,11 +152,7 @@ constexpr result result_visitor::visit( node const & node, T && obj ) const noex
 {
     if ( nullptr == node.left || nullptr == node.right )
     {
-        return
-        {
-            .success = false,
-            .message = "Missing operand"
-        };
+        return { false, "Missing operand" };
     }
 
     switch ( node.token.type() )
@@ -182,11 +167,7 @@ constexpr result result_visitor::visit( node const & node, T && obj ) const noex
         case token::token_type::leq        : return visit_relational( node, std::forward< T >( obj ), std::less_equal<>()    );
 
         default:
-            return
-            {
-                .success = false,
-                .message = "Unknown token type"
-            };
+            return { false, "Unknown token type" };
     }
 }
 

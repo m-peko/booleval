@@ -125,11 +125,7 @@ public:
         }
         else
         {
-            return
-            {
-                .success = false,
-                .message = "Evaluator not activated"
-            };
+            return { false, "Evaluator not activated" };
         }
     }
 
