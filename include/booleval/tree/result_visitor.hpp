@@ -135,7 +135,7 @@ private:
         {
             f
             (
-                ( *it )->template invoke( std::forward< T >( obj ) ),
+                ( *it )->invoke( std::forward< T >( obj ) ),
                 node.right->token.value()
             )
         };

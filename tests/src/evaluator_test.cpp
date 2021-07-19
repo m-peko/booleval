@@ -176,15 +176,15 @@ TEST( EvaluatorTest, NotEqualToOperator )
 
 TEST( EvaluatorTest, GreaterThanOperator )
 {
-    foo< float > x{ 1.22 };
-    foo< float > y{ 1.24 };
+    foo< float > x{ 1.22f };
+    foo< float > y{ 1.24f };
 
     foo< std::string > m{ "1000" };
     foo< std::string > n{ "50"   };
 
     booleval::evaluator evaluator_digits
     {
-        booleval::make_field( "field", &foo< float>::value )
+        booleval::make_field( "field", &foo< float >::value )
     };
 
     booleval::evaluator evaluator_strings
@@ -226,7 +226,7 @@ TEST( EvaluatorTest, GreaterThanOrEqualToOperator )
 
     booleval::evaluator evaluator
     {
-        booleval::make_field( "field", &foo< double>::value )
+        booleval::make_field( "field", &foo< double >::value )
     };
 
     {
@@ -255,7 +255,7 @@ TEST( EvaluatorTest, LessThanOperator )
 
     booleval::evaluator evaluator_digits
     {
-        booleval::make_field( "field", &foo< unsigned>::value )
+        booleval::make_field( "field", &foo< unsigned >::value )
     };
 
     booleval::evaluator evaluator_strings
@@ -297,7 +297,7 @@ TEST( EvaluatorTest, LessThanOrEqualToOperator )
 
     booleval::evaluator evaluator
     {
-        booleval::make_field( "field", &foo< double>::value )
+        booleval::make_field( "field", &foo< double >::value )
     };
 
     {
@@ -500,7 +500,7 @@ TEST( EvaluatorTest, UnknownField )
 
     booleval::evaluator evaluator
     {
-        booleval::make_field( "field", &foo< unsigned>::value )
+        booleval::make_field( "field", &foo< unsigned >::value )
     };
 
     {
