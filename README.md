@@ -3,10 +3,11 @@
 <img src="docs/booleval-title.png"/>
 
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/m-peko/booleval/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/m-peko/booleval.svg?branch=master)](https://travis-ci.org/m-peko/booleval)
+[![Build Status](https://app.travis-ci.com/m-peko/booleval.svg?branch=master)](https://travis-ci.org/m-peko/booleval)
 [![codecov](https://codecov.io/gh/m-peko/booleval/branch/master/graph/badge.svg)](https://codecov.io/gh/m-peko/booleval)
+[![Standard](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 
-Modern C++17 library for evaluating logical expressions.
+Header-only C++17 library for evaluating logical expressions.
 
 </div>
 
@@ -14,22 +15,74 @@ Modern C++17 library for evaluating logical expressions.
 
 The library is under development and subject to change. Contributions are welcome. You can also log an issue if you have a wish for enhancement or if you spot a bug.
 
-## Overview
+## Quick start
 
-1. [About](#about)
-2. [Motivation](#motivation)
-3. [Specification](#specification)
-4. [Requirements](#requirements)
-5. [Compilation](#compilation)
-6. [Tests](#tests)
-7. [Example](#example)
-8. [Support](#support)
+```cpp
+#include <string>
+#include <iostream>
+#include <booleval/evaluator.hpp>
 
-<a name="about"></a>
+template< typename T >
+class foo
+{
+public:
+    foo()             : value_{}        {}
+    foo( T && value ) : value_{ value } {}
 
-## About
+    void value( T && value ) { value_ = value; }
 
-`booleval` is a small C++17 library for evaluating logical expressions. It implements recursive descent parser mechanism for building an expression tree for a user-defined logical expression. After the expression tree is being built, map of fields and values representing a certain object can be passed to the `evaluator` component of this library which will evaluate those values to `true` or `false` according to the user-defined logical expression.
+    T value() const noexcept { return value_; }
+
+private:
+    T value_{};
+};
+
+int main()
+{
+    foo< std::string > x{ "foo" };
+    foo< std::string > y{ "bar" };
+
+    booleval::evaluator evaluator
+    {
+        booleval::make_field( "field", &foo< std::string >::value )
+    };
+
+    if ( !evaluator.expression( "field eq foo" ) )
+    {
+        std::cerr << "Expression not valid!" << std::endl;
+    }
+
+    if ( evaluator.is_activated() )
+    {
+        std::cout << std::boolalpha << evaluator.evaluate( x ) << std::endl; // true
+        std::cout << std::boolalpha << evaluator.evaluate( y ) << std::endl; // false
+    }
+
+    return 0;
+}
+```
+
+## Table of Contents
+
+* [Motivation](#motivation)
+* [Getting Started](#getting-started)
+    * [Zero Copy](#zero-copy)
+    * [EQUAL TO Operator](#equal-to-operator)
+    * [Valid Expressions](#valid-expressions)
+    * [Invalid Expressions](#invalid-expressions)
+    * [Evaluation Result](#evaluation-result)
+    * [Supported Tokens](#supported-tokens)
+* [Benchmark](#benchmark)
+* [Compilation](#compilation)
+* [Tests](#tests)
+* [Compiler Compatibility](#compiler-compatibility)
+* [Contributing](#contributing)
+* [License](#license)
+* [Support](#support)
+
+## Motivation
+
+`booleval` is a header-only C++17 library for evaluating logical expressions. It implements recursive descent parser mechanism for building an expression tree for a user-defined logical expression. After the expression tree is being built, map of fields and values representing a certain object can be passed to the `evaluator` component of this library which will evaluate those values to `true` or `false` according to the user-defined logical expression.
 
 <br/>
 <p align="center">
@@ -38,25 +91,21 @@ The library is under development and subject to change. Contributions are welcom
 <br/>
 <br/>
 
-<a name="motivation"></a>
-
-## Motivation
-
 In programming languages like Java and C# accessing arbitrary fields inside a class represents an omnipresent problem. However, it got solved by introducing a **reflections** feature. This feature provides us information about the class to which a certain object belongs to and, also, the methods of that class which we can invoke at runtime.
 
 Since the reflection feature is missing in C++, `booleval` library is implemented. It checks whether the members of a class to which an object belongs to have certain values. Members of a class are specified in a string format and can be used to form a logical expression.
 
 Providing an end-user a functionality of specifying a logical expression is a common way of filtering out a large amounts of objects. E.g. [`tcpdump`](https://www.tcpdump.org/manpages/tcpdump.1.html) and [BPF](https://en.wikipedia.org/wiki/Berkeley_Packet_Filter) (Berkeley Packet Filter), network tools available on most UNIX-like operating systems, have pretty much the same syntax for their filter expression.
 
-<br/>
-<p align="center">
-    <img src="docs/command-line.gif"/>
-</p>
-<br/>
+## Getting Started
 
-<a name="specification"></a>
+`booleval` is a header-only C++17 library for evaluating logical expressions.
 
-## Specification
+### Zero Copy
+
+In order to improve performance, `booleval` library does not copy objects that are being evaluated.
+
+### EQUAL TO operator
 
 EQUAL TO operator is an optional operator. Therefore, logical expression that checks whether a field with the name `field_a` has a value of `foo` can be constructed in a two different ways:
 
@@ -65,13 +114,30 @@ EQUAL TO operator is an optional operator. Therefore, logical expression that ch
 
 To conclude, equality operator is a default operator between two fields. Thus, it **does not need** to be specified in the logical expression.
 
-### Examples of valid expressions
+### Valid expressions
+
 - `(field_a foo and field_b bar) or field_a bar`
 - `(field_a eq foo and field_b eq bar) or field_a eq bar`
 
-### Examples of invalid expressions
+### Invalid expressions
+
 - `(field_a foo and field_b bar` _Note: Missing closing parentheses_
 - `field_a foo bar` _Note: Two field values in a row_
+
+### Evaluation Result
+
+Result of evaluation process contains two information:
+
+- `success`: `true` if evaluation process is successful; otherwise, `false`
+- `message`: meaningful message if evaluation process is unsuccessful; otherwise, empty message
+
+This kind of enriched lightweight result is being used instead of exceptions for performance reasons.
+
+Examples of messages:
+
+- `"Missing operand"`
+- `"Unknown field"`
+- `"Unknown token type"`
 
 ### Supported tokens
 
@@ -88,19 +154,16 @@ To conclude, equality operator is a default operator between two fields. Thus, i
 |LEFT parentheses|&empty;|(|
 |RIGHT parentheses|&empty;|)|
 
-<a name="requirements"></a>
+## Benchmark
 
-## Requirements
+Following table shows benchmark results:
 
-`booleval` project requires C++17 compiler and has been tested on:
+|Benchmark|Time|Iterations
+|:---:|:---:|:---:|
+|Building expression tree|3817 ns|180904|
+|Evaluation|1285 ns|532522|
 
-- gcc 8.4.0
-- clang 7.0.0
-- msvc 19.16
-
-There are no 3rd party dependencies.
-
-<a name="compilation"></a>
+In other words, it is possible to evaluate **2,413,045.84 objects per second**.
 
 ## Compilation
 
@@ -117,8 +180,6 @@ $ cmake ../
 $ # compile
 $ make
 ```
-
-<a name="tests"></a>
 
 ## Tests
 
@@ -142,71 +203,28 @@ $ # run tests
 $ make test
 ```
 
-If you find that any tests **fail**, please create a ticket in the
-issue tracker indicating the following information:
-- platform
-- architecture
-- library version
-- minimal reproducible example
+## Compiler Compatibility
 
-<a name="example"></a>
+* Clang/LLVM >= 7
+* MSVC++ >= 19.16
+* GCC >= 8.4
 
-## Example
+There are no 3<sup>rd</sup> party dependencies.
 
-Let's say we have a large number of objects coming through our interface. Objects can be of the following `class obj` type:
+## Contributing
 
-```c++
-struct obj {
-    std::string field_a_;
-    uint32_t field_b_;
+Feel free to contribute.
 
-public:
-    obj(std::string const& field_a, uint32_t const field_b)
-        : field_a_(field_a),
-          field_b_(field_b)
-    {}
+If you find that any of the tests **fail**, please create a ticket in the issue tracker indicating the following information:
 
-    std::string const& field_a() {
-        return field_a_;
-    }
+* platform
+* architecture
+* library version
+* minimal reproducible example
 
-    uint32_t field_b() {
-        return field_b_;
-    }
-};
-```
+## License
 
-In our application, we want to let end-users to specify some sort of a rule which will filter out only those objects that contain certain field values. This rule can have a form of a following logical expression `field_a foo and field_b 123`. Now, we can use `booleval::evaluator` component to check whether objects conform specified rule.
-
-```c++
-#include <string>
-#include <iostream>
-#include <booleval/evaluator.hpp>
-
-int main() {
-    obj pass("foo", 123);
-    obj fail("bar", 456);
-
-    booleval::evaluator evaluator({
-        { "field_a", &obj::field_a },
-        { "field_b", &obj::field_b }
-    });
-
-    auto valid = evaluator.expression("field_a foo and field_b 123");
-    if (!valid) {
-        std::cerr << "Expression not valid!" << std::endl;
-    }
-
-    if (evaluator.is_activated()) {
-        std::cout << std::boolalpha << evaluator.evaluate(pass) << std::endl;  // output: true
-        std::cout << std::boolalpha << evaluator.evaluate(fail) << std::endl;  // output: false
-    } else {
-        std::cerr << "Evaluator is not activated!" << std::endl;
-    }
-
-    return 0;
-}
-```
+The project is available under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ## Support
 

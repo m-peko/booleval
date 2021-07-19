@@ -4,6 +4,6 @@
     ignore = dirty
 
 [submodule "googlebench"]
-	path = googlebench
-	url = https://github.com/google/benchmark.git
+    path = googlebench
+    url = https://github.com/google/benchmark.git
     ignore = dirty
