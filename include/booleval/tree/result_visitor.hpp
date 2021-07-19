@@ -30,14 +30,19 @@
 #ifndef BOOLEVAL_RESULT_VISITOR_HPP
 #define BOOLEVAL_RESULT_VISITOR_HPP
 
-#include <map>
+#include <memory>
+#include <vector>
 #include <functional>
 #include <string_view>
-#include <booleval/exceptions.hpp>
-#include <booleval/tree/tree_node.hpp>
-#include <booleval/utils/any_mem_fn.hpp>
 
-namespace booleval::tree {
+#include <booleval/field.hpp>
+#include <booleval/result.hpp>
+#include <booleval/tree/node.hpp>
+
+namespace booleval::tree
+{
+
+using namespace std::string_literals;
 
 /**
  * @class result_visitor
@@ -45,27 +50,17 @@ namespace booleval::tree {
  * Represents a visitor for expression tree nodes in order to get the
  * final result of the expression based on the fields of an object being passed.
  */
-template <typename MemFn = utils::any_mem_fn>
-class result_visitor {
-    using field_map = std::map<std::string_view, MemFn>;
-
+class result_visitor
+{
 public:
-    result_visitor() = default;
-    result_visitor(result_visitor&& rhs) = default;
-    result_visitor(result_visitor const& rhs) = default;
-
-    result_visitor& operator=(result_visitor&& rhs) = default;
-    result_visitor& operator=(result_visitor const& rhs) = default;
-
-    ~result_visitor() = default;
-
     /**
-     * Sets the key - member function map used for evaluation of expression tree.
+     * Sets the fields used for evaluation of expression tree.
      *
-     * @param fields Key - member function map
+     * @param fields Fields to be used in evaluation process
      */
-    void fields(field_map const& fields) noexcept {
-        fields_ = fields;
+    void fields( std::initializer_list< field_base * > fields ) noexcept
+    {
+        fields_ = std::vector< std::unique_ptr< field_base > >{ std::begin( fields ), std::end( fields ) };
     }
 
     /**
@@ -74,13 +69,12 @@ public:
      *
      * @param node Currently visited tree node
      *
-     * @return ReturnType
+     * @return Result
      */
-    template <typename T>
-    [[nodiscard]] constexpr bool visit(tree_node const& node, T const& obj);
+    template< typename T >
+    [[ nodiscard ]] constexpr result visit( node const & node, T && obj ) const noexcept;
 
 private:
-
     /**
      * Visits tree node representing one of logical operations.
      *
@@ -88,11 +82,21 @@ private:
      * @param obj  Object to be evaluated
      * @param func Logical operation function
      *
-     * @return Result of logical operation
+     * @return Result
      */
-    template <typename T, typename F>
-    [[nodiscard]] constexpr bool visit_logical(tree_node const& node, T const& obj, F&& func) {
-        return func(visit(*node.left, obj), visit(*node.right, obj));
+    template< typename T, typename F >
+    [[ nodiscard ]] constexpr result visit_logical( node const & node, T && obj, F && f ) const noexcept
+    {
+        auto const left { visit( *node.left , std::forward< T >( obj ) ) };
+        auto const right{ visit( *node.right, std::forward< T >( obj ) ) };
+
+        // always pick the error message closer to the beginning of the expression
+        auto const message
+        {
+            left.message.empty() ? right.message : left.message
+        };
+
+        return { f( left.success, right.success ), message };
     }
 
     /**
@@ -102,59 +106,68 @@ private:
      * @param obj  Object to be evaluated
      * @param func Comparison function
      *
-     * @return Result of relational operation
+     * @return Result
      */
-    template <typename T, typename F>
-    [[nodiscard]] constexpr bool visit_relational(tree_node const& node, T const& obj, F&& func) {
-        auto key = node.left->token;
+    template< typename T, typename F >
+    [[ nodiscard ]] constexpr result visit_relational( node const & node, T && obj, F && f ) const noexcept
+    {
+        auto const key{ node.left->token };
 
-        auto iter = fields_.find(key.value());
-        if (iter == fields_.end()) {
-            throw field_not_found(key.value());
+        auto const it
+        {
+            std::find_if
+            (
+                std::cbegin( fields_ ),
+                std::cend  ( fields_ ),
+                [ key ]( auto && field ) noexcept
+                {
+                    return field->name == key.value();
+                }
+            )
+        };
+
+        if ( it == std::end( fields_ ) )
+        {
+            return { false, "Unknown field" };
         }
 
-        auto value = node.right->token;
-        return func(iter->second.invoke(obj), value.value());
+        auto const success
+        {
+            f
+            (
+                ( *it )->invoke( std::forward< T >( obj ) ),
+                node.right->token.value()
+            )
+        };
+
+        return { success };
     }
 
 private:
-    field_map fields_;
+    std::vector< std::unique_ptr< field_base > > fields_;
 };
 
-template <typename MemFn>
-template <typename T>
-constexpr bool result_visitor<MemFn>::visit(tree_node const& node, T const& obj) {
-    if (nullptr == node.left || nullptr == node.right) {
-        return false;
+template< typename T >
+constexpr result result_visitor::visit( node const & node, T && obj ) const noexcept
+{
+    if ( nullptr == node.left || nullptr == node.right )
+    {
+        return { false, "Missing operand" };
     }
 
-    switch (node.token.type()) {
-    case token::token_type::logical_and:
-        return visit_logical(node, obj, std::logical_and<>());
+    switch ( node.token.type() )
+    {
+        case token::token_type::logical_and: return visit_logical   ( node, std::forward< T >( obj ), std::logical_and<>()   );
+        case token::token_type::logical_or : return visit_logical   ( node, std::forward< T >( obj ), std::logical_or<>()    );
+        case token::token_type::eq         : return visit_relational( node, std::forward< T >( obj ), std::equal_to<>()      );
+        case token::token_type::neq        : return visit_relational( node, std::forward< T >( obj ), std::not_equal_to<>()  );
+        case token::token_type::gt         : return visit_relational( node, std::forward< T >( obj ), std::greater<>()       );
+        case token::token_type::lt         : return visit_relational( node, std::forward< T >( obj ), std::less<>()          );
+        case token::token_type::geq        : return visit_relational( node, std::forward< T >( obj ), std::greater_equal<>() );
+        case token::token_type::leq        : return visit_relational( node, std::forward< T >( obj ), std::less_equal<>()    );
 
-    case token::token_type::logical_or:
-        return visit_logical(node, obj, std::logical_or<>());
-
-    case token::token_type::eq:
-        return visit_relational(node, obj, std::equal_to<>());
-
-    case token::token_type::neq:
-        return visit_relational(node, obj, std::not_equal_to<>());
-
-    case token::token_type::gt:
-        return visit_relational(node, obj, std::greater<>());
-
-    case token::token_type::lt:
-        return visit_relational(node, obj, std::less<>());
-
-    case token::token_type::geq:
-        return visit_relational(node, obj, std::greater_equal<>());
-
-    case token::token_type::leq:
-        return visit_relational(node, obj, std::less_equal<>());
-
-    default:
-        return false;
+        default:
+            return { false, "Unknown token type" };
     }
 }
 

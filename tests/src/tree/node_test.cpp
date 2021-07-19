@@ -27,45 +27,43 @@
  *
  */
 
-#ifndef BOOLEVAL_TREE_NODE_HPP
-#define BOOLEVAL_TREE_NODE_HPP
+#include <gtest/gtest.h>
 
-#include <memory>
-#include <booleval/token/token.hpp>
 #include <booleval/token/token_type.hpp>
+#include <booleval/token/token.hpp>
+#include <booleval/tree/node.hpp>
 
-namespace booleval::tree {
+TEST( NodeTest, DefaultConstructor )
+{
+    booleval::tree::node node{};
+    ASSERT_EQ( node.token.type(), booleval::token::token_type::unknown );
+    ASSERT_EQ( node.left , nullptr );
+    ASSERT_EQ( node.right, nullptr );
+}
 
-/**
- * struct tree_node
- *
- * Represents the tree node containing references to left and right child nodes
- * as well as the token that the node represents in the actual expression tree.
- */
-struct tree_node {
-    token::token token{ token::token_type::unknown };
-    std::shared_ptr<tree_node> left;
-    std::shared_ptr<tree_node> right;
+TEST( NodeTest, ConstructorFromTokenType )
+{
+    booleval::tree::node node{ booleval::token::token_type::logical_and };
+    ASSERT_EQ( node.token.type(), booleval::token::token_type::logical_and );
+    ASSERT_EQ( node.left , nullptr );
+    ASSERT_EQ( node.right, nullptr );
+}
 
-    constexpr tree_node() = default;
-
-    tree_node(tree_node&& rhs) = default;
-    tree_node(tree_node const& rhs) = default;
-
-    constexpr tree_node(token::token_type const type)
-        : token(type)
-    {}
-
-    constexpr tree_node(token::token const& token)
-        : token(token)
-    {}
-
-    tree_node& operator=(tree_node&& rhs) = default;
-    tree_node& operator=(tree_node const& rhs) = default;
-
-    ~tree_node() = default;
-};
-
-} // namespace booleval::tree
-
-#endif // BOOLEVAL_TREE_NODE_HPP
+TEST( NodeTest, ConstructorFromToken )
+{
+    {
+        booleval::token::token and_token{ booleval::token::token_type::logical_and };
+        booleval::tree::node node{ and_token };
+        ASSERT_EQ( node.token.type(), booleval::token::token_type::logical_and );
+        ASSERT_EQ( node.left , nullptr );
+        ASSERT_EQ( node.right, nullptr );
+    }
+    {
+        booleval::token::token field_token{ "foo" };
+        booleval::tree::node node{ field_token };
+        ASSERT_EQ( node.token.value(), "foo" );
+        ASSERT_EQ( node.token.type(), booleval::token::token_type::field );
+        ASSERT_EQ( node.left , nullptr );
+        ASSERT_EQ( node.right, nullptr );
+    }
+}

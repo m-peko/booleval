@@ -31,84 +31,63 @@
 #define BOOLEVAL_TOKENIZER_HPP
 
 #include <vector>
+#include <iostream>
 #include <string_view>
-#include <booleval/token/token.hpp>
 
-namespace booleval::token {
+#include <booleval/token/token.hpp>
+#include <booleval/utils/string_utils.hpp>
+#include <booleval/utils/split_options.hpp>
+#include <booleval/utils/split_range.hpp>
+
+namespace booleval::token
+{
 
 /**
- * @class tokenizer
- *
- * Represents the mechanism for tokenizing the expressions, i.e. transforming
- * the expressions from a form of a string to the collection of tokens.
+ * Tokenizes given expression, i.e. transforms given expression
+ * from string to the collection of token objects.
  */
-class tokenizer {
-public:
-    tokenizer() = default;
-    tokenizer(tokenizer&& rhs) = default;
-    tokenizer(tokenizer const& rhs) = default;
-    tokenizer(std::string_view expression) noexcept;
+inline std::vector< token > tokenize( std::string_view const expression ) noexcept
+{
+    std::vector< token > result;
 
-    tokenizer& operator=(tokenizer&& rhs) = default;
-    tokenizer& operator=(tokenizer const& rhs) = default;
+    constexpr auto parentheses_symbols{ get_parentheses_symbols() };
+    constexpr auto split_options
+    {
+        utils::split_options::include_delimiters  |
+        utils::split_options::split_by_whitespace |
+        utils::split_options::allow_quoted_strings
+    };
 
-    ~tokenizer() = default;
+    auto const delimiters
+    {
+        utils::join
+        (
+            std::cbegin( parentheses_symbols ),
+            std::cend  ( parentheses_symbols )
+        )
+    };
 
-    /**
-     * Sets the expression that needs to be tokenized.
-     *
-     * @param expression Expression to be tokenized
-     */
-    void expression(std::string_view expression) noexcept;
+    auto const tokens_range{ utils::split_range< split_options >( expression, delimiters ) };
 
-    /**
-     * Gets the expression that needs to be tokenized.
-     *
-     * @return Expression to be tokenized
-     */
-    [[nodiscard]] std::string_view expression() const noexcept;
+    for ( auto const [ is_quoted, value ] : tokens_range )
+    {
+        if ( utils::is_whitespace( value ) ) { continue; }
 
-    /**
-     * Checks whether more tokens exist or not.
-     *
-     * @return True if there is more tokens, otherwise false
-     */
-    [[nodiscard]] bool has_tokens() const noexcept;
+        auto const type{ is_quoted ? token_type::field : to_token_type( value ) };
 
-    /**
-     * Passes the token by incrementing the current token index.
-     */
-    void pass_token() noexcept;
+        if ( type == token_type::field )
+        {
+            if ( !result.empty() && result.back().is( token_type::field ) )
+            {
+                result.emplace_back( token_type::eq, to_token_keyword( token_type::eq ) );
+            }
+        }
 
-    /**
-     * Gets the next token and increments the current token index.
-     *
-     * @return Next token
-     */
-    [[nodiscard]] token const& next_token();
+        result.emplace_back( type, value );
+    }
 
-    /**
-     * Gets the next token without incrementing the current token index.
-     *
-     * @return Next token
-     */
-    [[nodiscard]] token const& weak_next_token();
-
-    /**
-     * Tokenizes the expression and transforms it into the collection of tokens.
-     */
-    void tokenize();
-
-    /**
-     * Clears the collection of tokens and sets the current index to zero.
-     */
-    void reset() noexcept;
-
-private:
-    std::string_view expression_;
-    std::size_t current_token_index_{ 0 };
-    std::vector<token> tokens_;
-};
+    return result;
+}
 
 } // namespace booleval::token
 

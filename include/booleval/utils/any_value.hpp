@@ -34,7 +34,8 @@
 #include <type_traits>
 #include <booleval/utils/string_utils.hpp>
 
-namespace booleval::utils {
+namespace booleval::utils
+{
 
 /**
  * @class any_value
@@ -42,260 +43,114 @@ namespace booleval::utils {
  * Represents the class that accepts any type of value through its constructor
  * or assignment operator and internally stores its string version.
  */
-class any_value {
+class any_value
+{
 public:
     any_value() = default;
-    any_value(any_value&& rhs) = default;
-    any_value(any_value const& rhs) = default;
 
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    any_value(T const rhs);
+    any_value( any_value       && rhs ) = default;
+    any_value( any_value const  & rhs ) = default;
 
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    any_value(T const rhs);
+    template< typename T >
+    any_value( T && rhs ) noexcept
+    {
+        if constexpr ( std::is_arithmetic_v< std::remove_reference_t< T > > )
+        {
+            value_ = utils::to_chars< std::remove_reference_t< T > >( std::forward< T >( rhs ) );
+            use_string_comparison_ = false;
+        }
+        else if constexpr ( std::is_constructible_v< std::string, std::remove_reference_t< T > > )
+        {
+            value_ = std::forward< T >( rhs );
+            use_string_comparison_ = true;
+        }
+    }
 
-    any_value& operator=(any_value&& rhs) = default;
-    any_value& operator=(any_value const& rhs) = default;
+    any_value& operator=( any_value       && rhs ) = default;
+    any_value& operator=( any_value const  & rhs ) = default;
 
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    any_value& operator=(T const rhs);
+    template< typename T >
+    any_value& operator=( T && rhs ) noexcept
+    {
+        if constexpr ( std::is_arithmetic_v< std::remove_reference_t< T > > )
+        {
+            value_ = utils::to_chars< std::remove_reference_t< T > >( std::forward< T >( rhs ) );
+            use_string_comparison_ = false;
+        }
+        else if constexpr ( std::is_constructible_v< std::string, std::remove_reference_t< T > > )
+        {
+            value_ = std::forward< T >( rhs );
+            use_string_comparison_ = true;
+        }
+        return *this;
+    }
 
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    any_value& operator=(T const rhs);
+    template< typename T >
+    [[ nodiscard ]] bool operator==( T && rhs ) const noexcept
+    {
+        return compare( value_, rhs, std::equal_to<>{} );
+    }
 
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[nodiscard]] bool operator==(T const rhs);
+    template< typename T >
+    [[ nodiscard ]] bool operator!=( T && rhs ) const noexcept
+    {
+        return compare( value_, rhs, std::not_equal_to<>{} );
+    }
 
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[nodiscard]] bool operator==(T const rhs);
+    [[ nodiscard ]] bool operator>( std::string_view const rhs ) const noexcept
+    {
+        return compare( value_, rhs, std::greater<>{} );
+    }
 
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[nodiscard]] bool operator!=(T const rhs);
+    [[ nodiscard ]] bool operator<( std::string_view const rhs ) const noexcept
+    {
+        return compare( value_, rhs, std::less<>{} );
+    }
 
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[nodiscard]] bool operator!=(T const rhs);
+    [[ nodiscard ]] bool operator>=( std::string_view const rhs ) const noexcept
+    {
+        return compare( value_, rhs, std::greater_equal<>{} );
+    }
 
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[nodiscard]] bool operator>(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[nodiscard]] bool operator>(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[nodiscard]] bool operator<(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[nodiscard]] bool operator<(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[nodiscard]] bool operator>=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[nodiscard]] bool operator>=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-    [[nodiscard]] bool operator<=(T const rhs);
-
-    template <typename T,
-              typename std::enable_if_t<std::is_constructible_v<std::string, T>>* = nullptr>
-    [[nodiscard]] bool operator<=(T const rhs);
+    [[ nodiscard ]] bool operator<=( std::string_view const rhs ) const noexcept
+    {
+        return compare( value_, rhs, std::less_equal<>{} );
+    }
 
     ~any_value() = default;
 
-    [[nodiscard]] std::string const& str() const noexcept {
-        return value_;
-    }
-
-    friend bool operator==(any_value const& lhs, any_value const& rhs);
-    friend bool operator!=(any_value const& lhs, any_value const& rhs);
+    friend bool operator==( any_value const & lhs, any_value const & rhs ) noexcept;
+    friend bool operator!=( any_value const & lhs, any_value const & rhs ) noexcept;
 
 private:
+
+    template< typename F >
+    bool compare( std::string_view const lhs, std::string_view const rhs, F && f ) const noexcept
+    {
+        if ( use_string_comparison_ ) { return f( lhs, rhs ); }
+
+        auto const arithmetic_lhs{ utils::from_chars< double >( lhs ) };
+        auto const arithmetic_rhs{ utils::from_chars< double >( rhs ) };
+
+        if ( arithmetic_lhs && arithmetic_rhs )
+        {
+            return f( arithmetic_lhs.value(), arithmetic_rhs.value() );
+        }
+
+        return false;
+    }
+
     std::string value_;
-    bool use_string_comparison_{ false };
+    bool        use_string_comparison_{ false };
 };
 
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-any_value::any_value(T const rhs)
-    : value_(utils::to_chars<T>(rhs)),
-      use_string_comparison_(false)
-{}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-any_value::any_value(T const rhs)
-    : value_(rhs),
-      use_string_comparison_(true)
-{}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-any_value& any_value::operator=(T const rhs) {
-    value_ = utils::to_chars<T>(rhs);
-    use_string_comparison_ = false;
-    return *this;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-any_value& any_value::operator=(T const rhs) {
-    value_ = rhs;
-    use_string_comparison_ = true;
-    return *this;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator==(T const rhs) {
-    return value_ == utils::to_chars<T>(rhs);
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator==(T const rhs) {
-    return value_ == rhs;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator!=(T const rhs) {
-    return value_ != utils::to_chars<T>(rhs);
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator!=(T const rhs) {
-    return value_ != rhs;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator>(T const rhs) {
-    auto arithmetic_lhs = utils::from_chars<T>(value_);
-    if (arithmetic_lhs) {
-        return arithmetic_lhs.value() > rhs;
-    }
-
-    return false;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator>(T const rhs) {
-    if (use_string_comparison_) {
-        return value_ > rhs;
-    }
-
-    auto arithmetic_lhs = utils::from_chars<double>(value_);
-    auto arithmetic_rhs = utils::from_chars<double>(rhs);
-    if (arithmetic_lhs && arithmetic_rhs) {
-        return arithmetic_lhs.value() > arithmetic_rhs.value();
-    }
-
-    return false;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator<(T const rhs) {
-    auto arithmetic_lhs = utils::from_chars<T>(value_);
-    if (arithmetic_lhs) {
-        return arithmetic_lhs.value() < rhs;
-    }
-
-    return false;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator<(T const rhs) {
-    if (use_string_comparison_) {
-        return value_ < rhs;
-    }
-
-    auto arithmetic_lhs = utils::from_chars<double>(value_);
-    auto arithmetic_rhs = utils::from_chars<double>(rhs);
-    if (arithmetic_lhs && arithmetic_rhs) {
-        return arithmetic_lhs.value() < arithmetic_rhs.value();
-    }
-
-    return false;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator>=(T const rhs) {
-    auto arithmetic_lhs = utils::from_chars<T>(value_);
-    if (arithmetic_lhs) {
-        return arithmetic_lhs.value() >= rhs;
-    }
-
-    return false;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator>=(T const rhs) {
-    if (use_string_comparison_) {
-        return value_ >= rhs;
-    }
-
-    auto arithmetic_lhs = utils::from_chars<double>(value_);
-    auto arithmetic_rhs = utils::from_chars<double>(rhs);
-    if (arithmetic_lhs && arithmetic_rhs) {
-        return arithmetic_lhs.value() >= arithmetic_rhs.value();
-    }
-
-    return false;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic_v<T>>*>
-bool any_value::operator<=(T const rhs) {
-    auto arithmetic_lhs = utils::from_chars<T>(value_);
-    if (arithmetic_lhs) {
-        return arithmetic_lhs.value() <= rhs;
-    }
-
-    return false;
-}
-
-template <typename T,
-          typename std::enable_if_t<std::is_constructible_v<std::string, T>>*>
-bool any_value::operator<=(T const rhs) {
-    if (use_string_comparison_) {
-        return value_ <= rhs;
-    }
-
-    auto arithmetic_lhs = utils::from_chars<double>(value_);
-    auto arithmetic_rhs = utils::from_chars<double>(rhs);
-    if (arithmetic_lhs && arithmetic_rhs) {
-        return arithmetic_lhs.value() <= arithmetic_rhs.value();
-    }
-
-    return false;
-}
-
-[[nodiscard]] inline bool operator==(any_value const& lhs, any_value const& rhs) {
+[[ nodiscard ]] inline bool operator==( any_value const & lhs, any_value const & rhs ) noexcept
+{
     return lhs.value_ == rhs.value_;
 }
 
-[[nodiscard]] inline bool operator!=(any_value const& lhs, any_value const& rhs) {
+[[ nodiscard ]] inline bool operator!=( any_value const & lhs, any_value const & rhs ) noexcept
+{
     return lhs.value_ != rhs.value_;
 }
 

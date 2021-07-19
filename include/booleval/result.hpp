@@ -27,48 +27,32 @@
  *
  */
 
-#include <gtest/gtest.h>
-#include <booleval/token/token.hpp>
-#include <booleval/tree/tree_node.hpp>
-#include <booleval/token/token_type.hpp>
+#ifndef BOOLEVAL_RESULT_HPP
+#define BOOLEVAL_RESULT_HPP
 
-class TreeNodeTest : public testing::Test {};
+#include <string_view>
 
-TEST_F(TreeNodeTest, DefaultConstructor) {
-    using namespace booleval;
+namespace booleval
+{
 
-    tree::tree_node node;
-    EXPECT_EQ(node.token.type(), token::token_type::unknown);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
+/**
+ * @struct result
+ *
+ * Represents a lightweight result of evaluation process.
+ */
+struct result
+{
+    /**
+     * True if evaluation process is successful. Otherwise, false.
+     */
+    bool success{ false };
 
-TEST_F(TreeNodeTest, ConstructorFromTokenType) {
-    using namespace booleval;
+    /**
+     * Message in case of the fault.
+     */
+    std::string_view message{};
+};
 
-    tree::tree_node node(token::token_type::logical_and);
-    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
+} // namespace booleval
 
-TEST_F(TreeNodeTest, ConstructorFromToken) {
-    using namespace booleval;
-
-    token::token and_token(token::token_type::logical_and);
-    tree::tree_node node(and_token);
-    EXPECT_EQ(node.token.type(), token::token_type::logical_and);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
-
-TEST_F(TreeNodeTest, ConstructorFromFieldToken) {
-    using namespace booleval;
-
-    token::token field_token("foo");
-    tree::tree_node node(field_token);
-    EXPECT_EQ(node.token.value(), "foo");
-    EXPECT_EQ(node.token.type(), token::token_type::field);
-    EXPECT_EQ(node.left, nullptr);
-    EXPECT_EQ(node.right, nullptr);
-}
+#endif // BOOLEVAL_RESULT_HPP

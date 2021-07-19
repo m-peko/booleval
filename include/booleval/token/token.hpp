@@ -33,56 +33,63 @@
 #include <optional>
 #include <string_view>
 #include <type_traits>
-#include <booleval/token/token_type.hpp>
-#include <booleval/utils/string_utils.hpp>
 
-namespace booleval::token {
+#include <booleval/token/token_type.hpp>
+#include <booleval/token/token_type_utils.hpp>
+
+namespace booleval::token
+{
 
 /**
  * @class token
  *
  * Represents all tokens ('and', 'or', 'eq', ...).
  */
-class token {
+class token
+{
 public:
-    constexpr token() = default;
-    constexpr token(token&& rhs) = default;
-    constexpr token(token const& rhs) = default;
+    constexpr token() noexcept = default;
 
-    constexpr token(token_type const type) noexcept
-        : type_(type),
-          value_(map_to_token_value(type))
+    constexpr token( token       && rhs ) noexcept = default;
+    constexpr token( token const  & rhs ) noexcept = default;
+
+    constexpr token( token_type const type ) noexcept
+        : type_ ( type )
+        , value_( to_token_keyword( type ) )
     {}
 
-    constexpr token(std::string_view const value) noexcept
-        : type_(map_to_token_type(value)),
-          value_(value)
+    constexpr token( std::string_view const value ) noexcept
+        : type_ ( to_token_type( value ) )
+        , value_( value )
     {}
 
-    constexpr token(token_type const type, std::string_view const value) noexcept
-        : type_(type),
-          value_(value)
+    constexpr token( token_type const type, std::string_view const value ) noexcept
+        : type_ ( type  )
+        , value_( value )
     {}
 
-    token& operator=(token&& rhs) = default;
-    token& operator=(token const& rhs) = default;
+    token & operator=( token       && rhs ) noexcept = default;
+    token & operator=( token const  & rhs ) noexcept = default;
 
-    [[nodiscard]] constexpr bool operator==(token const& rhs) const noexcept {
+    [[ nodiscard ]] constexpr bool operator==( token const & rhs ) const noexcept
+    {
         return type_  == rhs.type_ &&
                value_ == rhs.value_;
     }
 
-    ~token() = default;
+    ~token() noexcept = default;
 
     /**
      * Sets the token type.
      *
      * @param type Token type
      */
-    constexpr void type(token_type const type) noexcept {
-        if (type != type_) {
-            type_ = type;
-            value_ = map_to_token_value(type);
+    constexpr void type( token_type const type ) noexcept
+    {
+        if ( type != type_ )
+        {
+            type_  = type;
+            value_ = to_token_keyword( type );
         }
     }
 
@@ -91,7 +98,8 @@ public:
      *
      * @return Token type
      */
-    constexpr token_type type() const noexcept {
+    [[ nodiscard ]] constexpr token_type type() const noexcept
+    {
         return type_;
     }
 
@@ -100,8 +108,9 @@ public:
      *
      * @param value Token value
      */
-    constexpr void value(std::string_view const value) noexcept {
-        type_ = map_to_token_type(value);
+    constexpr void value( std::string_view const value ) noexcept
+    {
+        type_  = to_token_type( value );
         value_ = value;
     }
 
@@ -110,20 +119,9 @@ public:
      *
      * @return Token value
      */
-    [[nodiscard]] constexpr std::string_view value() const noexcept {
+    [[ nodiscard ]] constexpr std::string_view value() const noexcept
+    {
         return value_;
-    }
-
-    /**
-     * Gets the token value as an arithmetic value.
-     * If value cannot be parsed, std::nullopt is returned.
-     *
-     * @return Optional token value
-     */
-    template <typename T,
-              typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-    [[nodiscard]] constexpr std::optional<T> value() const noexcept {
-        return utils::from_chars<T>(value_);
     }
 
     /**
@@ -131,7 +129,8 @@ public:
      *
      * @return True if the token is of the specified type, false otherwise
      */
-    [[nodiscard]] constexpr bool is(token_type const type) const noexcept {
+    [[ nodiscard ]] constexpr bool is( token_type const type ) const noexcept
+    {
         return type_ == type;
     }
 
@@ -140,7 +139,8 @@ public:
      *
      * @return True if the token is not of the specified type, false otherwise
      */
-    [[nodiscard]] constexpr bool is_not(token_type const type) const noexcept {
+    [[ nodiscard ]] constexpr bool is_not( token_type const type ) const noexcept
+    {
         return type_ != type;
     }
 
@@ -149,8 +149,13 @@ public:
      *
      * @return True if the token is of the first or second specified type, false otherwise
      */
-    [[nodiscard]] constexpr bool is_one_of(token_type const first, token_type const second) const noexcept {
-        return is(first) || is(second);
+    [[ nodiscard ]] constexpr bool is_one_of
+    (
+        token_type const first,
+        token_type const second
+    ) const noexcept
+    {
+        return is( first ) || is( second );
     }
 
     /**
@@ -158,16 +163,20 @@ public:
      *
      * @return True if the token is one of the multiple specified types, false otherwise
      */
-    template <typename... TokenType>
-    [[nodiscard]] constexpr bool is_one_of(token_type const first,
-                                           token_type const second,
-                                           TokenType const ... nth) const noexcept {
-        return is(first) || is_one_of(second, nth...);
+    template< typename ... TokenType >
+    [[nodiscard]] constexpr bool is_one_of
+    (
+        token_type const first,
+        token_type const second,
+        TokenType  const ... nth
+    ) const noexcept
+    {
+        return is( first ) || is_one_of( second, nth ... );
     }
 
 private:
-    token_type type_{ token_type::unknown };
-    std::string_view value_;
+    token_type       type_ { token_type::unknown };
+    std::string_view value_{};
 };
 
 } // namespace booleval::token

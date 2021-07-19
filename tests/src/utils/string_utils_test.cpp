@@ -28,144 +28,173 @@
  */
 
 #include <gtest/gtest.h>
+#include <booleval/utils/split_options.hpp>
 #include <booleval/utils/string_utils.hpp>
 
-class StringUtilsTest : public testing::Test {};
-
-TEST_F(StringUtilsTest, IsSetSplitOption) {
+TEST( StringUtilsTest, IsSetSplitOption )
+{
     using namespace booleval::utils;
 
-    auto options = split_options::include_delimiters;
-    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
-    EXPECT_FALSE(is_set(options, split_options::exclude_delimiters));
-    EXPECT_FALSE(is_set(options, split_options::split_by_whitespace));
-    EXPECT_FALSE(is_set(options, split_options::allow_quoted_strings));
-
-    options = split_options::include_delimiters |
-              split_options::exclude_delimiters;
-    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
-    EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
-    EXPECT_FALSE(is_set(options, split_options::split_by_whitespace));
-    EXPECT_FALSE(is_set(options, split_options::allow_quoted_strings));
-
-    options = split_options::include_delimiters |
-              split_options::exclude_delimiters |
-              split_options::split_by_whitespace;
-    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
-    EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
-    EXPECT_TRUE(is_set(options, split_options::split_by_whitespace));
-    EXPECT_FALSE(is_set(options, split_options::allow_quoted_strings));
-
-    options = split_options::include_delimiters  |
-              split_options::exclude_delimiters  |
-              split_options::split_by_whitespace |
-              split_options::allow_quoted_strings;
-    EXPECT_TRUE(is_set(options, split_options::include_delimiters));
-    EXPECT_TRUE(is_set(options, split_options::exclude_delimiters));
-    EXPECT_TRUE(is_set(options, split_options::split_by_whitespace));
-    EXPECT_TRUE(is_set(options, split_options::allow_quoted_strings));
+    {
+        auto const options{ split_options::include_delimiters };
+        ASSERT_TRUE ( is_set( options, split_options::include_delimiters   ) );
+        ASSERT_FALSE( is_set( options, split_options::exclude_delimiters   ) );
+        ASSERT_FALSE( is_set( options, split_options::split_by_whitespace  ) );
+        ASSERT_FALSE( is_set( options, split_options::allow_quoted_strings ) );
+    }
+    {
+        auto const options
+        {
+            split_options::include_delimiters |
+            split_options::exclude_delimiters
+        };
+        ASSERT_TRUE ( is_set( options, split_options::include_delimiters   ) );
+        ASSERT_TRUE ( is_set( options, split_options::exclude_delimiters   ) );
+        ASSERT_FALSE( is_set( options, split_options::split_by_whitespace  ) );
+        ASSERT_FALSE( is_set( options, split_options::allow_quoted_strings ) );
+    }
+    {
+        auto const options
+        {
+            split_options::include_delimiters |
+            split_options::exclude_delimiters |
+            split_options::split_by_whitespace
+        };
+        ASSERT_TRUE ( is_set( options, split_options::include_delimiters   ) );
+        ASSERT_TRUE ( is_set( options, split_options::exclude_delimiters   ) );
+        ASSERT_TRUE ( is_set( options, split_options::split_by_whitespace  ) );
+        ASSERT_FALSE( is_set( options, split_options::allow_quoted_strings ) );
+    }
+    {
+        auto const options
+        {
+            split_options::include_delimiters  |
+            split_options::exclude_delimiters  |
+            split_options::split_by_whitespace |
+             split_options::allow_quoted_strings
+        };
+        ASSERT_TRUE( is_set( options, split_options::include_delimiters   ) );
+        ASSERT_TRUE( is_set( options, split_options::exclude_delimiters   ) );
+        ASSERT_TRUE( is_set( options, split_options::split_by_whitespace  ) );
+        ASSERT_TRUE( is_set( options, split_options::allow_quoted_strings ) );
+    }
 }
 
-TEST_F(StringUtilsTest, LeftTrimWhitespaces) {
+TEST( StringUtilsTest, LeftTrimWhitespaces )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(ltrim("abc"), "abc");
-    EXPECT_EQ(ltrim(" abc"), "abc");
-    EXPECT_EQ(ltrim("  abc"), "abc");
-    EXPECT_EQ(ltrim("  abc "), "abc ");
-    EXPECT_EQ(ltrim("  a b c "), "a b c ");
+    ASSERT_EQ( ltrim( "abc"      ), "abc"    );
+    ASSERT_EQ( ltrim( " abc"     ), "abc"    );
+    ASSERT_EQ( ltrim( "  abc"    ), "abc"    );
+    ASSERT_EQ( ltrim( "  abc "   ), "abc "   );
+    ASSERT_EQ( ltrim( "  a b c " ), "a b c " );
 }
 
-TEST_F(StringUtilsTest, LeftTrimZeros) {
+TEST( StringUtilsTest, LeftTrimZeros )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(ltrim("abc", '0'), "abc");
-    EXPECT_EQ(ltrim("0abc", '0'), "abc");
-    EXPECT_EQ(ltrim("00abc", '0'), "abc");
-    EXPECT_EQ(ltrim("00abc0", '0'), "abc0");
-    EXPECT_EQ(ltrim("00a0b0c0", '0'), "a0b0c0");
+    ASSERT_EQ( ltrim( "abc"     , '0' ), "abc"    );
+    ASSERT_EQ( ltrim( "0abc"    , '0' ), "abc"    );
+    ASSERT_EQ( ltrim( "00abc"   , '0' ), "abc"    );
+    ASSERT_EQ( ltrim( "00abc0"  , '0' ), "abc0"   );
+    ASSERT_EQ( ltrim( "00a0b0c0", '0' ), "a0b0c0" );
 }
 
-TEST_F(StringUtilsTest, RightTrimWhitespaces) {
+TEST( StringUtilsTest, RightTrimWhitespaces )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(rtrim("abc"), "abc");
-    EXPECT_EQ(rtrim("abc "), "abc");
-    EXPECT_EQ(rtrim("abc  "), "abc");
-    EXPECT_EQ(rtrim(" abc  "), " abc");
-    EXPECT_EQ(rtrim(" a b c  "), " a b c");
+    ASSERT_EQ( rtrim( "abc"      ), "abc"    );
+    ASSERT_EQ( rtrim( "abc "     ), "abc"    );
+    ASSERT_EQ( rtrim( "abc  "    ), "abc"    );
+    ASSERT_EQ( rtrim( " abc  "   ), " abc"   );
+    ASSERT_EQ( rtrim( " a b c  " ), " a b c" );
 }
 
-TEST_F(StringUtilsTest, RightTrimZeros) {
+TEST( StringUtilsTest, RightTrimZeros )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(rtrim("abc", '0'), "abc");
-    EXPECT_EQ(rtrim("abc0", '0'), "abc");
-    EXPECT_EQ(rtrim("abc00", '0'), "abc");
-    EXPECT_EQ(rtrim("0abc00", '0'), "0abc");
-    EXPECT_EQ(rtrim("0a0b0c00", '0'), "0a0b0c");
+    ASSERT_EQ( rtrim( "abc"     , '0' ), "abc"    );
+    ASSERT_EQ( rtrim( "abc0"    , '0' ), "abc"    );
+    ASSERT_EQ( rtrim( "abc00"   , '0' ), "abc"    );
+    ASSERT_EQ( rtrim( "0abc00"  , '0' ), "0abc"   );
+    ASSERT_EQ( rtrim( "0a0b0c00", '0' ), "0a0b0c" );
 }
 
-TEST_F(StringUtilsTest, TrimWhitespaces) {
+TEST( StringUtilsTest, TrimWhitespaces )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(trim("abc"), "abc");
-    EXPECT_EQ(trim(" abc "), "abc");
-    EXPECT_EQ(trim("  abc  "), "abc");
-    EXPECT_EQ(trim("  a b c  "), "a b c");
+    ASSERT_EQ( trim( "abc"       ), "abc"   );
+    ASSERT_EQ( trim( " abc "     ), "abc"   );
+    ASSERT_EQ( trim( "  abc  "   ), "abc"   );
+    ASSERT_EQ( trim( "  a b c  " ), "a b c" );
 }
 
-TEST_F(StringUtilsTest, TrimZeros) {
+TEST( StringUtilsTest, TrimZeros )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(trim("abc", '0'), "abc");
-    EXPECT_EQ(trim("0abc0", '0'), "abc");
-    EXPECT_EQ(trim("00abc00", '0'), "abc");
-    EXPECT_EQ(trim("00a0b0c00", '0'), "a0b0c");
+    ASSERT_EQ( trim( "abc"      , '0' ), "abc"   );
+    ASSERT_EQ( trim( "0abc0"    , '0' ), "abc"   );
+    ASSERT_EQ( trim( "00abc00"  , '0' ), "abc"   );
+    ASSERT_EQ( trim( "00a0b0c00", '0' ), "a0b0c" );
 }
 
-TEST_F(StringUtilsTest, IsEmpty) {
+TEST( StringUtilsTest, IsEmpty )
+{
     using namespace booleval::utils;
 
-    EXPECT_TRUE(is_empty(""));
-    EXPECT_TRUE(is_empty(" "));
-    EXPECT_TRUE(is_empty("  "));
+    ASSERT_TRUE( is_empty( ""   ) );
+    ASSERT_TRUE( is_empty( " "  ) );
+    ASSERT_TRUE( is_empty( "  " ) );
 
-    EXPECT_FALSE(is_empty("abc"));
-    EXPECT_FALSE(is_empty(" abc"));
-    EXPECT_FALSE(is_empty("abc "));
-    EXPECT_FALSE(is_empty(" abc "));
-    EXPECT_FALSE(is_empty(" a b c "));
+    ASSERT_FALSE( is_empty( "abc"     ) );
+    ASSERT_FALSE( is_empty( " abc"    ) );
+    ASSERT_FALSE( is_empty( "abc "    ) );
+    ASSERT_FALSE( is_empty( " abc "   ) );
+    ASSERT_FALSE( is_empty( " a b c " ) );
 }
 
-TEST_F(StringUtilsTest, JoinWithoutSeparator) {
+TEST( StringUtilsTest, JoinWithoutSeparator )
+{
     using namespace booleval::utils;
 
-    auto tokens = { "a", "b", "c", "d" };
-    auto result = join(std::begin(tokens), std::end(tokens));
-    EXPECT_EQ(result, "abcd");
+    auto const tokens = { "a", "b", "c", "d" };
+    auto const result{ join( std::begin( tokens ), std::end( tokens ) ) };
+    ASSERT_EQ( result, "abcd" );
 }
 
-TEST_F(StringUtilsTest, JoinWithCommaSeparator) {
+TEST( StringUtilsTest, JoinWithCommaSeparator )
+{
     using namespace booleval::utils;
 
-    auto tokens = { "a", "b", "c", "d" };
-    auto result = join(std::begin(tokens), std::end(tokens), ",");
-    EXPECT_EQ(result, "a,b,c,d");
+    auto const tokens = { "a", "b", "c", "d" };
+    auto const result{ join( std::begin( tokens ), std::end( tokens ), "," ) };
+    ASSERT_EQ( result, "a,b,c,d" );
 }
 
-TEST_F(StringUtilsTest, From) {
+TEST( StringUtilsTest, FromString )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(from_chars<uint8_t>("1").value(), 1U);
-    EXPECT_DOUBLE_EQ(from_chars<double>("1.23456789").value(), 1.23456789);
-    EXPECT_FLOAT_EQ(from_chars<float>("1.23456789").value(), 1.23456789F);
+    ASSERT_FALSE( from_chars< std::uint8_t >( "a" ) );
+    ASSERT_FALSE( from_chars< double       >( "a" ) );
+    ASSERT_FALSE( from_chars< float        >( "a" ) );
+
+    ASSERT_EQ       ( from_chars< std::uint8_t >( "1"          ).value(), 1U          );
+    ASSERT_DOUBLE_EQ( from_chars< double       >( "1.23456789" ).value(), 1.23456789  );
+    ASSERT_FLOAT_EQ ( from_chars< float        >( "1.23456789" ).value(), 1.23456789F );
 }
 
-TEST_F(StringUtilsTest, To) {
+TEST( StringUtilsTest, ToString )
+{
     using namespace booleval::utils;
 
-    EXPECT_EQ(to_chars<uint8_t>(1), "1");
-    EXPECT_EQ(to_chars<double>(1.234567), "1.234567");
-    EXPECT_EQ(to_chars<float>(1.234567F), "1.234567");
+    ASSERT_EQ( to_chars< std::uint8_t >( 1         ), "1"        );
+    ASSERT_EQ( to_chars< double       >( 1.234567  ), "1.234567" );
+    ASSERT_EQ( to_chars< float        >( 1.234567F ), "1.234567" );
 }

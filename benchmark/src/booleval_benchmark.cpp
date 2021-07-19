@@ -27,35 +27,36 @@
  *
  */
 
-#include <string>
-#include <iostream>
+#include <benchmark/benchmark.h>
 #include <booleval/evaluator.hpp>
 
-template< typename T, typename U >
-class bar
+namespace
 {
-public:
-    bar( T && value_1, U && value_2 )
-    : value_1_{ value_1 }
-    , value_2_{ value_2 }
-    {}
 
-    void value_1( T && value ) noexcept { value_1_ = value; }
-    void value_2( U && value ) noexcept { value_2_ = value; }
+    template< typename T, typename U >
+    class bar
+    {
+    public:
+        bar( T && value_1, U && value_2 )
+        : value_1_{ value_1 }
+        , value_2_{ value_2 }
+        {}
 
-    T value_1() const noexcept { return value_1_; }
-    U value_2() const noexcept { return value_2_; }
+        void value_1( T && value ) noexcept { value_1_ = value; }
+        void value_2( U && value ) noexcept { value_2_ = value; }
 
-private:
-    T value_1_{};
-    U value_2_{};
-};
+        T value_1() const noexcept { return value_1_; }
+        U value_2() const noexcept { return value_2_; }
 
-int main()
+    private:
+        T value_1_{};
+        U value_2_{};
+    };
+
+} // namespace
+
+void BuildingExpressionTree( benchmark::State & state )
 {
-    bar< std::string, unsigned > x{ "foo", 1 };
-    bar< std::string, unsigned > y{ "bar", 2 };
-
     booleval::evaluator evaluator
     {
         {
@@ -64,20 +65,37 @@ int main()
         }
     };
 
-    if ( !evaluator.expression( "(field_1 foo and field_2 1) or (field_1 qux and field_2 2)" ) )
+    for (auto _ : state)
     {
-        std::cerr << "Expression not valid!" << std::endl;
+        [[ maybe_unused ]] auto const success{ evaluator.expression( "(field_1 foo and field_2 1) or (field_1 qux and field_2 2)" ) };
+        benchmark::DoNotOptimize( evaluator );
     }
-
-    if ( evaluator.is_activated() )
-    {
-        std::cout << std::boolalpha << evaluator.evaluate( x ).success << std::endl;
-        std::cout << std::boolalpha << evaluator.evaluate( y ).success << std::endl;
-    }
-    else
-    {
-        std::cerr << "Evaluator is not activated!" << std::endl;
-    }
-
-    return 0;
 }
+
+BENCHMARK( BuildingExpressionTree );
+
+void Evaluation( benchmark::State & state )
+{
+    booleval::evaluator evaluator
+    {
+        {
+            booleval::make_field( "field_1", &bar< std::string, unsigned >::value_1 ),
+            booleval::make_field( "field_2", &bar< std::string, unsigned >::value_2 )
+        }
+    };
+
+    bar< std::string, unsigned > x{ "foo", 1 };
+
+    [[ maybe_unused ]] auto const success{ evaluator.expression( "(field_1 foo and field_2 1) or (field_1 qux and field_2 2)" ) };
+
+    for (auto _ : state)
+    {
+        [[ maybe_unused ]] auto const result{ evaluator.evaluate( x ) };
+        benchmark::DoNotOptimize( evaluator );
+        benchmark::DoNotOptimize( x         );
+    }
+}
+
+BENCHMARK( Evaluation );
+
+BENCHMARK_MAIN();
