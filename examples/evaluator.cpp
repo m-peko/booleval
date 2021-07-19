@@ -71,8 +71,8 @@ int main()
 
     if ( evaluator.is_activated() )
     {
-        std::cout << std::boolalpha << evaluator.evaluate( x ) << std::endl;
-        std::cout << std::boolalpha << evaluator.evaluate( y ) << std::endl;
+        std::cout << std::boolalpha << evaluator.evaluate( x ).success << std::endl;
+        std::cout << std::boolalpha << evaluator.evaluate( y ).success << std::endl;
     }
     else
     {
