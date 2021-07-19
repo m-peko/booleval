@@ -79,4 +79,4 @@ script:
   - cmake --build . --target tests
 
   # Execute tests
-  - ctest
+  - ctest --extra-verbose
