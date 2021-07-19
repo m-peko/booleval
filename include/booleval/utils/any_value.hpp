@@ -46,10 +46,10 @@ namespace booleval::utils
 class any_value
 {
 public:
-    any_value() noexcept = default;
+    any_value() = default;
 
-    any_value( any_value       && rhs ) noexcept = default;
-    any_value( any_value const  & rhs ) noexcept = default;
+    any_value( any_value       && rhs ) = default;
+    any_value( any_value const  & rhs ) = default;
 
     template< typename T >
     any_value( T && rhs ) noexcept
@@ -66,8 +66,8 @@ public:
         }
     }
 
-    any_value& operator=( any_value       && rhs ) noexcept = default;
-    any_value& operator=( any_value const  & rhs ) noexcept = default;
+    any_value& operator=( any_value       && rhs ) = default;
+    any_value& operator=( any_value const  & rhs ) = default;
 
     template< typename T >
     any_value& operator=( T && rhs ) noexcept
@@ -117,7 +117,7 @@ public:
         return compare( value_, rhs, std::less_equal<>{} );
     }
 
-    ~any_value() noexcept = default;
+    ~any_value() = default;
 
     friend bool operator==( any_value const & lhs, any_value const & rhs ) noexcept;
     friend bool operator!=( any_value const & lhs, any_value const & rhs ) noexcept;

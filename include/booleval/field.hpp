@@ -47,17 +47,17 @@ struct field;
  */
 struct field_base
 {
-    field_base() noexcept = default;
+    field_base() = default;
 
-    field_base( field_base       && rhs ) noexcept = default;
-    field_base( field_base const  & rhs ) noexcept = default;
+    field_base( field_base       && rhs ) = default;
+    field_base( field_base const  & rhs ) = default;
 
     field_base( std::string_view const name ) noexcept : name{ name } {}
 
-    field_base & operator=( field_base       && rhs ) noexcept = default;
-    field_base & operator=( field_base const  & rhs ) noexcept = default;
+    field_base & operator=( field_base       && rhs ) = default;
+    field_base & operator=( field_base const  & rhs ) = default;
 
-    virtual ~field_base() noexcept = default;
+    virtual ~field_base() = default;
 
     template< typename C >
     utils::any_value invoke( C && obj ) noexcept
@@ -81,10 +81,10 @@ struct field_base
 template< typename C >
 struct field : field_base
 {
-    field() noexcept = default;
+    field() = default;
 
-    field( field       && rhs ) noexcept = default;
-    field( field const  & rhs ) noexcept = default;
+    field( field       && rhs ) = default;
+    field( field const  & rhs ) = default;
 
     template< typename R >
     field( std::string_view const name, R ( C::*m )() ) noexcept : field_base{ name }
@@ -104,10 +104,8 @@ struct field : field_base
         };
     }
 
-    field & operator=( field       && rhs ) noexcept = default;
-    field & operator=( field const  & rhs ) noexcept = default;
-
-    ~field() noexcept = default;
+    field & operator=( field       && rhs ) = default;
+    field & operator=( field const  & rhs ) = default;
 
     std::function< utils::any_value( C && ) > get{ nullptr };
 };
