@@ -31,36 +31,32 @@
 #include <iostream>
 #include <booleval/evaluator.hpp>
 
-template< typename T, typename U >
 class bar
 {
 public:
-    bar( T && value_1, U && value_2 )
-    : value_1_{ value_1 }
-    , value_2_{ value_2 }
+    bar( std::string value_1, unsigned value_2 ) noexcept
+    : value_1_{ std::move( value_1 ) }
+    , value_2_{            value_2   }
     {}
 
-    void value_1( T && value ) noexcept { value_1_ = value; }
-    void value_2( U && value ) noexcept { value_2_ = value; }
-
-    T value_1() const noexcept { return value_1_; }
-    U value_2() const noexcept { return value_2_; }
+    std::string const & value_1() const noexcept { return value_1_; }
+    unsigned            value_2() const noexcept { return value_2_; }
 
 private:
-    T value_1_{};
-    U value_2_{};
+    std::string value_1_{};
+    unsigned    value_2_{ 0 };
 };
 
 int main()
 {
-    bar< std::string, unsigned > x{ "foo", 1 };
-    bar< std::string, unsigned > y{ "bar", 2 };
+    bar x{ "foo", 1 };
+    bar y{ "bar", 2 };
 
     booleval::evaluator evaluator
     {
         {
-            booleval::make_field( "field_1", &bar< std::string, unsigned >::value_1 ),
-            booleval::make_field( "field_2", &bar< std::string, unsigned >::value_2 )
+            booleval::make_field( "field_1", &bar::value_1 ),
+            booleval::make_field( "field_2", &bar::value_2 )
         }
     };
 
