@@ -22,29 +22,25 @@ The library is under development and subject to change. Contributions are welcom
 #include <iostream>
 #include <booleval/evaluator.hpp>
 
-template< typename T >
 class foo
 {
 public:
-    foo()             : value_{}        {}
-    foo( T && value ) : value_{ value } {}
+    foo( std::string value ) noexcept : value_{ std::move( value ) } {}
 
-    void value( T && value ) { value_ = value; }
-
-    T value() const noexcept { return value_; }
+    std::string const & value() const noexcept { return value_; }
 
 private:
-    T value_{};
+    std::string value_{};
 };
 
 int main()
 {
-    foo< std::string > x{ "foo" };
-    foo< std::string > y{ "bar" };
+    foo x{ "foo" };
+    foo y{ "bar" };
 
     booleval::evaluator evaluator
     {
-        booleval::make_field( "field", &foo< std::string >::value )
+        booleval::make_field( "field", &foo::value )
     };
 
     if ( !evaluator.expression( "field eq foo" ) )
