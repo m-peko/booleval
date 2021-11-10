@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 3.2)
 
 project (booleval)
 
-option (BOOLEVAL_BUILD_TESTS "Build tests" ON)
-option (BOOLEVAL_BUILD_EXAMPLES "Build examples" ON)
+option (BOOLEVAL_BUILD_TESTS     "Build tests"     ON )
+option (BOOLEVAL_BUILD_EXAMPLES  "Build examples"  ON )
 option (BOOLEVAL_BUILD_BENCHMARK "Build benchmark" OFF)
 
 # Compile in release mode by default
@@ -14,9 +14,9 @@ else (NOT CMAKE_BUILD_TYPE)
     message (STATUS "Using specified '${CMAKE_BUILD_TYPE}' build type.")
 endif (NOT CMAKE_BUILD_TYPE)
 
-set (CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
-set (CMAKE_CXX_EXTENSIONS OFF)
+set (CMAKE_CXX_STANDARD          17 )
+set (CMAKE_CXX_STANDARD_REQUIRED ON )
+set (CMAKE_CXX_EXTENSIONS        OFF)
 
 # Compilation flags
 if (MSVC)
@@ -73,10 +73,10 @@ if (BOOLEVAL_BUILD_TESTS)
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
         # Enable tests and add the test directory
         message (STATUS "Tests have been enabled")
-        set (GOOGLETEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/googletest)
-        set (GOOGLETEST_INCLUDE ${GOOGLETEST_ROOT}/googletest/include)
+        set (GOOGLETEST_ROOT       ${CMAKE_CURRENT_SOURCE_DIR}/googletest)
+        set (GOOGLETEST_INCLUDE    ${GOOGLETEST_ROOT}/googletest/include )
         set (GOOGLETEST_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/googletest)
-        set (GOOGLETEST_LIBRARY ${GOOGLETEST_BINARY_DIR}/googletest)
+        set (GOOGLETEST_LIBRARY    ${GOOGLETEST_BINARY_DIR}/googletest   )
 
         if (${LIBBOOLEVAL_TYPE} MATCHES SHARED)
             set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -84,7 +84,7 @@ if (BOOLEVAL_BUILD_TESTS)
 
         enable_testing ()
         add_subdirectory (googletest)
-        add_subdirectory (tests)
+        add_subdirectory (tests     )
     else ()
         message (STATUS "googletest git submodule is absent. Run `git submodule init && git submodule update` to get it")
     endif ()
@@ -95,10 +95,10 @@ if (BOOLEVAL_BUILD_BENCHMARK)
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googlebench/CMakeLists.txt")
         # Enable benchmark and add the benchmark directory
         message (STATUS "Benchmark has been enabled")
-        set (GOOGLEBENCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/googlebench)
-        set (GOOGLEBENCH_INCLUDE ${GOOGLEBENCH_ROOT}/googlebench/include)
+        set (GOOGLEBENCH_ROOT       ${CMAKE_CURRENT_SOURCE_DIR}/googlebench)
+        set (GOOGLEBENCH_INCLUDE    ${GOOGLEBENCH_ROOT}/googlebench/include)
         set (GOOGLEBENCH_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/googlebench)
-        set (GOOGLEBENCH_LIBRARY ${GOOGLEBENCH_BINARY_DIR}/googlebench)
+        set (GOOGLEBENCH_LIBRARY    ${GOOGLEBENCH_BINARY_DIR}/googlebench  )
 
         set (BENCHMARK_ENABLE_GTEST_TESTS OFF)
 
@@ -107,7 +107,7 @@ if (BOOLEVAL_BUILD_BENCHMARK)
         endif()
 
         add_subdirectory (googlebench)
-        add_subdirectory (benchmark)
+        add_subdirectory (benchmark  )
     else ()
         message (STATUS "googlebench git submodule is absent. Run `git submodule init && git submodule update` to get it")
     endif ()

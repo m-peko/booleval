@@ -37,13 +37,23 @@ endmacro ()
 
 # Tests
 
-create_test (token/token)
-create_test (token/tokenizer)
-create_test (tree/node)
+create_test (token/token        )
+create_test (token/tokenizer    )
+create_test (tree/node          )
 create_test (tree/result_visitor)
-create_test (tree/tree)
-create_test (utils/algorithm)
-create_test (utils/any_value)
-create_test (utils/split_range)
-create_test (utils/string_utils)
-create_test (evaluator)
+create_test (tree/tree          )
+create_test (utils/algorithm    )
+create_test (utils/any_value    )
+create_test (utils/split_range  )
+create_test (utils/string_utils )
+create_test (evaluator          )
+
+# Fuzz test
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    add_executable (fuzz EXCLUDE_FROM_ALL fuzz.cpp)
+    target_compile_options (fuzz PRIVATE $<$<C_COMPILER_ID:Clang>:-g -O1 -fsanitize=fuzzer>)
+    target_link_libraries (fuzz PRIVATE $<$<C_COMPILER_ID:Clang>:-fsanitize=fuzzer>)
+else ()
+    message (STATUS "Fuzz test has been disabled for ${CMAKE_CXX_COMPILER_ID} compiler. Use Clang / AppleClang instead.")
+endif ()
