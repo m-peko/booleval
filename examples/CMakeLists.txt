@@ -10,4 +10,6 @@ add_custom_target (
     evaluator
 )
 
-add_executable (evaluator EXCLUDE_FROM_ALL evaluator.cpp)
+add_executable (evaluator evaluator.cpp)
+
+target_compile_features(evaluator PRIVATE cxx_std_17)
